@@ -1,5 +1,3 @@
-#include <raylib.h>
-#include <raymath.h>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -9,146 +7,22 @@
 #include <type_traits>
 #include <tuple>
 
+#include <raylib.h>
+#include <raymath.h>
+
+#include "../include/debug.h"
+#include "../include/node.h"
+
 constexpr auto SCREEN_WIDTH  = 800;
 constexpr auto SCREEN_HEIGHT = 450;
 
 class Engine;
 class Node;
 
-typedef std::shared_ptr<Node> shared_node_ptr;
-typedef std::weak_ptr<Node> node_ptr;
-
-class Node
+struct ColorModulator
 {
 public:
-    node_ptr self;
-
-    node_ptr root;
-
-    node_ptr parent;
-    std::vector<shared_node_ptr> children;
-
-    std::string name;
-
-    Node(const char* p_name) : name(p_name) {}
-
-    virtual void _ready() {}
-    virtual void _update() {}
-    virtual void _draw() {}
-
-    Node& getNode(const char* path)
-    {
-        std::vector<std::string> tokens = std::vector<std::string>();
-
-        std::string current {""};
-
-        const char* c = &path[0];
-        while (*c != '\0')
-        {
-            bool nextIsEnd = *(c+1) == '\0';
-            if (*c == '/' || nextIsEnd)
-            {
-                if (nextIsEnd)
-                    current.push_back(*c);
-                if (current != "")
-                {
-                    tokens.push_back(current);
-                    current = {""};
-                }
-            }
-            else
-            {
-                current.push_back(*c);
-            }
-
-            ++c;
-        }
-
-        node_ptr currentNode;
-        // Determine starting node.
-        if (tokens[0] == "root")
-        {
-            currentNode = root;
-            tokens.erase(tokens.begin());
-        }
-        else
-        {
-            currentNode = shared_node_ptr(this);
-        }
-
-        // Follow token path.
-        for (std::string& token : tokens)
-        {
-            currentNode = getNodeByToken(currentNode, token);
-
-            if (currentNode.expired())
-            {
-                // Break early and the function will return the expired pointer.
-                std::cerr << "Invalid token in getNode, fix path. (" + token + ")";
-                break;
-            }
-        }
-
-        return *currentNode.lock();
-    }
-
-    void addChild(node_ptr child)
-    {
-        if (auto child_ptr = child.lock())
-        {
-            // Remove this child from current parent.
-            child_ptr->removeParent();
-
-            // Add as child to this.
-            children.push_back(child_ptr);
-
-            // Set parent to new parent.
-            child_ptr->parent = self;
-        }
-        else
-        {
-            std::cerr << "Couldn't add invalid child." << std::endl;
-        }
-    }
-private:
-    node_ptr getNodeByToken(node_ptr currentNode, std::string& token)
-    {
-        if (auto currentNode_ptr = currentNode.lock())
-        {
-            if (token == "..")
-            {
-                return currentNode_ptr->parent;
-            }
-            else
-            {
-                // Loop through children to find by name.
-                for (auto child : currentNode_ptr->children)
-                {
-                    if (child->name == token)
-                    {
-                        return child;
-                    }
-                }
-            }
-        }
-
-        return node_ptr();
-    }
-
-    void removeParent()
-    {
-        if (auto parent_ptr = parent.lock())
-        {
-            auto captureName = name;
-            auto at = std::remove_if(parent_ptr->children.begin(),
-                                            parent_ptr->children.end(),
-                                            [captureName](shared_node_ptr& node) {
-                                                return node->name == captureName;
-                                            });
-
-            parent_ptr->children.erase(at);
-        }
-    }
+    Color modulate = WHITE;
 };
 
 class Resource
@@ -164,6 +38,7 @@ public:
 
 class Engine
 {
+    friend class Node;
 private:
     inline static std::unique_ptr<Engine> singleton;
 public:
@@ -188,18 +63,18 @@ public:
         started = true;
 
         // Ready
-        recursiveRun(root, [](shared_node_ptr node){ node->_ready(); });
+        recursiveRun(root, [](shared_node_ptr node){ runReady(node); });
 
         while (!WindowShouldClose())
         {
             // Update
-            recursiveRun(root, [](shared_node_ptr node){ node->_update(); });
+            recursiveRun(root, [](shared_node_ptr node){ runUpdate(node); });
 
             BeginDrawing();
 
             ClearBackground(RAYWHITE);
 
-            recursiveRun(root, [](shared_node_ptr node){ node->_draw(); });
+            recursiveRun(root, [](shared_node_ptr node){ runDraw(node); });
 
             EndDrawing();
         }
@@ -250,22 +125,10 @@ public:
 
         if (started)
         {
-            childPtr->_ready();
+            runReady(childPtr);
         }
 
         return *this;
-    }
-
-    template <typename T, class... Args>
-    static void print(T t, Args... args)
-    {
-        std::cout << t << std::endl;
-    }
-
-    template <typename T, class... Args>
-    static void printerr(T t, Args... args)
-    {
-        std::cerr << t << std::endl;
     }
 private:
     inline static bool started = false;
@@ -281,20 +144,6 @@ private:
             recursiveRun(child, function);
         }
     }
-};
-
-class EngineTransform
-{
-public:
-    Vector3 position;
-    Quaternion rotation = QuaternionFromEuler(0, 0, 0.01f);
-    Vector3 scale = {1, 1, 1};
-};
-
-class ColorModulator
-{
-public:
-    Color modulate = WHITE;
 };
 
 class EngineTexture : public Resource
@@ -316,7 +165,7 @@ public:
     }
 };
 
-class EngineTextureRect : public Node, public EngineTransform, public ColorModulator
+class EngineTextureRect : public Node, public ColorModulator
 {
 public:
     EngineTextureRect(const char* name, std::weak_ptr<EngineTexture> p_texture) : Node(name), texture(p_texture) {}
@@ -328,11 +177,11 @@ public:
     {
         if (auto texture = this->texture.lock())
         {
-            position = {
-                SCREEN_WIDTH / 2.0f - texture->texture.width / 2.0f,
-                SCREEN_HEIGHT / 2.0f - texture->texture.height / 2.0f,
+            setLocalPosition({
+                (SCREEN_WIDTH / 2.0f - texture->texture.width / 2.0f) / 2,
+                (SCREEN_HEIGHT / 2.0f - texture->texture.height / 2.0f) / 2,
                 0.0
-            };
+            });
         }
     }
 
@@ -340,6 +189,8 @@ public:
     {
         if (auto texture = this->texture.lock())
         {
+            // Debug::print(position.x);
+            auto position = getWorldPosition();
             DrawTexturePro(texture->texture,
             {0, 0, texture->texture.width * 1.0f, texture->texture.height * 1.0f},
             {position.x, position.y, texture->texture.width * scale.x, texture->texture.height * scale.y},
