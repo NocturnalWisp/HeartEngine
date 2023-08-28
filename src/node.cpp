@@ -80,6 +80,13 @@ void Node::addChild(node_ptr child)
     }
 }
 
+void Node::destroy()
+{
+    runRemove(self.lock());
+
+    EarlyResourceReleaseCallback();
+}
+
 node_ptr Node::getNodeByToken(node_ptr currentNode, std::string& token) const
 {
     if (auto currentNode_ptr = currentNode.lock())
@@ -112,10 +119,12 @@ void Node::removeParent()
         auto at = std::remove_if(parent_ptr->children.begin(),
                                         parent_ptr->children.end(),
                                         [captureName](shared_node_ptr& node) {
-                                            return node->name == captureName;
+                                            return node->name.compare(captureName) == 0;
                                         });
 
         parent_ptr->children.erase(at);
+
+        parent = node_ptr();
     }
 }
 

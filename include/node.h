@@ -10,6 +10,7 @@
 
 #include "debug.h"
 
+class Engine;
 class Node;
 
 typedef std::shared_ptr<Node> shared_node_ptr;
@@ -23,6 +24,7 @@ typedef struct RotationAxisAngle
 
 class Node
 {
+    friend class Engine;
 public:
     node_ptr self;
     node_ptr root;
@@ -37,10 +39,13 @@ public:
     virtual void _ready() {}
     virtual void _update() {}
     virtual void _draw() {}
+    virtual void _remove() {}
 
     node_ptr getNode(const char* path) const;
 
     void addChild(node_ptr child);
+
+    void destroy();
 
     // Transform
     Vector3 getLocalPosition() const;
@@ -61,6 +66,9 @@ protected:
     Vector3 scale = {1, 1, 1};
     Vector3 origin = {0, 0, 0};
 private:
+    // Engine callbacks
+    void(*EarlyResourceReleaseCallback)();
+
     friend void runReady(shared_node_ptr node)
     {
         node->_ready();
@@ -73,11 +81,23 @@ private:
     {
         node->_draw();
     }
+    friend void runRemove(shared_node_ptr node)
+    {
+        node->_remove();
+
+        for (auto child : node->children)
+        {
+            runRemove(child);
+        }
+
+        node->children.clear();
+
+        node->removeParent();
+    }
 
     node_ptr getNodeByToken(node_ptr currentNode, std::string& token) const;
 
     void removeParent();
-
 
     // Borrowed liberally from https://github.com/juniper-dusk/raylib-transform
     // Awesome library thank you Juniper!

@@ -22,7 +22,7 @@ public:
     template <class T>
     static void printerr(T t)
     {
-        std::cerr << t;
+        std::cerr << t << std::endl;
     }
 
     template <class T, class... Args>
