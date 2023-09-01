@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <tuple>
+#include <functional>
 
 #include <raylib.h>
 #include <raymath.h>
@@ -18,10 +19,6 @@ constexpr auto SCREEN_HEIGHT = 450;
 
 class Engine;
 class Node;
-class Resource;
-
-typedef std::shared_ptr<Resource> shared_resource_ptr;
-typedef std::weak_ptr<Resource> resource_ptr;
 
 struct ColorModulator
 {
@@ -29,20 +26,49 @@ public:
     Color modulate = WHITE;
 };
 
-class Resource
+class ResourceBase
 {
+    friend class Engine;
 public:
-    Resource(const char* p_name) : name(p_name) {} 
+    ResourceBase(const char* p_name) : name(p_name) {} 
 
     virtual void _load() {}
     virtual void _unload() {}
 
     std::string name;
+private:
+    friend void load(const std::shared_ptr<ResourceBase>& res)
+    {
+        if (res->loaded)
+            return;
+
+        res->_load();
+        res->loaded = true;
+    }
+
+    friend void unload(const std::shared_ptr<ResourceBase>& res)
+    {
+        if (!res->loaded)
+            return;
+
+        res->_unload();
+        res->loaded = false;
+    }
+
+    bool loaded = false;
+};
+
+template <class T>
+class Resource : public ResourceBase
+{
+public:
+    Resource(const char* p_name) : ResourceBase(p_name) {}
 };
 
 class Engine
 {
     friend class Node;
+    friend class ResourceBase;
 private:
     inline static std::unique_ptr<Engine> singleton;
 public:
@@ -69,31 +95,31 @@ public:
         started = true;
 
         // Ready
-        recursiveRun(root, [](shared_node_ptr node){ runReady(node); });
+        recursiveRun(root, [](const shared_node_ptr& node){ runReady(node); });
 
         if (checkResourceRelease)
-            handleCheckResourceRelease();
+            checkEarlyResourceRelease();
 
         while (!WindowShouldClose())
         {
             // Update
-            recursiveRun(root, [](shared_node_ptr node){ runUpdate(node); });
+            recursiveRun(root, [](const shared_node_ptr& node){ runUpdate(node); });
 
             BeginDrawing();
 
             ClearBackground(RAYWHITE);
 
-            recursiveRun(root, [](shared_node_ptr node){ runDraw(node); });
+            recursiveRun(root, [](const shared_node_ptr& node){ runDraw(node); });
 
             EndDrawing();
 
             if (checkResourceRelease)
-                handleCheckResourceRelease();
+                checkEarlyResourceRelease();
         }
 
         for (auto& res : resources)
         {
-            res->_unload();
+            unload(res);
         }
 
         CloseWindow();
@@ -101,44 +127,48 @@ public:
         return 0;
     }
 
+    static node_ptr getRoot()
+    {
+        return root;
+    }
+
     template <typename T>
     Engine& loadResource(T resource)
     {
-        static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
+        static_assert(std::is_base_of<ResourceBase, T>::value, "T must derive from Resource.");
 
-        resources.push_back(std::make_shared<T>(resource));
+        auto res = std::make_shared<T>(resource);
 
-        resources[resources.size()-1]->_load();
+        resources.push_back(res);
+
+        load(res);
 
         return *this;
     }
 
     template <typename T>
-    static std::weak_ptr<T> getResource(const char* name)
+    static std::shared_ptr<T> getResource(const char* name)
     {
+        static_assert(std::is_base_of<ResourceBase, T>::value, "T must derive from Resource.");
+
+        std::shared_ptr<T> found = nullptr;
+
         for (auto res : resources)
         {
             if (strcmp(res->name.c_str(), name) == 0)
             {
-                return std::dynamic_pointer_cast<T>(res);
+                found = std::dynamic_pointer_cast<T>(res);
+
+                if (!found->loaded)
+                {
+                    load(found);
+                }
+
+                break;
             }
         }
 
-        return std::weak_ptr<T>();
-    }
-
-    template <typename T>
-    static std::shared_ptr<T> getResourceShared(const char* name)
-    {
-        for (auto res : resources)
-        {
-            if (strcmp(res->name.c_str(), name) == 0)
-            {
-                return std::dynamic_pointer_cast<T>(res);
-            }
-        }
-
-        return nullptr;
+        return found;
     }
 
     template <typename T>
@@ -174,16 +204,23 @@ public:
 
         return *this;
     }
+
+    Engine& inlineDoSomething(void(*something)())
+    {
+        something();
+
+        return *this;
+    }
 private:
     inline static bool started = false;
     inline static bool checkResourceRelease = false;
 
-    inline static std::vector<std::shared_ptr<Resource>> resources;
+    inline static std::vector<std::shared_ptr<ResourceBase>> resources;
     inline static std::shared_ptr<Node> root;
 
-    static void recursiveRun(shared_node_ptr node, void (*function)(shared_node_ptr))
+    static void recursiveRun(const shared_node_ptr& node, void (function)(const shared_node_ptr&))
     {
-        function(node);
+        std::invoke(function, node);
         for (auto i = node->children.rbegin(); i != node->children.rend(); ++i)
         {
             if ((*i) != nullptr)
@@ -195,19 +232,11 @@ private:
 
     static void checkEarlyResourceRelease()
     {
-        checkResourceRelease = true;
-    }
-
-    static void handleCheckResourceRelease()
-    {
         for (auto it = resources.begin(); it != resources.end();)
         {
-            Debug::print("Use: ", (*it).use_count());
-            if ((*it).use_count() <= 1)
+            if ((*it)->loaded && it->use_count() <= 1)
             {
-                (*it)->_unload();
-                *it = nullptr;
-                it = resources.erase(it);
+                unload(*it);
             }
             else
             {
@@ -217,7 +246,7 @@ private:
     }
 };
 
-class EngineTexture : public Resource
+class EngineTexture : public Resource<Texture2D>
 {
 public:
     EngineTexture(const char* name, const char* p_path) : Resource(name), path(p_path) {}
@@ -228,11 +257,15 @@ public:
     void _load() override
     {
         texture = LoadTexture(path);
+
+        Debug::print("Loaded!");
     }
 
     void _unload() override
     {
         UnloadTexture(texture);
+
+        Debug::print("Unloaded!");
     }
 };
 
@@ -240,27 +273,24 @@ class EngineTextureRect : public Node, public ColorModulator
 {
 public:
     EngineTextureRect(const char* name, const char* p_texture)
-        : Node(name)
+        : Node(name), textureName(p_texture)
     {
-        texture = Engine::getResourceShared<EngineTexture>(p_texture);
+
     }
     EngineTextureRect(const char* name) : Node(name) {}
 
+    const char* textureName;
     std::shared_ptr<EngineTexture> texture;
 
     void _ready() override
     {
-        setLocalPosition({
-            (SCREEN_WIDTH / 2.0f - texture->texture.width / 2.0f) / 2,
-            (SCREEN_HEIGHT / 2.0f - texture->texture.height / 2.0f) / 2,
-            0.0
-        });
+        texture = Engine::getResource<EngineTexture>(textureName);
     }
 
     void _draw() override
     {
-        // Debug::print(position.x);
         auto position = getWorldPosition();
+
         DrawTexturePro(texture->texture,
         {0, 0, texture->texture.width * 1.0f, texture->texture.height * 1.0f},
         {position.x, position.y, texture->texture.width * scale.x, texture->texture.height * scale.y},
@@ -271,7 +301,6 @@ public:
 
     void _remove() override
     {
-        Debug::print(texture.use_count());
-        texture = nullptr;
+        texture.reset();
     }
 };

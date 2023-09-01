@@ -16,7 +16,6 @@ public:
     {
         std::cout << t;
         print(args...);
-        std::cout << std::endl;
     }
 
     template <class T>

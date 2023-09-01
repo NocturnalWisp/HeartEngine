@@ -34,7 +34,7 @@ public:
 
     std::string name;
 
-    Node(const char* p_name) : name(p_name) {}
+    Node(const char* p_name) : name(p_name) {Debug::print("Created: ", name);}
 
     virtual void _ready() {}
     virtual void _update() {}
@@ -69,19 +69,19 @@ private:
     // Engine callbacks
     void(*EarlyResourceReleaseCallback)();
 
-    friend void runReady(shared_node_ptr node)
+    friend void runReady(const shared_node_ptr& node)
     {
         node->_ready();
     }
-    friend void runUpdate(shared_node_ptr node)
+    friend void runUpdate(const shared_node_ptr& node)
     {
         node->_update();
     }
-    friend void runDraw(shared_node_ptr node)
+    friend void runDraw(const shared_node_ptr& node)
     {
         node->_draw();
     }
-    friend void runRemove(shared_node_ptr node)
+    friend void runRemove(const shared_node_ptr& node)
     {
         node->_remove();
 

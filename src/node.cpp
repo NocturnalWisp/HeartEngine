@@ -82,7 +82,10 @@ void Node::addChild(node_ptr child)
 
 void Node::destroy()
 {
-    runRemove(self.lock());
+    if (auto self_ptr = self.lock())
+    {
+        runRemove(self_ptr);
+    }
 
     EarlyResourceReleaseCallback();
 }
@@ -118,7 +121,7 @@ void Node::removeParent()
         auto captureName = name;
         auto at = std::remove_if(parent_ptr->children.begin(),
                                         parent_ptr->children.end(),
-                                        [captureName](shared_node_ptr& node) {
+                                        [captureName](const shared_node_ptr& node) {
                                             return node->name.compare(captureName) == 0;
                                         });
 
