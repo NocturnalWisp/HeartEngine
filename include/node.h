@@ -65,6 +65,8 @@ protected:
     Quaternion rotation = {0, 0, 0, 1};
     Vector3 scale = {1, 1, 1};
     Vector3 origin = {0, 0, 0};
+
+    Color modulate = WHITE;
 private:
     // Engine callbacks
     void(*EarlyResourceReleaseCallback)();

@@ -1,4 +1,6 @@
-#include "engine.cpp"
+#include "engine.h"
+
+#include "nodes/engine_texture_rect.cpp"
 
 class CustomTexture : public EngineTextureRect
 {
@@ -13,8 +15,6 @@ public:
         EngineTextureRect::_ready();
 
         getNode("../").lock()->setLocalPosition({200, 200, 0});
-
-        destroy();
     }
 
     void _update() override
