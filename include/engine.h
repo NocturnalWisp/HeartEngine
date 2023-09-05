@@ -24,19 +24,15 @@ class Engine
 {
     friend class Node;
     friend class Resource;
-private:
-    inline static std::unique_ptr<Engine> singleton;
 public:
-    static Engine& create();
+    Engine();
 
-    static int run();
+    int run();
 
     static node_ptr getRoot();
 
-    Engine& inlineDoSomething(void(*something)());
-
     template <typename T>
-    Engine& loadResource(T resource)
+    void loadResource(T resource)
     {
         static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
 
@@ -45,8 +41,6 @@ public:
         resources.push_back(res);
 
         load(res);
-
-        return *this;
     }
 
     template <typename T>
@@ -75,7 +69,7 @@ public:
     }
 
     template <typename T>
-    Engine& addNode(T node, node_ptr parent = root)
+    node_ptr addNode(T node, node_ptr parent = root)
     {
         static_assert(std::is_base_of<Node, T>::value, "T must derive from Node.");
 
@@ -94,18 +88,18 @@ public:
             {
                 ready(childPtr);
             }
+
+            return childPtr;
         }
 
-        return *this;
+        return node_ptr();
     }
 
     // Always relative to root!
     template <typename T>
-    Engine& addNode(T node, const char* path)
+    node_ptr addNode(T node, const char* path)
     {
-        addNode(node, root->getNode(path));
-
-        return *this;
+        return addNode(node, root->getNode(path));
     }
 private:
     inline static bool started = false;

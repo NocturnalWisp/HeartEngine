@@ -1,12 +1,7 @@
 #include "../include/engine.h"
 
-Engine& Engine::create()
+Engine::Engine()
 {
-    if (singleton != nullptr)
-        return *singleton;
-
-    singleton = std::make_unique<Engine>();
-
     SetTraceLogLevel(4);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Window title");
     SetTargetFPS(60);
@@ -15,7 +10,7 @@ Engine& Engine::create()
     root->root = root;
     root->self = root;
 
-    return *singleton;
+    return ;
 }
 
 int Engine::run()
@@ -58,13 +53,6 @@ int Engine::run()
 node_ptr Engine::getRoot()
 {
     return root;
-}
-
-Engine& Engine::inlineDoSomething(void(*something)())
-{
-    something();
-
-    return *this;
 }
 
 void Engine::recursiveRun(const shared_node_ptr& node, void (function)(const shared_node_ptr&))

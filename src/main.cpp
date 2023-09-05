@@ -30,13 +30,16 @@ public:
 
 int main()
 {
-    Engine::create()
-        .addNode(Node("Game"))
-        .loadResource(EngineTexture("Texture", ASSETS_PATH"test.png"))
-        .addNode(CustomTexture("TextureRect", "Texture"), "/root/Game")
-        .addNode(CustomTexture("TextureRect2", "Texture"), "/root/Game")
-        .inlineDoSomething([](){ Engine::getRoot().lock()->getNode("Game/TextureRect2").lock()->setLocalPosition({200, 20, 20}); })
-        .run();
+    Engine engine = Engine();
+
+    engine.addNode(Node("Game"));
+    engine.loadResource(EngineTexture("Texture", ASSETS_PATH"test.png"));
+    engine.addNode(CustomTexture("TextureRect", "Texture"), "/root");
+    auto textureRect2 = engine.addNode(CustomTexture("TextureRect2", "Texture"), "/root");
+
+    textureRect2.lock()->setLocalPosition({200, 20, 20});
+
+    engine.run();
     
     return 0;
 }
