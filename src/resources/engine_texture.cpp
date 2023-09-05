@@ -1,6 +1,6 @@
 #include "../include/resource.h"
 
-class EngineTexture : public Resource<Texture2D>
+class EngineTexture : public Resource
 {
 public:
     EngineTexture(const char* name, const char* p_path) : Resource(name), path(p_path) {}

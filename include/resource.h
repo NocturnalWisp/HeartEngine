@@ -1,10 +1,36 @@
 #pragma once
 
-#include "../src/resource_base.h"
+#include <string>
+#include <memory>
 
-template <class T>
-class Resource : public ResourceBase
+class Resource
 {
+    friend class Engine;
 public:
-    Resource(const char* p_name) : ResourceBase(p_name) {}
+    Resource(const char* p_name) : name(p_name) {} 
+
+    virtual void _load() {}
+    virtual void _unload() {}
+
+    std::string name;
+private:
+    friend void load(const std::shared_ptr<Resource>& res)
+    {
+        if (res->loaded)
+            return;
+
+        res->_load();
+        res->loaded = true;
+    }
+
+    friend void unload(const std::shared_ptr<Resource>& res)
+    {
+        if (!res->loaded)
+            return;
+
+        res->_unload();
+        res->loaded = false;
+    }
+
+    bool loaded = false;
 };

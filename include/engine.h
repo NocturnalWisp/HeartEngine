@@ -23,7 +23,7 @@ constexpr auto SCREEN_HEIGHT = 450;
 class Engine
 {
     friend class Node;
-    friend class ResourceBase;
+    friend class Resource;
 private:
     inline static std::unique_ptr<Engine> singleton;
 public:
@@ -38,7 +38,7 @@ public:
     template <typename T>
     Engine& loadResource(T resource)
     {
-        static_assert(std::is_base_of<ResourceBase, T>::value, "T must derive from Resource.");
+        static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
 
         auto res = std::make_shared<T>(resource);
 
@@ -52,7 +52,7 @@ public:
     template <typename T>
     static std::shared_ptr<T> getResource(const char* name)
     {
-        static_assert(std::is_base_of<ResourceBase, T>::value, "T must derive from Resource.");
+        static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
 
         std::shared_ptr<T> found = nullptr;
 
@@ -111,7 +111,7 @@ private:
     inline static bool started = false;
     inline static bool checkResourceRelease = false;
 
-    inline static std::vector<std::shared_ptr<ResourceBase>> resources;
+    inline static std::vector<std::shared_ptr<Resource>> resources;
     inline static std::shared_ptr<Node> root;
 
     static void recursiveRun(const shared_node_ptr& node, void (function)(const shared_node_ptr&));
