@@ -84,7 +84,7 @@ void Node::destroy()
 {
     if (auto self_ptr = self.lock())
     {
-        runRemove(self_ptr);
+        remove(self_ptr);
     }
 
     EarlyResourceReleaseCallback();

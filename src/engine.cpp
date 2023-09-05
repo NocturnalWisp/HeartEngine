@@ -23,7 +23,7 @@ int Engine::run()
     started = true;
 
     // Ready
-    recursiveRun(root, [](const shared_node_ptr& node){ runReady(node); });
+    recursiveRun(root, [](const shared_node_ptr& node){ ready(node); });
 
     if (checkResourceRelease)
         checkEarlyResourceRelease();
@@ -31,13 +31,13 @@ int Engine::run()
     while (!WindowShouldClose())
     {
         // Update
-        recursiveRun(root, [](const shared_node_ptr& node){ runUpdate(node); });
+        recursiveRun(root, [](const shared_node_ptr& node){ update(node); });
 
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
 
-        recursiveRun(root, [](const shared_node_ptr& node){ runDraw(node); });
+        recursiveRun(root, [](const shared_node_ptr& node){ draw(node); });
 
         EndDrawing();
 

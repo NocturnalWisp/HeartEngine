@@ -92,7 +92,7 @@ public:
 
             if (started)
             {
-                runReady(childPtr);
+                ready(childPtr);
             }
         }
 

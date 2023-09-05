@@ -71,25 +71,25 @@ private:
     // Engine callbacks
     void(*EarlyResourceReleaseCallback)();
 
-    friend void runReady(const shared_node_ptr& node)
+    friend void ready(const shared_node_ptr& node)
     {
         node->_ready();
     }
-    friend void runUpdate(const shared_node_ptr& node)
+    friend void update(const shared_node_ptr& node)
     {
         node->_update();
     }
-    friend void runDraw(const shared_node_ptr& node)
+    friend void draw(const shared_node_ptr& node)
     {
         node->_draw();
     }
-    friend void runRemove(const shared_node_ptr& node)
+    friend void remove(const shared_node_ptr& node)
     {
         node->_remove();
 
         for (auto child : node->children)
         {
-            runRemove(child);
+            remove(child);
         }
 
         node->children.clear();
