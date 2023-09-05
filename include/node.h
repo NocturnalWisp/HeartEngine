@@ -34,7 +34,7 @@ public:
 
     std::string name;
 
-    Node(const char* p_name) : name(p_name) {Debug::print("Created: ", name);}
+    Node(const char* p_name) : name(p_name) {}
 
     virtual void _ready() {}
     virtual void _update() {}
@@ -67,6 +67,8 @@ protected:
     Vector3 origin = {0, 0, 0};
 
     Color modulate = WHITE;
+
+    
 private:
     // Engine callbacks
     void(*EarlyResourceReleaseCallback)();
