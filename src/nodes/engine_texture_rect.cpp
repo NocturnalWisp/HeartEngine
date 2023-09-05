@@ -12,9 +12,6 @@ public:
     }
     EngineTextureRect(const char* name) : Node(name) {}
 
-    const char* textureName;
-    std::shared_ptr<EngineTexture> texture;
-
     void _ready() override
     {
         texture = Engine::getResource<EngineTexture>(textureName);
@@ -36,4 +33,7 @@ public:
     {
         texture.reset();
     }
+private:
+    const char* textureName;
+    std::shared_ptr<EngineTexture> texture;
 };

@@ -43,6 +43,11 @@ public:
 
     node_ptr getNode(const char* path) const;
 
+    Node* getNodePtr(const char* path) const
+    {
+        return getNode(path).lock().get();
+    }
+
     void addChild(node_ptr child);
 
     void destroy();

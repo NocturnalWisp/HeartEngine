@@ -2,6 +2,8 @@
 
 #include "nodes/engine_texture_rect.cpp"
 
+#include "lua_wrappers/lw_node.cpp"
+
 class CustomTexture : public EngineTextureRect
 {
 public:
@@ -38,6 +40,23 @@ int main()
     auto textureRect2 = engine.addNode(CustomTexture("TextureRect2", "Texture"), "/root");
 
     textureRect2.lock()->setLocalPosition({200, 20, 20});
+
+    auto luaTest = engine.addNode(Node("LuaTest"));
+
+    {
+        sol::state lua;
+        lua.open_libraries(sol::lib::base);
+
+        lw_getNodeWrapper(lua, *luaTest.lock().get());
+
+        lua.script(R"(
+            print("Working!")
+            val = getNode("/root")
+            print(val.name)
+            val:setName("pop")
+            print(val.name)
+        )");
+    }
 
     engine.run();
     
