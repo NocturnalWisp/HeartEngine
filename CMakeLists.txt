@@ -10,7 +10,7 @@ set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # or games
 add_subdirectory(libs/raylib)
 add_subdirectory(external/lua)
 
-file(GLOB lua_engine_sources CONFIGURE_DEPENDS src/*.cpp)
+file(GLOB_RECURSE lua_engine_sources CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${PROJECT_NAME} ${lua_engine_sources})
 
 include_directories(${PROJECT_NAME} PUBLIC include)

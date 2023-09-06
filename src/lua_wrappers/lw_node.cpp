@@ -1,8 +1,4 @@
-#define SOL_ALL_SAFETIES_ON 1
-#include <sol.hpp>
-#include <string>
-
-#include "../../include/node.h"
+#include "lua_wrappers/lw_node.h"
 
 void lw_getNodeWrapper(sol::state& lua, Node& node)
 {
@@ -13,4 +9,6 @@ void lw_getNodeWrapper(sol::state& lua, Node& node)
     lua.set("name", node.name);
 
     lua.set_function("getNode", &Node::getNodePtr, node);
+
+    
 }

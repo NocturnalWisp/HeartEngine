@@ -7,7 +7,7 @@ class Resource
 {
     friend class Engine;
 public:
-    Resource(const char* p_name) : name(p_name) {} 
+    Resource(std::string p_name) : name(p_name) {} 
 
     virtual void _load() {}
     virtual void _unload() {}

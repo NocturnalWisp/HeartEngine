@@ -34,16 +34,16 @@ public:
 
     std::string name;
 
-    Node(const char* p_name) : name(p_name) {}
+    Node(std::string p_name) : name(p_name) {}
 
     virtual void _ready() {}
     virtual void _update() {}
     virtual void _draw() {}
     virtual void _remove() {}
 
-    node_ptr getNode(const char* path) const;
+    node_ptr getNode(std::string_view path) const;
 
-    Node* getNodePtr(const char* path) const
+    Node* getNodePtr(std::string_view path) const
     {
         return getNode(path).lock().get();
     }

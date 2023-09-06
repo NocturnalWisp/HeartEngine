@@ -1,44 +1,30 @@
-#include <sol.hpp>
+#include "lua_wrappers/lua_node.h"
 
-#include "../../include/node.h"
-
-#include "lw_node.cpp"
-
-template<class T>
-class LuaNode
+void LuaNode::init(std::string_view script)
 {
-    static_assert(std::is_base_of<Node, T>::value, "T must derive from Node.");
-    shared_node_ptr node;
-    sol::state lua;
-public:
-    LuaNode(shared_node_ptr node) : node(node) {}
+    lua.open_libraries(sol::lib::base);
 
-    void init(std::string_view script)
-    {
-        lua.open_libraries(sol::lib::base);
+    lw_getNodeWrapper(lua, *node.get());
 
-        lw_getNodeWrapper(lua, *node.get());
+    lua.script(script);
+}
 
-        lua.script(script);
-    }
+void LuaNode::ready()
+{
+    lua["_ready"]();
+}
 
-    void ready()
-    {
-        lua["_ready"]();
-    }
+void LuaNode::update()
+{
+    lua["_update"]();
+}
 
-    void update()
-    {
-        lua["_update"]();
-    }
+void LuaNode::draw()
+{
+    lua["_draw"]();
+}
 
-    void draw()
-    {
-        lua["_draw"]();
-    }
-
-    void remove()
-    {
-        lua["_remove"]();
-    }
-};
+void LuaNode::remove()
+{
+    lua["_remove"]();
+}

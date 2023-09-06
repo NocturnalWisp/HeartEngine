@@ -1,8 +1,8 @@
-#include "../include/node.h"
+#include "node.h"
 
 const float EPSILON = 0.001;
 
-node_ptr Node::getNode(const char* path) const
+node_ptr Node::getNode(std::string_view path) const
 {
     std::vector<std::string> tokens = std::vector<std::string>();
 
@@ -35,7 +35,7 @@ node_ptr Node::getNode(const char* path) const
 
     node_ptr currentNode;
     // Determine starting node.
-    if (tokens[0] == "root")
+    if (tokens.size() > 0 && tokens[0] == "root")
     {
         currentNode = root;
         tokens.erase(tokens.begin());

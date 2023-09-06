@@ -1,16 +1,18 @@
-#include "../include/node.h"
+#include "node.h"
 
-#include "../resources/engine_texture.cpp"
+#include "engine.h"
+
+#include "resources/engine_texture.h"
 
 class EngineTextureRect : public Node
 {
 public:
-    EngineTextureRect(const char* name, const char* p_texture)
+    EngineTextureRect(std::string name, std::string p_texture)
         : Node(name), textureName(p_texture)
     {
 
     }
-    EngineTextureRect(const char* name) : Node(name) {}
+    EngineTextureRect(std::string name) : Node(name) {}
 
     void _ready() override
     {
@@ -33,7 +35,13 @@ public:
     {
         texture.reset();
     }
+
+    void setTexture(std::string p_textureName)
+    {
+        textureName = p_textureName;
+        texture = Engine::getResource<EngineTexture>(textureName);
+    }
 private:
-    const char* textureName;
+    std::string textureName;
     std::shared_ptr<EngineTexture> texture;
 };

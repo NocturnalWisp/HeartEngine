@@ -1,16 +1,16 @@
-#include "../include/resource.h"
+#include "resource.h"
 
 class EngineTexture : public Resource
 {
 public:
-    EngineTexture(const char* name, const char* p_path) : Resource(name), path(p_path) {}
+    EngineTexture(std::string name, std::string p_path) : Resource(name), path(p_path) {}
 
-    const char* path;
+    std::string path;
     Texture2D texture;
 
     void _load() override
     {
-        texture = LoadTexture(path);
+        texture = LoadTexture(path.c_str());
     }
 
     void _unload() override
