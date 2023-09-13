@@ -14,12 +14,6 @@
 class Engine;
 class Node;
 
-// typedef struct RotationAxisAngle
-// {
-//     Vector3 axis;
-//     float   angle;
-// } RotationAxisAngle;
-
 class Component
 {
 public:
@@ -41,10 +35,9 @@ class Node
 public:
     Node(std::string p_name) : name(p_name) {}
 
-    template <class T>
-    T* getComponent(std::string_view name) const
+    Component* getComponent(std::string_view name) const
     {
-        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
+        // static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
         Component* foundComponent;
 
         for (const auto& component : components)
@@ -58,12 +51,26 @@ public:
         return foundComponent;
     }
 
-    template <class T>
-    void addComponent(T component)
+    template<typename T>
+    T* getComponentT(std::string_view name) const
     {
         static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
-        component.node = this;
-        components.push_back(std::make_unique<T>(component));
+        return static_cast<T*>(getComponent(name));
+    }
+
+    template <class T>
+    T* addComponent(T c)
+    {
+        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
+
+        auto component = std::make_unique<T>(c);
+        component->node = this;
+
+        auto ptr = component.get();
+
+        components.push_back(std::move(component));
+
+        return ptr;
     }
 
     void destroy();
@@ -101,8 +108,3 @@ private:
         node.components.clear();
     }
 };
-
-
-//TODO:
-// Borrowed liberally from https://github.com/juniper-dusk/raylib-transform
-// Awesome library thank you Juniper!

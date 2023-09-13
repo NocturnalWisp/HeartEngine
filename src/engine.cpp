@@ -66,22 +66,6 @@ Node* Engine::getNode(std::string_view name)
     return foundNode;
 }
 
-Node* Engine::addNode(Node n)
-{
-    std::unique_ptr<Node> node = std::make_unique<Node>(std::move(n));
-    node->engine = this;
-    node->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
-
-    if (started)
-    {
-        onCreate(*node.get());
-    }
-
-    nodes.push_back(std::move(node));
-
-    return nodes.back().get();
-}
-
 void Engine::checkEarlyResourceRelease()
 {
     for (auto it = resources.begin(); it != resources.end();)

@@ -32,7 +32,23 @@ public:
 
     Node* getNode(std::string_view name);
 
-    Node* addNode(Node node);
+    Node* addNode(Node n)
+    {
+        std::unique_ptr<Node> node = std::make_unique<Node>(std::move(n));
+        node->engine = this;
+        node->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
+
+        if (started)
+        {
+            onCreate(*node.get());
+        }
+
+        auto ptr = node.get();
+
+        nodes.push_back(std::move(node));
+
+        return ptr;
+    }
 
     template <typename T>
     void loadResource(T resource)

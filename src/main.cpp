@@ -4,36 +4,37 @@
 #include "engine.h"
 
 #include "components/engine_texture_rect.h"
+#include "components/game_transform.h"
 
 // #include "lua_wrappers/lua_wrapper.h"
 
-class CustomTexture : public EngineTextureRect
+class CustomTexture : public Component
 {
+private:
+    EngineTextureRect* textureRect;
+    GameTransform* transform;
 public:
-    CustomTexture(std::string name, std::string textureRes)
-        : EngineTextureRect(name, textureRes) {  }
-
     CustomTexture(std::string name)
-        : EngineTextureRect(name) {  }
-
+        : Component(name) {  }
+    
     float spin = 0.0f;
 
     void _on_create() override
     {
-        EngineTextureRect::_on_create();
+        transform = node->getComponentT<GameTransform>("Transform");
+        textureRect = node->getComponentT<EngineTextureRect>("TextureRect");
 
-        // getNode("../").lock()->setLocalPosition({200, 200, 0});
+        node->engine->updateEvent.append([this](){ _update(); });
+
+        transform->SetLocalPosition({200, 200, 0});
     }
 
-    // void _update() override
-    // {
-    //     EngineTextureRect::_update();
+    void _update()
+    {
+        spin += 200.0f * GetFrameTime();
 
-    //     parent.lock()->setLocalRotation({{0, 0, 1}, spin});
-    //     setLocalRotation({{0, 0, 1}, spin});
-
-    //     spin += 1.0f;
-    // }
+        transform->SetLocalRotation({{0, 0, 1}, DEG2RAD * spin});
+    }
 };
 
 int main()
@@ -43,9 +44,16 @@ int main()
     engine.loadResource(EngineTexture("Texture", ASSETS_PATH"test.png"));
 
     auto textureRect = engine.addNode(Node("TextureRect"));
-    textureRect->addComponent<CustomTexture>(CustomTexture("TextureRect", "Texture"));
-    // auto textureRect2 = engine.addNode("CustomTexture", "TextureRect2", "/root");
-    // engine.addNode(CustomTexture("TextureRect2", "Texture"), "/root");
+    textureRect->addComponent(EngineTextureRect("TextureRect", "Texture"));
+    auto textureRect1Transform = textureRect->addComponent(GameTransform("Transform", {200, 200, 0}, {{0, 0, 0}, 0}, {1, 1, 1}));
+    textureRect->addComponent(CustomTexture("CustomTexture"));
+
+    auto textureRect2 = engine.addNode(Node("TextureRect2"));
+    textureRect2->addComponent(CustomTexture("CustomTexture"));
+    textureRect2->addComponent(EngineTextureRect("TextureRect", "Texture"));
+    textureRect2->addComponent(GameTransform("Transform", {250, 250, 0}, {{0, 0, 0}, 0}, {1, 1, 1}));
+    textureRect2->getComponentT<GameTransform>("Transform")
+        ->SetParent(textureRect1Transform);
 
     // auto ptr = std::dynamic_pointer_cast<CustomTexture>(textureRect2.lock());
     // ptr->setTexture("Texture");
