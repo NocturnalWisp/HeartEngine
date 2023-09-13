@@ -8,7 +8,7 @@ void lw_getNodeWrapper(sol::state& lua, Node& node)
 
     lua.set("name", node.name);
 
-    lua.set_function("getNode", &Node::getNodePtr, node);
+    // lua.set_function("getNode", &Node::getNodePtr, node);
 
     
 }

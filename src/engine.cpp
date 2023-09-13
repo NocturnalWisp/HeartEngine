@@ -6,10 +6,6 @@ Engine::Engine()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Window title");
     SetTargetFPS(60);
 
-    root = std::make_shared<Node>("root");
-    root->root = root;
-    root->self = root;
-
     return ;
 }
 
@@ -17,8 +13,11 @@ int Engine::run()
 {
     started = true;
 
-    // Ready
-    recursiveRun(root, [](const shared_node_ptr& node){ ready(node); });
+    // Creation
+    for (auto& node : nodes)
+    {
+        onCreate(*node.get());
+    }
 
     if (checkResourceRelease)
         checkEarlyResourceRelease();
@@ -26,13 +25,15 @@ int Engine::run()
     while (!WindowShouldClose())
     {
         // Update
-        recursiveRun(root, [](const shared_node_ptr& node){ update(node); });
+        //TODO: recursiveRun(root, [](const shared_node_ptr& node){ update(node); });
+        updateEvent();
 
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
 
-        recursiveRun(root, [](const shared_node_ptr& node){ draw(node); });
+        drawEvent();
+        //TODO: recursiveRun(root, [](const shared_node_ptr& node){ draw(node); });
 
         EndDrawing();
 
@@ -50,21 +51,35 @@ int Engine::run()
     return 0;
 }
 
-node_ptr Engine::getRoot()
+Node* Engine::getNode(std::string_view name)
 {
-    return root;
-}
+    Node* foundNode;
 
-void Engine::recursiveRun(const shared_node_ptr& node, void (function)(const shared_node_ptr&))
-{
-    std::invoke(function, node);
-    for (auto i = node->children.rbegin(); i != node->children.rend(); ++i)
+    for (const auto& node : nodes)
     {
-        if ((*i) != nullptr)
+        if (node->name.compare(name) == 0)
         {
-            recursiveRun((*i), function);
+            foundNode = node.get();
         }
     }
+
+    return foundNode;
+}
+
+Node* Engine::addNode(Node n)
+{
+    std::unique_ptr<Node> node = std::make_unique<Node>(std::move(n));
+    node->engine = this;
+    node->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
+
+    if (started)
+    {
+        onCreate(*node.get());
+    }
+
+    nodes.push_back(std::move(node));
+
+    return nodes.back().get();
 }
 
 void Engine::checkEarlyResourceRelease()

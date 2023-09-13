@@ -12,6 +12,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include <eventpp/callbacklist.h>
+
 #include "debug.h"
 #include "node.h"
 #include "resource.h"
@@ -28,7 +30,9 @@ public:
 
     int run();
 
-    static node_ptr getRoot();
+    Node* getNode(std::string_view name);
+
+    Node* addNode(Node node);
 
     template <typename T>
     void loadResource(T resource)
@@ -43,7 +47,7 @@ public:
     }
 
     template <typename T>
-    static std::shared_ptr<T> getResource(std::string_view name)
+    std::shared_ptr<T> getResource(std::string_view name)
     {
         static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
 
@@ -67,76 +71,36 @@ public:
         return found;
     }
 
-    template <typename T>
-    node_ptr addNode(T node, node_ptr parent = root, bool make_shared = true)
-    {
-        static_assert(std::is_base_of<Node, T>::value, "T must derive from Node.");
-
-        if (auto parent_ptr = parent.lock())
-        {
-            return handle_node(std::make_shared<T>(node), parent_ptr);
-        }
-
-        return node_ptr();
-    }
-
-    // Always relative to root!
-    template <typename T>
-    node_ptr addNode(T node, std::string_view path)
-    {
-        return addNode(node, root->getNode(path));
-    }
-
-    node_ptr addNode(std::string registeredType, std::string name, std::string_view parentPath)
-    {
-        if (nodeRegistry.count(registeredType))
-        {
-            if (auto parent_ptr = root->getNode(parentPath).lock())
-            {
-                return handle_node(nodeRegistry[registeredType](name), parent_ptr);
-            }
-        }
-        else
-        {
-            Debug::printerr("No registered type with the name: ", registeredType);
-        }
-
-        return node_ptr();
-    }
-
-    void registerNodeType(std::string name, shared_node_ptr(*ctor)(std::string))
-    {
-        nodeRegistry[name] = ctor;
-    }
+    // Events
+    eventpp::CallbackList<void()> updateEvent;
+    eventpp::CallbackList<void()> drawEvent;
 private:
-    inline static bool started = false;
-    inline static bool checkResourceRelease = false;
+    bool started = false;
+    bool checkResourceRelease = false;
 
-    inline static std::map<std::string, shared_node_ptr(*)(std::string)> nodeRegistry;
+    std::vector<std::shared_ptr<Resource>> resources;
+    std::vector<std::unique_ptr<Node>> nodes;
 
-    inline static std::vector<std::shared_ptr<Resource>> resources;
-    inline static std::shared_ptr<Node> root;
+    // static void recursiveRun(const shared_node_ptr& node, void (function)(const shared_node_ptr&));
 
-    static void recursiveRun(const shared_node_ptr& node, void (function)(const shared_node_ptr&));
+    void checkEarlyResourceRelease();
 
-    static void checkEarlyResourceRelease();
+    // node_ptr handle_node(shared_node_ptr node, shared_node_ptr parent = root)
+    // {
+    //     parent->addChild(node);
 
-    node_ptr handle_node(shared_node_ptr node, shared_node_ptr parent = root)
-    {
-        parent->addChild(node);
+    //     auto& childPtr = parent->children.back();
 
-        auto& childPtr = parent->children.back();
+    //     childPtr->root = root;
+    //     childPtr->self = childPtr;
 
-        childPtr->root = root;
-        childPtr->self = childPtr;
+    //     childPtr->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
 
-        childPtr->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
+    //     if (started)
+    //     {
+    //         ready(childPtr);
+    //     }
 
-        if (started)
-        {
-            ready(childPtr);
-        }
-
-        return childPtr;
-    }
+    //     return childPtr;
+    // }
 };

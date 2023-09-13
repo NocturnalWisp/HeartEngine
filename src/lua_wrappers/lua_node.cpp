@@ -4,7 +4,7 @@ void LuaNode::init(std::string_view script)
 {
     lua.open_libraries(sol::lib::base);
 
-    lw_getNodeWrapper(lua, *node.get());
+    // lw_getNodeWrapper(lua, *node.get());
 
     lua.script(script);
 }

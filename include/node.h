@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#include <type_traits>
 
 #include <raylib.h>
 #include <raymath.h>
@@ -13,114 +14,95 @@
 class Engine;
 class Node;
 
-typedef std::shared_ptr<Node> shared_node_ptr;
-typedef std::weak_ptr<Node> node_ptr;
+// typedef struct RotationAxisAngle
+// {
+//     Vector3 axis;
+//     float   angle;
+// } RotationAxisAngle;
 
-typedef struct RotationAxisAngle
+class Component
 {
-    Vector3 axis;
-    float   angle;
-} RotationAxisAngle;
+public:
+    Component(std::string name) : name(name) {}
+
+    Node* node;
+
+    std::string name;
+
+    virtual void _on_create() {}
+    virtual void _on_destroy() {}
+
+    virtual void registerLuaData() {}
+};
 
 class Node
 {
     friend class Engine;
 public:
-    node_ptr self;
-    node_ptr root;
-
-    node_ptr parent;
-    std::vector<shared_node_ptr> children;
-
-    std::string name;
-
     Node(std::string p_name) : name(p_name) {}
 
-    virtual void _ready() {}
-    virtual void _update() {}
-    virtual void _draw() {}
-    virtual void _remove() {}
-
-    node_ptr getNode(std::string_view path) const;
-
-    Node* getNodePtr(std::string_view path) const
+    template <class T>
+    T* getComponent(std::string_view name) const
     {
-        return getNode(path).lock().get();
+        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
+        Component* foundComponent;
+
+        for (const auto& component : components)
+        {
+            if (component->name.compare(name) == 0)
+            {
+                foundComponent = component.get();
+            }
+        }
+
+        return foundComponent;
     }
 
-    void addChild(node_ptr child);
+    template <class T>
+    void addComponent(T component)
+    {
+        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
+        component.node = this;
+        components.push_back(std::make_unique<T>(component));
+    }
 
     void destroy();
 
-    // Transform
-    Vector3 getLocalPosition() const;
-    void setLocalPosition(Vector3 localPosition);
-    Vector3 getWorldPosition() const;
+    Engine* engine;
 
-    RotationAxisAngle getLocalRotation() const;
-    void setLocalRotation(RotationAxisAngle rotation);
-    RotationAxisAngle getWorldRotation() const;
+    std::vector<std::unique_ptr<Component>> components;
 
-    Vector3 getLocalScale() const;
-    void setLocalScale(Vector3 localScale);
-    Vector3 getWorldScale() const;
+    std::string name;
 protected:
-    // Transform
-    Vector3 position = {0, 0, 0};
-    Quaternion rotation = {0, 0, 0, 1};
-    Vector3 scale = {1, 1, 1};
-    Vector3 origin = {0, 0, 0};
-
-    Color modulate = WHITE;
-
-    
+    virtual void _on_create() {}
+    virtual void _on_destroy() {}
 private:
     // Engine callbacks
-    void(*EarlyResourceReleaseCallback)();
+    void(Engine::*EarlyResourceReleaseCallback)();
 
-    friend void ready(const shared_node_ptr& node)
+    friend void onCreate(Node& node)
     {
-        node->_ready();
-    }
-    friend void update(const shared_node_ptr& node)
-    {
-        node->_update();
-    }
-    friend void draw(const shared_node_ptr& node)
-    {
-        node->_draw();
-    }
-    friend void remove(const shared_node_ptr& node)
-    {
-        node->_remove();
-
-        for (auto child : node->children)
+        for (auto& component : node.components)
         {
-            remove(child);
+            component->_on_create();
         }
 
-        node->children.clear();
-
-        node->removeParent();
+        node._on_create();
     }
-
-    node_ptr getNodeByToken(node_ptr currentNode, std::string& token) const;
-
-    void removeParent();
-
-    // Borrowed liberally from https://github.com/juniper-dusk/raylib-transform
-    // Awesome library thank you Juniper!
-    class Extensions
+    friend void onDestroy(Node& node)
     {
-    public:
-        static Matrix makeLocalToParent(node_ptr node);
-        static Matrix makeParentToLocal(node_ptr node);
+        for (auto& component : node.components)
+        {
+            component->_on_destroy();
+        }
 
-        static Matrix getLocalToWorldMatrix(node_ptr node);
-        static Matrix getWorldToLocalMatrix(node_ptr node);
+        node._on_destroy();
 
-        static Vector3 extractTranslation(Matrix transform);
-        static Matrix  extractRotation(Matrix transform);
-        static Vector3 extractScale(Matrix transform);
-    };
+        node.components.clear();
+    }
 };
+
+
+//TODO:
+// Borrowed liberally from https://github.com/juniper-dusk/raylib-transform
+// Awesome library thank you Juniper!

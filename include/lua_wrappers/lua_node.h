@@ -9,7 +9,7 @@
 class LuaNode
 {
 public:
-    LuaNode(shared_node_ptr node) : node(node) {}
+    // LuaNode(Node* node) : node(node) {}
 
     void init(std::string_view script);
 
@@ -20,5 +20,5 @@ public:
 
     sol::state lua;
 private:
-    shared_node_ptr node;
+    // shared_node_ptr node;
 };

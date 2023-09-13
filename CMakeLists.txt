@@ -14,7 +14,8 @@ file(GLOB_RECURSE lua_engine_sources CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${PROJECT_NAME} ${lua_engine_sources})
 
 include_directories(${PROJECT_NAME} PUBLIC include)
-include_directories(${PROJECT_NAME} PUBLIC sol)
+include_directories(${PROJECT_NAME} PUBLIC libs/sol)
+include_directories(${PROJECT_NAME} PUBLIC libs)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE lua::lib)
 target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
