@@ -9,16 +9,6 @@ void LuaNode::init(std::string_view script)
     lua.script(script);
 }
 
-void LuaNode::_on_create()
-{
-    lua["_on_create"]();
-}
-
-void LuaNode::_on_destroy()
-{
-    lua["_on_destroy"]();
-}
-
 Component* LuaNode::addComponent(std::string_view typeName, std::string name)
 {
     auto ptr = Node::addComponent(typeName, name);

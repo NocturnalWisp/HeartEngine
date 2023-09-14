@@ -39,7 +39,6 @@ public:
 
         std::unique_ptr<T> node = std::make_unique<T>(std::move(n));
         node->engine = this;
-        node->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
 
         if (started)
         {
@@ -52,6 +51,8 @@ public:
 
         return ptr;
     }
+
+    bool removeNode(std::string_view name);
 
     template <typename T>
     void loadResource(T resource)
@@ -90,23 +91,9 @@ public:
         return found;
     }
 
-    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name)
-    {
-        for (const auto& componentType : componentRegistry)
-        {
-            if (componentType.first.compare(typeName) == 0)
-            {
-                return componentType.second(name);
-            }
-        }
+    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name);
 
-        return nullptr;
-    }
-
-    void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name))
-    {
-        componentRegistry[typeName] = creator;
-    }
+    void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name));
 
     // Events
     eventpp::CallbackList<void()> updateEvent;

@@ -16,9 +16,6 @@ public:
 
     void init(std::string_view script);
 
-    void _on_create();
-    void _on_destroy();
-
     sol::state lua;
 
     Component* addComponent(std::string_view typeName, std::string name) override;

@@ -67,6 +67,15 @@ Node* Engine::getNode(std::string_view name)
     return foundNode;
 }
 
+bool Engine::removeNode(std::string_view name)
+{
+    auto it = std::remove_if(nodes.begin(), nodes.end(),
+        [name](const std::unique_ptr<Node>& node){ return node->name.compare(name) == 0; });
+    bool any_change = it != nodes.end();
+    nodes.erase(it, nodes.end());
+    return any_change;
+}
+
 template <> Node* Engine::addNode(Node n);
 template <> LuaNode* Engine::addNode(LuaNode n);
 
@@ -85,3 +94,20 @@ void Engine::checkEarlyResourceRelease()
     }
 }
 
+std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name)
+{
+    for (const auto &componentType : componentRegistry)
+    {
+        if (componentType.first.compare(typeName) == 0)
+        {
+            return componentType.second(name);
+        }
+    }
+
+    return nullptr;
+}
+
+void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name))
+{
+    componentRegistry[typeName] = creator;
+}
