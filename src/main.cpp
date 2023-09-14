@@ -6,7 +6,7 @@
 #include "components/engine_texture_rect.h"
 #include "components/game_transform.h"
 
-// #include "lua_wrappers/lua_wrapper.h"
+#include "lua_wrappers/lua_wrapper.h"
 
 class CustomTexture : public Component
 {
@@ -37,9 +37,19 @@ public:
     }
 };
 
+template <class T>
+std::unique_ptr<Component> registerComponentType(std::string name)
+{
+    static_assert(std::is_base_of<Component, T>::value, "Type must inherit from Component.");
+    return std::make_unique<T>(T(name));
+}
+
 int main()
 {
     Engine engine = Engine();
+
+    engine.registerComponent("Transform", &registerComponentType<GameTransform>);
+    engine.registerComponent("EngineTextureRect", &registerComponentType<EngineTextureRect>);
 
     engine.loadResource(EngineTexture("Texture", ASSETS_PATH"test.png"));
 
@@ -60,48 +70,31 @@ int main()
 
     // textureRect2.lock()->setLocalPosition({200, 20, 20});
 
-    // auto luaTest = engine.addNode(Node("LuaTest"));
+    auto luaTest = engine.addNode<LuaNode>(LuaNode("LuaTest"));
 
-    // LuaNode customTextureScript = LuaNode(textureRect2.lock());
+    luaTest->lua.new_usertype<Vector3>("Vector3",
+        "x", &Vector3::x,
+        "y", &Vector3::y,
+        "z", &Vector3::z
+    );
 
-    // std::string script = R"(
-    //     print("Working!")
-    //     val = getNode("/root")
-    //     print(val.name)
-    //     val:setName("pop")
-    //     print(val.name)
+    std::string script = R"(
+        print("Working!")
 
-    //     newNode = addNode("Node", "LuaTestNode", "")
+        addComponent("Transform", "c_transform")
 
-    //     print(newNode.name)
+        c_transform.position.x = 20
+        print(c_transform.position.x)
 
-    //     function _ready()
-    //         print("Ready!")
-    //     end
-    // )";
+        function _on_create()
+            print("Ready!")
+        end
+    )";
 
-    // customTextureScript.lua.set_function(
-    //     "addNode",
-    //     [&engine](std::string registeredType, std::string name, std::string parentPath = "") -> shared_node_ptr
-    //     {
-    //         auto newNode = engine.addNode(registeredType, name, parentPath);
+    luaTest->init(script);
 
-    //         if (auto newNode_ptr = newNode.lock())
-    //         {
-    //             auto luaNode = std::make_unique<LuaNode>(LuaNode(newNode_ptr));
-
-    //             wrappers[registeredType](luaNode->lua, *newNode_ptr.get());
-
-    //             luaNode->init("");
-
-    //             return newNode_ptr;
-    //         }
-
-    //         return nullptr;
-    //     }
-    // );
-
-    // customTextureScript.init(script);
+    Debug::print(luaTest->getComponentT<GameTransform>("c_transform")
+        ->GetLocalPosition().x);
 
     engine.run();
     

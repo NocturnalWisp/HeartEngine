@@ -1,24 +1,27 @@
 #pragma once
 
+#include <string>
+
 #include <sol.hpp>
 
 #include "node.h"
+#include "Engine.h"
 
 #include "lw_node.h"
 
-class LuaNode
+class LuaNode : public Node
 {
 public:
-    // LuaNode(Node* node) : node(node) {}
+    LuaNode(std::string name) : Node(name) {}
 
     void init(std::string_view script);
 
-    void ready();
-    void update();
-    void draw();
-    void remove();
+    void _on_create();
+    void _on_destroy();
 
     sol::state lua;
+
+    Component* addComponent(std::string_view typeName, std::string name) override;
 private:
-    // shared_node_ptr node;
+    void populate();
 };

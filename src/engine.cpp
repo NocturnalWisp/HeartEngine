@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "lua_wrappers/lua_node.h"
 
 Engine::Engine()
 {
@@ -65,6 +66,9 @@ Node* Engine::getNode(std::string_view name)
 
     return foundNode;
 }
+
+template <> Node* Engine::addNode(Node n);
+template <> LuaNode* Engine::addNode(LuaNode n);
 
 void Engine::checkEarlyResourceRelease()
 {

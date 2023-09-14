@@ -9,6 +9,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include <sol.hpp>
+
 #include "debug.h"
 
 class Engine;
@@ -26,7 +28,7 @@ public:
     virtual void _on_create() {}
     virtual void _on_destroy() {}
 
-    virtual void registerLuaData() {}
+    virtual void getLuaData(sol::state& lua, std::string_view tableName) {  }
 };
 
 class Node
@@ -37,7 +39,6 @@ public:
 
     Component* getComponent(std::string_view name) const
     {
-        // static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
         Component* foundComponent;
 
         for (const auto& component : components)
@@ -72,6 +73,8 @@ public:
 
         return ptr;
     }
+
+    virtual Component* addComponent(std::string_view typeName, std::string name);
 
     void destroy();
 

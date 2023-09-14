@@ -32,9 +32,12 @@ public:
 
     Node* getNode(std::string_view name);
 
-    Node* addNode(Node n)
+    template <class T>
+    T* addNode(T n)
     {
-        std::unique_ptr<Node> node = std::make_unique<Node>(std::move(n));
+        static_assert(std::is_base_of<Node, T>::value, "T must derive from Node.");
+
+        std::unique_ptr<T> node = std::make_unique<T>(std::move(n));
         node->engine = this;
         node->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
 
@@ -87,6 +90,24 @@ public:
         return found;
     }
 
+    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name)
+    {
+        for (const auto& componentType : componentRegistry)
+        {
+            if (componentType.first.compare(typeName) == 0)
+            {
+                return componentType.second(name);
+            }
+        }
+
+        return nullptr;
+    }
+
+    void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name))
+    {
+        componentRegistry[typeName] = creator;
+    }
+
     // Events
     eventpp::CallbackList<void()> updateEvent;
     eventpp::CallbackList<void()> drawEvent;
@@ -97,26 +118,7 @@ private:
     std::vector<std::shared_ptr<Resource>> resources;
     std::vector<std::unique_ptr<Node>> nodes;
 
-    // static void recursiveRun(const shared_node_ptr& node, void (function)(const shared_node_ptr&));
+    std::map<std::string, std::unique_ptr<Component>(*)(std::string name)> componentRegistry;
 
     void checkEarlyResourceRelease();
-
-    // node_ptr handle_node(shared_node_ptr node, shared_node_ptr parent = root)
-    // {
-    //     parent->addChild(node);
-
-    //     auto& childPtr = parent->children.back();
-
-    //     childPtr->root = root;
-    //     childPtr->self = childPtr;
-
-    //     childPtr->EarlyResourceReleaseCallback = checkEarlyResourceRelease;
-
-    //     if (started)
-    //     {
-    //         ready(childPtr);
-    //     }
-
-    //     return childPtr;
-    // }
 };
