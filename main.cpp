@@ -63,6 +63,7 @@ int main()
     textureRect2->addComponent(CustomTexture("CustomTexture"));
     textureRect2->addComponent(EngineTextureRect("TextureRect", "Texture"));
     textureRect2->addComponent(GameTransform("Transform", {250, 250, 0}, {{0, 0, 0}, 0}, {1, 1, 1}));
+
     textureRect2->getComponentT<GameTransform>("Transform")
         ->SetParent(textureRect1Transform);
 

@@ -79,21 +79,6 @@ bool Engine::removeNode(std::string_view name)
 template <> Node* Engine::addNode(Node n);
 template <> LuaNode* Engine::addNode(LuaNode n);
 
-void Engine::checkEarlyResourceRelease()
-{
-    for (auto it = resources.begin(); it != resources.end();)
-    {
-        if ((*it)->loaded && it->use_count() <= 1)
-        {
-            unload(*it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
-}
-
 std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name)
 {
     for (const auto &componentType : componentRegistry)
@@ -110,4 +95,45 @@ std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typ
 void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name))
 {
     componentRegistry[typeName] = creator;
+}
+
+void Engine::populateBasicLua(sol::state& lua)
+{
+    lua.new_usertype<Engine>("Engine",
+        "getNode", &Engine::getNode,
+        "addNode", [](Engine& self, std::string name) -> Node*
+            { return self.addNode<Node>(Node(name)); },
+        "addLuaNode", [](Engine& self, std::string scriptName) -> Node*
+            { return self.addNode<Node>(LuaNode(scriptName)); },
+        "removeNode", &Engine::removeNode
+    );
+
+    lua.new_usertype<Node>("Node",
+        "name", &Node::name,
+        "getComponent", &Node::getComponent,
+        "addComponent", [](Node& self, std::string_view typeName, std::string name, sol::table args) -> Component*
+            { return self.addComponent(typeName, name); },
+        "removeComponent", &Node::removeComponent,
+        "engine", &Node::engine
+    );
+
+    lua.new_usertype<Component>("Component",
+        "name", &Component::name,
+        "node", &Component::node
+    );
+}
+
+void Engine::checkEarlyResourceRelease()
+{
+    for (auto it = resources.begin(); it != resources.end();)
+    {
+        if ((*it)->loaded && it->use_count() <= 1)
+        {
+            unload(*it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }

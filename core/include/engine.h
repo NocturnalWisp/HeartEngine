@@ -98,6 +98,8 @@ public:
     // Events
     eventpp::CallbackList<void()> updateEvent;
     eventpp::CallbackList<void()> drawEvent;
+
+    static void populateBasicLua(sol::state& lua);
 private:
     bool started = false;
     bool checkResourceRelease = false;

@@ -32,7 +32,7 @@ public:
     {
         static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
 
-        auto component = std::make_unique<T>(c);
+        auto component = std::make_unique<T>(std::move(c));
         component->node = this;
 
         auto ptr = component.get();
