@@ -5,7 +5,7 @@
 #include <sol.hpp>
 
 #include "node.h"
-#include "Engine.h"
+#include "component.h"
 
 class LuaNode : public Node
 {

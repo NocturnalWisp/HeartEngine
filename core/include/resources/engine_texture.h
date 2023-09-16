@@ -1,5 +1,7 @@
 #include "resource.h"
 
+#include <raylib.h>
+
 class EngineTexture : public Resource
 {
 public:

@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <algorithm>
 #include <type_traits>
 
 #include "debug.h"

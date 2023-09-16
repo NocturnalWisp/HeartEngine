@@ -1,16 +1,10 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <string>
 #include <memory>
-#include <algorithm>
 #include <type_traits>
-#include <tuple>
-#include <functional>
-#include <map>
-
-#include <raylib.h>
-#include <raymath.h>
 
 #include <eventpp/callbacklist.h>
 

@@ -1,6 +1,12 @@
 #include "engine.h"
 #include "lua_wrappers/lua_node.h"
 
+#include <raylib.h>
+#include <raymath.h>
+
+#include <algorithm>
+#include <functional>
+
 Engine::Engine()
 {
     SetTraceLogLevel(4);

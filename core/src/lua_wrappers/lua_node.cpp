@@ -1,5 +1,7 @@
 #include "lua_wrappers/lua_node.h"
+
 #include "lua_wrappers/lua_component.h"
+#include "engine.h"
 
 void LuaNode::init(const std::string& scriptPath)
 {

@@ -1,6 +1,8 @@
 #include "node.h"
 #include "engine.h"
 
+#include <algorithm>
+
 const float EPSILON = 0.001;
 
 Component* Node::getComponent(std::string_view name) const
