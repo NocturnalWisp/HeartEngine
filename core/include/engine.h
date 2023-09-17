@@ -10,7 +10,10 @@
 
 #include "debug.h"
 #include "node.h"
+
 #include "resource.h"
+
+namespace sol { class state; }
 
 constexpr auto SCREEN_WIDTH  = 800;
 constexpr auto SCREEN_HEIGHT = 450;

@@ -2,10 +2,9 @@
 
 #include <string>
 
-#include <sol.hpp>
-
 #include "node.h"
-#include "component.h"
+
+#include <sol.hpp>
 
 typedef void (*LuaComponentFunctionCallback)(std::string_view componentName, std::string_view functionName);
 

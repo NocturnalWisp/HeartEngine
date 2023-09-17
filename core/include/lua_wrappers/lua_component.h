@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include <sol.hpp>
-
 #include "component.h"
+
+namespace sol { class state; }
 
 class LuaComponent : public Component
 {

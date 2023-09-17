@@ -1,11 +1,14 @@
 #include "engine.h"
-#include "lua_wrappers/lua_node.h"
+
+#include <algorithm>
+#include <functional>
 
 #include <raylib.h>
 #include <raymath.h>
 
-#include <algorithm>
-#include <functional>
+#include <sol.hpp>
+
+#include "lua_wrappers/lua_node.h"
 
 Engine::Engine()
 {

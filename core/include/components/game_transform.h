@@ -24,7 +24,9 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include "node.h"
+#include "component.h"
+
+namespace sol { class state; }
 
 //typedef std::pair<Vector3, float> RotationAxisAngle;
 typedef struct RotationAxisAngle
@@ -36,6 +38,8 @@ typedef struct RotationAxisAngle
 class GameTransform : public Component
 {
 public:
+    void getLuaData(sol::state& lua) override;
+
     // INITIALIZATION.
     // Default constructor.
     GameTransform(std::string name);
@@ -77,13 +81,6 @@ public:
 
     // HIERARCHY OPERATIONS.
     void SetParent(GameTransform* newParent, unsigned int childIndex = 0);
-
-    void getLuaData(sol::state& lua) override
-    {
-        lua.create_named_table(name,
-            "position", &position
-        );
-    }
 
 protected:
     // Parent transform.

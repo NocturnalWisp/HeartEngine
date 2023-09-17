@@ -1,6 +1,8 @@
 #pragma once
 
-#include <sol.hpp>
+#include <string>
+
+namespace sol { class state; }
 
 class Node;
 

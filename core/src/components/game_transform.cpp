@@ -15,6 +15,15 @@
 
 #include "components/game_transform.h"
 
+#include <sol.hpp>
+
+void GameTransform::getLuaData(sol::state& lua)
+{
+    lua.create_named_table(name,
+        "position", &position
+    );
+}
+
 Matrix QuatToMat(Quaternion q)
 {
     Matrix result = MatrixIdentity();

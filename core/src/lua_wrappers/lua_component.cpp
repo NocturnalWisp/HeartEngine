@@ -1,5 +1,7 @@
 #include "lua_wrappers/lua_component.h"
 
+#include <sol.hpp>
+
 #include "node.h"
 
 void LuaComponent::init(std::string_view scriptPath, sol::state& p_lua)
