@@ -53,21 +53,20 @@ public:
 
     std::string name;
 
-private:
-    friend void onCreate(Node& node)
+    virtual void onCreate()
     {
-        for (auto& component : node.components)
+        for (auto& component : components)
         {
             component->_on_create();
         }
     }
-    friend void onDestroy(Node& node)
+    virtual void onDestroy()
     {
-        for (auto& component : node.components)
+        for (auto& component : components)
         {
             component->_on_destroy();
         }
 
-        node.components.clear();
+        components.clear();
     }
 };

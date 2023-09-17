@@ -23,7 +23,7 @@ int Engine::run()
     // Creation
     for (auto& node : nodes)
     {
-        onCreate(*node.get());
+        node->onCreate();
     }
 
     if (checkResourceRelease)
@@ -46,6 +46,12 @@ int Engine::run()
 
         if (checkResourceRelease)
             checkEarlyResourceRelease();
+    }
+
+    // Destruction
+    for (auto& node : nodes)
+    {
+        node->onDestroy();
     }
 
     for (auto& res : resources)

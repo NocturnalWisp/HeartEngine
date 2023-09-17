@@ -17,18 +17,18 @@ Component* LuaNode::addComponent(std::string_view typeName, std::string name)
 {
     auto ptr = Node::addComponent(typeName, name);
 
-    ptr->getLuaData(lua, name);
+    ptr->getLuaData(lua);
 
     return ptr;
 }
 
-Component* LuaNode::addLuaComponent(std::string_view scriptName, std::string name)
+Component* LuaNode::addLuaComponent(std::string_view scriptPath, std::string name)
 {
     auto ptr = Node::addComponent(LuaComponent(name));
 
-    ptr->init(scriptName);
+    ptr->init(scriptPath, lua);
 
-    ptr->getLuaData(lua, name);
+    ptr->getLuaData(lua);
 
     return ptr;
 }

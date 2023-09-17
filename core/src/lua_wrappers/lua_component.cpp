@@ -1,36 +1,27 @@
 #include "lua_wrappers/lua_component.h"
-#include "engine.h"
 
-#include <fstream>
+#include "node.h"
 
-void LuaComponent::init(std::string_view scriptPath)
+void LuaComponent::init(std::string_view scriptPath, sol::state& p_lua)
 {
-    lua.open_libraries(sol::lib::base);
+    lua = &p_lua;
 
-    Engine::populateBasicLua(lua);
-    populate();
-
-    lua.script_file(std::string(scriptPath));
+    lua->script_file(std::string(scriptPath));
 }
 
 void LuaComponent::_on_create()
 {
-    lua["_on_create"]();
+    sol::protected_function _on_create = (*lua)[name]["_on_create"];
+    _on_create();
 }
 
 void LuaComponent::_on_destroy()
 {
-    lua["_on_destroy"]();
+    (*lua)[name]["_on_destroy"];
 }
 
-void LuaComponent::getLuaData(sol::state& otherLua, std::string_view tableName)
+void LuaComponent::getLuaData(sol::state& lua)
 {
-    //TODO: May not work!
-    // lua[tableName] = ;
-}
-
-void LuaComponent::populate()
-{
-    lua.set("name", &name);
-    lua.set("node", node);
+    lua[name]["name"] = &name;
+    lua[name]["node"] = node;
 }

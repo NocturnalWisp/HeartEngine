@@ -78,7 +78,7 @@ public:
     // HIERARCHY OPERATIONS.
     void SetParent(GameTransform* newParent, unsigned int childIndex = 0);
 
-    void getLuaData(sol::state& lua, std::string_view name) override
+    void getLuaData(sol::state& lua) override
     {
         lua.create_named_table(name,
             "position", &position

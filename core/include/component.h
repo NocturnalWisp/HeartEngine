@@ -16,5 +16,5 @@ public:
     virtual void _on_create() {}
     virtual void _on_destroy() {}
 
-    virtual void getLuaData(sol::state& lua, std::string_view tableName) {  }
+    virtual void getLuaData(sol::state& lua) {  }
 };

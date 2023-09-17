@@ -36,7 +36,7 @@ public:
 
         if (started)
         {
-            onCreate(*node.get());
+            node->onCreate();
         }
 
         auto ptr = node.get();

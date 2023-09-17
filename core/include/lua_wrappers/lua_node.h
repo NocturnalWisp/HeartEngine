@@ -7,6 +7,8 @@
 #include "node.h"
 #include "component.h"
 
+typedef void (*LuaComponentFunctionCallback)(std::string_view componentName, std::string_view functionName);
+
 class LuaNode : public Node
 {
 public:
