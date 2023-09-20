@@ -139,9 +139,11 @@ void Engine::populateBasicLua(sol::state& lua)
 
         "addEventListener", [](Node& self, std::string eventName, sol::function function) -> EventHandle*
             {
-                return self.addEventListener(eventName, [function](){ function(); });
+                return self.addEventListener(eventName, [function](sol::object obj1, sol::object obj2){ function(obj1, obj2); });
             },
-        "runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent)
+        "runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent),
+        "runEvent", static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent),
+        "runEvent", static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent)
     );
 
     // Component
