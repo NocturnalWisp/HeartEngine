@@ -43,4 +43,13 @@ void LuaNode::populate()
     lua.set_function("addLuaComponent",
         [this](std::string_view scriptName, std::string name)
         { addLuaComponent(scriptName, name); });
+
+    lua.set_function("addEventListener",
+        [this](std::string eventName, sol::function function) -> EventHandle*
+        {
+            return addEventListener(eventName, [function](sol::object obj1, sol::object obj2){ function(obj1, obj2); });
+        });
+    lua.set_function("runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent), this);
+    lua.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent), this);
+    lua.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent), this);
 }

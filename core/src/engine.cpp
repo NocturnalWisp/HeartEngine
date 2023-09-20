@@ -35,18 +35,19 @@ int Engine::run()
     while (!WindowShouldClose())
     {
         // Update
-        //TODO: recursiveRun(root, [](const shared_node_ptr& node){ update(node); });
         updateEvent.run();
 
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
 
+        // Draw
         drawEvent.run();
-        //TODO: recursiveRun(root, [](const shared_node_ptr& node){ draw(node); });
 
         EndDrawing();
 
+        // Handle hanging resources
+        //TODO: Iterating on the list every loop is especially unessecary.
         if (checkResourceRelease)
             checkEarlyResourceRelease();
     }
@@ -114,6 +115,10 @@ void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(
 
 void Engine::populateBasicLua(sol::state& lua)
 {
+    // Event System
+    lua.new_usertype<EventHandle>("EventHandle");
+
+    // Engine
     lua.new_usertype<Engine>("Engine",
         "getNode", &Engine::getNode,
         "addNode", [](Engine& self, std::string name) -> Node*
@@ -123,15 +128,23 @@ void Engine::populateBasicLua(sol::state& lua)
         "removeNode", &Engine::removeNode
     );
 
+    // Node
     lua.new_usertype<Node>("Node",
         "name", &Node::name,
         "getComponent", &Node::getComponent,
         "addComponent", [](Node& self, std::string_view typeName, std::string name, sol::table args) -> Component*
             { return self.addComponent(typeName, name); },
         "removeComponent", &Node::removeComponent,
-        "engine", &Node::engine
+        "engine", &Node::engine,
+
+        "addEventListener", [](Node& self, std::string eventName, sol::function function) -> EventHandle*
+            {
+                return self.addEventListener(eventName, [function](){ function(); });
+            },
+        "runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent)
     );
 
+    // Component
     lua.new_usertype<Component>("Component",
         "name", &Component::name,
         "node", &Component::node
