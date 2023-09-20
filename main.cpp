@@ -19,6 +19,8 @@ public:
     
     float spin = 0.0f;
 
+    EventHandle* handle;
+
     void _on_create() override
     {
         transform = node->getComponentT<GameTransform>("Transform");
@@ -27,6 +29,14 @@ public:
         node->engine->updateEvent.append([this](){ _update(); });
 
         transform->SetLocalPosition({200, 200, 0});
+
+        std::function<void()> function = std::bind(&test, this);
+        handle = node->addEventListener("test", function);
+    }
+
+    void test()
+    {
+        Debug::print("blegh");
     }
 
     void _update()
@@ -57,7 +67,7 @@ int main()
     auto textureRect = engine.addNode(Node("TextureRect"));
     textureRect->addComponent(EngineTextureRect("TextureRect", "Texture"));
     auto textureRect1Transform = textureRect->addComponent(GameTransform("Transform", {200, 200, 0}, {{0, 0, 0}, 0}, {1, 1, 1}));
-    textureRect->addComponent(CustomTexture("CustomTexture"));
+    // textureRect->addComponent(CustomTexture("CustomTexture"));
 
     auto textureRect2 = engine.addNode(Node("TextureRect2"));
     textureRect2->addComponent(CustomTexture("CustomTexture"));

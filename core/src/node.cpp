@@ -49,3 +49,56 @@ Component* Node::addComponent(std::string_view typeName, std::string name)
 
     return nullptr;
 }
+
+void Node::onCreate()
+{
+    for (auto &component : components)
+    {
+        component->_on_create();
+    }
+}
+void Node::onDestroy()
+{
+    for (auto& component : components)
+    {
+        component->_on_destroy();
+    }
+
+    components.clear();
+}
+
+EventHandle* Node::addEventListener(std::string eventName, std::function<void()> function)
+{
+    return events.events[eventName].addListener(function);
+}
+EventHandle* Node::addEventListener(std::string eventName, std::function<void(sol::object)> function)
+{
+    return events.events[eventName].addListener(function);
+}
+EventHandle* Node::addEventListener(std::string eventName, std::function<void(sol::object, sol::object)> function)
+{
+    return events.events[eventName].addListener(function);
+}
+
+void Node::removeEventListener(std::string eventName, EventHandle& handle)
+{
+    events.events[eventName].removeListener(handle);
+}
+
+void Node::runEvent(std::string eventName)
+{
+    events.events[eventName].run();
+}
+void Node::runEvent(std::string eventName, sol::object arg1)
+{
+    events.events[eventName].run(arg1);
+}
+void Node::runEvent(std::string eventName, sol::object arg1, sol::object arg2)
+{
+    events.events[eventName].run(arg1, arg2);
+}
+
+void Node::deleteEvent(std::string eventName)
+{
+    events.events.erase(eventName);
+}

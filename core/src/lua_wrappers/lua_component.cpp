@@ -13,13 +13,12 @@ void LuaComponent::init(std::string_view scriptPath, sol::state& p_lua)
 
 void LuaComponent::_on_create()
 {
-    sol::protected_function _on_create = (*lua)[name]["_on_create"];
-    _on_create();
+    (*lua)[name]["_on_create"]();
 }
 
 void LuaComponent::_on_destroy()
 {
-    (*lua)[name]["_on_destroy"];
+    (*lua)[name]["_on_destroy"]();
 }
 
 void LuaComponent::getLuaData(sol::state& lua)

@@ -2,12 +2,17 @@
 
 #include <string>
 
-namespace sol { class state; }
+#include <sol.hpp>
+
+#include "debug.h"
+
+#include "event.h"
 
 class Node;
 
 class Component
 {
+    friend class Node;
 public:
     Component(std::string name) : name(name) {}
 

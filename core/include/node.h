@@ -5,7 +5,11 @@
 #include <memory>
 #include <type_traits>
 
+#include <sol.hpp>
+
 #include "debug.h"
+
+#include "event.h"
 
 #include "component.h"
 
@@ -13,6 +17,7 @@ class Engine;
 
 class Node
 {
+    friend class Component;
     friend class Engine;
 public:
     Node(std::string p_name) : name(p_name) {}
@@ -47,26 +52,26 @@ public:
 
     void destroy();
 
+    virtual void onCreate();
+    virtual void onDestroy();
+
     Engine* engine;
 
     std::vector<std::unique_ptr<Component>> components;
 
     std::string name;
 
-    virtual void onCreate()
-    {
-        for (auto& component : components)
-        {
-            component->_on_create();
-        }
-    }
-    virtual void onDestroy()
-    {
-        for (auto& component : components)
-        {
-            component->_on_destroy();
-        }
+    EventHandle* addEventListener(std::string eventName, std::function<void()>);
+    EventHandle* addEventListener(std::string eventName, std::function<void(sol::object)>);
+    EventHandle* addEventListener(std::string eventName, std::function<void(sol::object, sol::object)>);
 
-        components.clear();
-    }
+    void removeEventListener(std::string eventName, EventHandle& handle);
+
+    void runEvent(std::string eventName);
+    void runEvent(std::string eventName, sol::object);
+    void runEvent(std::string eventName, sol::object, sol::object);
+
+    void deleteEvent(std::string eventName);
+private:
+    EventManager events;
 };
