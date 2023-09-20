@@ -16,7 +16,6 @@ add_library(LuaEngine ${lua_engine_sources})
 target_include_directories(LuaEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_include_directories(LuaEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/libs/sol)
 target_include_directories(LuaEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/libs)
-target_include_directories(LuaEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/libs/eventpp)
 
 target_link_libraries(LuaEngine lua::lib)
 target_link_libraries(LuaEngine raylib)

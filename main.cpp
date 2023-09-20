@@ -26,7 +26,7 @@ public:
         transform = node->getComponentT<GameTransform>("Transform");
         textureRect = node->getComponentT<EngineTextureRect>("TextureRect");
 
-        node->engine->updateEvent.append([this](){ _update(); });
+        node->engine->updateEvent.addListener([this](){ _update(); });
 
         transform->SetLocalPosition({200, 200, 0});
 

@@ -36,13 +36,13 @@ int Engine::run()
     {
         // Update
         //TODO: recursiveRun(root, [](const shared_node_ptr& node){ update(node); });
-        updateEvent();
+        updateEvent.run();
 
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
 
-        drawEvent();
+        drawEvent.run();
         //TODO: recursiveRun(root, [](const shared_node_ptr& node){ draw(node); });
 
         EndDrawing();

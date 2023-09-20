@@ -6,12 +6,12 @@
 #include <memory>
 #include <type_traits>
 
-#include <eventpp/callbacklist.h>
-
 #include "debug.h"
 #include "node.h"
 
 #include "resource.h"
+
+#include "event.h"
 
 namespace sol { class state; }
 
@@ -93,8 +93,8 @@ public:
     void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name));
 
     // Events
-    eventpp::CallbackList<void()> updateEvent;
-    eventpp::CallbackList<void()> drawEvent;
+    EventBus updateEvent;
+    EventBus drawEvent;
 
     static void populateBasicLua(sol::state& lua);
 private:

@@ -20,7 +20,7 @@ public:
 
     void _on_create() override
     {
-        node->engine->drawEvent.append([this](){_on_draw(); });
+        node->engine->drawEvent.addListener([this](){_on_draw(); });
 
         texture = node->engine->getResource<EngineTexture>(textureName);
 
