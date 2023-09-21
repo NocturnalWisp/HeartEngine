@@ -19,6 +19,17 @@ c_test = {
     end,
 }
 
-addEventListener("component_event", c_test._on_test_component)
-addEventListener("component_event", c_test._on_test_component2)
-addEventListener("component_event", c_test._on_test_component3)
+print(node.name)
+
+v = node:addEventListener("component_event", c_test._on_test_component)
+node:addEventListener("component_event", c_test._on_test_component2)
+node:addEventListener("component_event", c_test._on_test_component3)
+
+node:removeEventListener("component_event", v)
+
+getComponent("c_transform")
+
+print(c_transform.position.x)
+c_transform.position.x = 40
+
+node:runEvent("component_event", 8, 9)

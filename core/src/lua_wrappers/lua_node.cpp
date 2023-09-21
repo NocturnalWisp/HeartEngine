@@ -28,15 +28,17 @@ Component* LuaNode::addLuaComponent(std::string_view scriptPath, std::string nam
 
     ptr->init(scriptPath, lua);
 
-    ptr->getLuaData(lua);
+    lua[name] = ptr->lua[name];
 
     return ptr;
 }
 
 void LuaNode::populate()
 {
+
     lua.set("name", &name);
-    lua.set_function("getComponent", &Node::getComponent, this);
+    lua["engine"] = engine;
+
     lua.set_function("addComponent",
         [this](std::string_view typeName, std::string name)
         { addComponent(typeName, name); });

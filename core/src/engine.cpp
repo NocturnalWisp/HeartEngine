@@ -115,42 +115,41 @@ void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(
 
 void Engine::populateBasicLua(sol::state& lua)
 {
-    // Event System
-    lua.new_usertype<EventHandle>("EventHandle");
-
     // Engine
-    lua.new_usertype<Engine>("Engine",
-        "getNode", &Engine::getNode,
-        "addNode", [](Engine& self, std::string name) -> Node*
-            { return self.addNode<Node>(Node(name)); },
-        "addLuaNode", [](Engine& self, std::string scriptName) -> Node*
-            { return self.addNode<Node>(LuaNode(scriptName)); },
-        "removeNode", &Engine::removeNode
-    );
+    auto enginetype = lua.new_usertype<Engine>("Engine");
+
+    enginetype["getNode"] = &Engine::getNode;
+    enginetype["addNode"] = [](Engine& self, std::string name) -> Node*
+        { return self.addNode<Node>(Node(name)); };
+    enginetype["addLuaNode"] = [](Engine& self, std::string scriptName) -> Node*
+        { return self.addNode<Node>(LuaNode(scriptName)); };
+    enginetype["removeNode"] = &Engine::removeNode;
 
     // Node
-    lua.new_usertype<Node>("Node",
-        "name", &Node::name,
-        "getComponent", &Node::getComponent,
-        "addComponent", [](Node& self, std::string_view typeName, std::string name, sol::table args) -> Component*
-            { return self.addComponent(typeName, name); },
-        "removeComponent", &Node::removeComponent,
-        "engine", &Node::engine,
+    auto nodeType = lua.new_usertype<Node>("Node");
 
-        "addEventListener", [](Node& self, std::string eventName, sol::function function) -> EventHandle*
-            {
-                return self.addEventListener(eventName, [function](sol::object obj1, sol::object obj2){ function(obj1, obj2); });
-            },
-        "runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent),
-        "runEvent", static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent),
-        "runEvent", static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent)
-    );
+    nodeType["name"] = &Node::name;
+    nodeType["addComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::table args)
+        { self.addComponent(typeName, name); },
+    //TODO: add child class LuaComponent to user type
+    // nodeType["addLuaComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::table args)
+    //     { self.addLuaComponent(typeName, name); },
+    // lua.set_function("addLuaComponent",
+    //     [this](std::string_view scriptName, std::string name)
+    //     { addLuaComponent(scriptName, name); });
 
-    // Component
-    lua.new_usertype<Component>("Component",
-        "name", &Component::name,
-        "node", &Component::node
-    );
+    //TODO: remove component should remove any table usage.
+    // nodeType["removeComponent"] = &Node::removeComponent;
+    nodeType["engine"] = &Node::engine;
+
+    nodeType["addEventListener"] = [](Node& self, std::string eventName, sol::function function) -> EventHandle*
+        {
+            return self.addEventListener(eventName, [function](sol::object obj1, sol::object obj2){ function(obj1, obj2); });
+        };
+    nodeType["removeEventListener"] = &Node::removeEventListener;
+    nodeType["runEvent"] = static_cast<void(Node::*)(std::string)>(&Node::runEvent);
+    nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent);
+    nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent);
 }
 
 void Engine::checkEarlyResourceRelease()
