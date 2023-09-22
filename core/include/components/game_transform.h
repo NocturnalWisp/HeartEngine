@@ -38,7 +38,7 @@ typedef struct RotationAxisAngle
 class GameTransform : public Component
 {
 public:
-    void getLuaData(sol::state& lua) override;
+    void populateLuaData() override;
 
     // INITIALIZATION.
     // Default constructor.

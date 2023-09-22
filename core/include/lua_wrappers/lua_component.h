@@ -19,5 +19,5 @@ public:
     void _on_create() override;
     void _on_destroy() override;
 
-    void getLuaData();
+    void populateLuaData();
 };

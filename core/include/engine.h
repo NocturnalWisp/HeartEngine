@@ -1,6 +1,6 @@
 #pragma once
 
-#define SOL_ALL_SAFETIES_ON 1
+#define SOL_ALL_SAFETIES_ON 0
 
 #include <vector>
 #include <map>
@@ -23,6 +23,7 @@ constexpr auto SCREEN_HEIGHT = 450;
 class Engine
 {
     friend class Node;
+    friend class Component;
     friend class Resource;
 public:
     Engine();
@@ -32,23 +33,21 @@ public:
     Node* getNode(std::string_view name);
 
     template <class T>
-    T* addNode(T n)
+    T* addNode(T nodeObject, std::string scriptName = "")
     {
         static_assert(std::is_base_of<Node, T>::value, "T must derive from Node.");
 
-        std::unique_ptr<T> node = std::make_unique<T>(std::move(n));
-        node->engine = this;
+        std::unique_ptr<T> node = std::make_unique<T>(std::move(nodeObject));
 
-        if (started)
-        {
-            node->onCreate();
-        }
-
-        auto ptr = node.get();
+        auto nodePtr = node.get();
 
         nodes.push_back(std::move(node));
 
-        return ptr;
+        nodePtr->engine = this;
+
+        nodePtr->setupLuaState(*lua.get(), scriptName);
+
+        return nodePtr;
     }
 
     bool removeNode(std::string_view name);
@@ -94,19 +93,21 @@ public:
 
     void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name));
 
+    bool started = false;
+
     // Events
     EventBus updateEvent;
     EventBus drawEvent;
-
-    static void populateBasicLua(sol::state& lua);
 private:
-    bool started = false;
+    void populateBasicLua();
+    void checkEarlyResourceRelease();
+
+    std::unique_ptr<sol::state> lua;
+
     bool checkResourceRelease = false;
 
     std::vector<std::shared_ptr<Resource>> resources;
     std::vector<std::unique_ptr<Node>> nodes;
 
     std::map<std::string, std::unique_ptr<Component>(*)(std::string name)> componentRegistry;
-
-    void checkEarlyResourceRelease();
 };

@@ -38,13 +38,15 @@ Component* Node::addComponent(std::string_view typeName, std::string name)
 
     if (component != nullptr)
     {
-        component->node = this;
-
-        auto ptr = component.get();
+        auto componentPtr = component.get();
 
         components.push_back(std::move(component));
 
-        return ptr;
+        componentPtr->node = this;
+
+        componentPtr->setupLuaState(*luaState, "");
+
+        return componentPtr;
     }
 
     return nullptr;
@@ -101,4 +103,56 @@ void Node::runEvent(std::string eventName, sol::object arg1, sol::object arg2)
 void Node::deleteEvent(std::string eventName)
 {
     events.events.erase(eventName);
+}
+
+void Node::setupLuaState(sol::state& p_luaState, std::string scriptName)
+{
+    luaState = &p_luaState;
+
+    // Create lua environment.
+    if (scriptName.compare("") != 0)
+    {
+        luaEnv = sol::environment(*luaState, sol::create, luaState->globals());
+
+        populateEnvironment();
+
+        luaState->script_file(scriptName, luaEnv);
+    }
+
+    if (engine->started)
+    {
+        onCreate();
+    }
+}
+
+void Node::populateEnvironment()
+{
+    luaEnv.set("name", &name);
+    luaEnv["engine"] = engine;
+
+    luaEnv.set_function("addComponent",
+        [this](std::string_view typeName, std::string name) -> sol::table
+        {
+            return addComponent(typeName, name)->luaEnv;
+        });
+    luaEnv.set_function("addLuaComponent",
+        [this](std::string scriptName, std::string name) -> sol::table
+        {
+            return addComponent(Component(name), scriptName)->luaEnv;
+        });
+    
+    luaEnv.set_function("getComponent",
+        [this](std::string_view component) -> sol::table
+        {
+            return getComponent(component)->luaEnv;
+        });
+
+    luaEnv.set_function("addEventListener",
+        [this](std::string eventName, sol::function function) -> EventHandle*
+        {
+            return addEventListener(eventName, [function](sol::object obj1, sol::object obj2){ function(obj1, obj2); });
+        });
+    luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent), this);
+    luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent), this);
+    luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent), this);
 }

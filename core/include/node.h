@@ -17,37 +17,39 @@ class Engine;
 
 class Node
 {
-    friend class Component;
     friend class Engine;
+    friend class Component;
 public:
     Node(std::string p_name) : name(p_name) {}
 
+    template <class T>
+    T* addComponent(T c, std::string scriptName = "")
+    {
+        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
+
+        auto component = std::make_unique<T>(std::move(c));
+
+        auto componentPtr = component.get();
+
+        components.push_back(std::move(component));
+
+        componentPtr->node = this;
+
+        componentPtr->setupLuaState(*luaState, scriptName);
+
+        return componentPtr;
+    }
+
     Component* getComponent(std::string_view name) const;
 
-    template<typename T>
+    template<class T>
     T* getComponentT(std::string_view name) const
     {
         static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
         return static_cast<T*>(getComponent(name));
     }
 
-    template <class T>
-    T* addComponent(T c)
-    {
-        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
-
-        auto component = std::make_unique<T>(std::move(c));
-        component->node = this;
-
-        auto ptr = component.get();
-
-        components.push_back(std::move(component));
-
-        return ptr;
-    }
-
-    virtual Component* addComponent(std::string_view typeName, std::string name);
-
+    Component* addComponent(std::string_view typeName, std::string name);
     void removeComponent(std::string_view name);
 
     void destroy();
@@ -61,6 +63,7 @@ public:
 
     std::string name;
 
+public:
     EventHandle* addEventListener(std::string eventName, std::function<void()>);
     EventHandle* addEventListener(std::string eventName, std::function<void(sol::object)>);
     EventHandle* addEventListener(std::string eventName, std::function<void(sol::object, sol::object)>);
@@ -73,5 +76,11 @@ public:
 
     void deleteEvent(std::string eventName);
 private:
+    void setupLuaState(sol::state& state, std::string scriptName);
+    void populateEnvironment();
+
+    sol::state* luaState;
+    sol::environment luaEnv;
+
     EventManager events;
 };

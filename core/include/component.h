@@ -8,10 +8,12 @@
 
 #include "event.h"
 
+class Engine;
 class Node;
 
 class Component
 {
+    friend class Engine;
     friend class Node;
 public:
     Component(std::string name) : name(name) {}
@@ -20,8 +22,15 @@ public:
 
     std::string name;
 
-    virtual void _on_create() {}
-    virtual void _on_destroy() {}
+    virtual void _on_create();
+    virtual void _on_destroy();
 
-    virtual void getLuaData(sol::state& lua) {  }
+    virtual void populateLuaData() {  }
+protected:
+    sol::environment luaEnv;
+private:
+    void setupLuaState(sol::state& state, std::string scriptName);
+    void populateEnvironment();
+
+    sol::state* luaState;
 };

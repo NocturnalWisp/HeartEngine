@@ -17,7 +17,7 @@ public:
 
     sol::state lua;
 
-    Component* addComponent(std::string_view typeName, std::string name) override;
+    // Component* addComponent(std::string_view typeName, std::string name) override;
     Component* addLuaComponent(std::string_view scriptName, std::string name);
 private:
     void populate();

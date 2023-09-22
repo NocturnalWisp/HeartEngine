@@ -11,7 +11,7 @@ void LuaComponent::init(std::string_view scriptPath, sol::state& p_luaState)
     lua["print"] = p_luaState["print"];
 
     // Engine::populateBasicLua(lua);
-    getLuaData();
+    populateLuaData();
 
     p_luaState.script_file(std::string(scriptPath), lua);
 }
@@ -26,7 +26,7 @@ void LuaComponent::_on_destroy()
     lua[name]["_on_destroy"]();
 }
 
-void LuaComponent::getLuaData()
+void LuaComponent::populateLuaData()
 {
     lua["name"] = &name;
     lua["node"] = std::ref(node);

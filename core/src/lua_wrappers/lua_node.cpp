@@ -7,20 +7,20 @@ void LuaNode::init(const std::string& scriptPath)
 {
     lua.open_libraries(sol::lib::base);
 
-    Engine::populateBasicLua(lua);
+    // Engine::populateBasicLua(lua);
     populate();
 
     lua.load_file(scriptPath)();
 }
 
-Component* LuaNode::addComponent(std::string_view typeName, std::string name)
-{
-    auto ptr = Node::addComponent(typeName, name);
+// Component* LuaNode::addComponent(std::string_view typeName, std::string name)
+// {
+//     auto ptr = Node::addComponent(typeName, name);
 
-    ptr->getLuaData(lua);
+//     ptr->populateLuaData();
 
-    return ptr;
-}
+//     return ptr;
+// }
 
 Component* LuaNode::addLuaComponent(std::string_view scriptPath, std::string name)
 {

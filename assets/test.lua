@@ -1,7 +1,7 @@
 
-addComponent("Transform", "c_transform")
+transform = addComponent("Transform", "c_transform")
 
-c_transform.position.x = 20
+transform.position.x = 20
 
 addLuaComponent("assets/test_component.lua", "c_test")
 

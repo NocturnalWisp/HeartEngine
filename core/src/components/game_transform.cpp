@@ -17,11 +17,9 @@
 
 #include <sol.hpp>
 
-void GameTransform::getLuaData(sol::state& lua)
+void GameTransform::populateLuaData()
 {
-    lua.create_named_table(name,
-        "position", &position
-    );
+    luaEnv["position"] = &position;
 }
 
 Matrix QuatToMat(Quaternion q)

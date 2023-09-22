@@ -8,15 +8,16 @@
 
 #include <sol.hpp>
 
-#include "lua_wrappers/lua_node.h"
-
 Engine::Engine()
 {
     SetTraceLogLevel(4);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Window title");
     SetTargetFPS(60);
 
-    return ;
+    lua = std::make_unique<sol::state>(sol::state());
+    lua->open_libraries(sol::lib::base);
+
+    populateBasicLua();
 }
 
 int Engine::run()
@@ -92,8 +93,7 @@ bool Engine::removeNode(std::string_view name)
     return any_change;
 }
 
-template <> Node* Engine::addNode(Node n);
-template <> LuaNode* Engine::addNode(LuaNode n);
+template <> Node* Engine::addNode(Node n, std::string);
 
 std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name)
 {
@@ -113,20 +113,20 @@ void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(
     componentRegistry[typeName] = creator;
 }
 
-void Engine::populateBasicLua(sol::state& lua)
+void Engine::populateBasicLua()
 {
     // Engine
-    auto enginetype = lua.new_usertype<Engine>("Engine");
+    auto enginetype = lua->new_usertype<Engine>("Engine");
 
     enginetype["getNode"] = &Engine::getNode;
     enginetype["addNode"] = [](Engine& self, std::string name) -> Node*
         { return self.addNode<Node>(Node(name)); };
-    enginetype["addLuaNode"] = [](Engine& self, std::string scriptName) -> Node*
-        { return self.addNode<Node>(LuaNode(scriptName)); };
+    enginetype["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name) -> Node*
+        { return self.addNode<Node>(Node(name), scriptName); };
     enginetype["removeNode"] = &Engine::removeNode;
 
     // Node
-    auto nodeType = lua.new_usertype<Node>("Node");
+    auto nodeType = lua->new_usertype<Node>("Node");
 
     nodeType["name"] = &Node::name;
     nodeType["addComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::table args)
@@ -134,6 +134,11 @@ void Engine::populateBasicLua(sol::state& lua)
     //TODO: add child class LuaComponent to user type
     // nodeType["addLuaComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::table args)
     //     { self.addLuaComponent(typeName, name); },
+    nodeType["getComponent"] =
+        [](Node& self, std::string_view component) -> sol::table
+        {
+            return self.getComponent(component)->luaEnv;
+        };
     // lua.set_function("addLuaComponent",
     //     [this](std::string_view scriptName, std::string name)
     //     { addLuaComponent(scriptName, name); });
@@ -150,6 +155,13 @@ void Engine::populateBasicLua(sol::state& lua)
     nodeType["runEvent"] = static_cast<void(Node::*)(std::string)>(&Node::runEvent);
     nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent);
     nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent);
+
+    // Other
+    lua->new_usertype<Vector3>("Vector3",
+        "x", &Vector3::x,
+        "y", &Vector3::y,
+        "z", &Vector3::z
+    );
 }
 
 void Engine::checkEarlyResourceRelease()

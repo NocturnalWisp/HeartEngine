@@ -77,15 +77,7 @@ int main()
     textureRect2->getComponentT<GameTransform>("Transform")
         ->SetParent(textureRect1Transform);
 
-    auto luaTest = engine.addNode<LuaNode>(LuaNode("LuaTest"));
-
-    luaTest->lua.new_usertype<Vector3>("Vector3",
-        "x", &Vector3::x,
-        "y", &Vector3::y,
-        "z", &Vector3::z
-    );
-
-    luaTest->init("assets/test.lua");
+    auto luaTest = engine.addNode(Node("LuaTest"), "assets/test.lua");
 
     Debug::print(luaTest->getComponentT<GameTransform>("c_transform")
         ->GetLocalPosition().x);
