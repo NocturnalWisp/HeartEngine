@@ -3,6 +3,12 @@ project(LuaEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
+
+# Settings
+set(SOL_ALL_SAFETIES_ON 1)
+
+
+
 # Setting parameters for raylib
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
 set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # or games

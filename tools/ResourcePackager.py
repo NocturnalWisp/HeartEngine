@@ -3,22 +3,26 @@
 import os
 from sys import argv
 from pathlib import Path
+import subprocess
 
 if len(argv) < 3:
-    raise Exception("Expected 2 arguments.")
+    raise Exception("Expected 3 arguments.")
 
 if not isinstance(argv[1], str):
-    raise Exception("First argument provided is not of type string. (For directory.)")
+    raise Exception("First argument provided is not of type string. (For tools directory.)")
 
 if not isinstance(argv[2], str):
-    raise Exception("Second argument provided is not of type string. (For destination file.)")
+    raise Exception("Second argument provided is not of type string. (For directory.)")
+
+if not isinstance(argv[3], str):
+    raise Exception("Third argument provided is not of type string. (For destination file.)")
 
 # The following limits are in byte counts
 b_maxFileCount = 2
 b_maxPathLength = 1
 b_maxDataLength = 4
 
-directory = Path(argv[1])
+directory = Path(argv[2])
 pathlist = list(directory.rglob("**/*.*"))
 
 # Formatted as pathLength, path, length
@@ -38,11 +42,11 @@ for path in pathlist:
 
     byteData = bytes()
     if path.suffix == ".lua":
-        os.system('luac54.exe ' + str(path))
+        print(argv[1])
+        subprocess.call([argv[1] + "/luac54.exe", str(path)])
 
         with open("luac.out", 'rb') as luaByteCode:
             byteData = luaByteCode.read()
-            print(byteData)
 
         os.remove("luac.out")
     else:
@@ -53,7 +57,7 @@ for path in pathlist:
     # Data
     data.append(byteData)
 
-newPath = os.path.join(directory.parent.absolute(), argv[2])
+newPath = os.path.join(directory.parent.absolute(), argv[3])
 
 combined = header + data
 bArray = b''.join(combined)
