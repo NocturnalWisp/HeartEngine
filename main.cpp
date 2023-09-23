@@ -6,7 +6,35 @@
 #include "components/engine_texture_rect.h"
 #include "components/game_transform.h"
 
-#include "lua_wrappers/lua_node.h"
+class GlobalDataTest : public GlobalData
+{
+public:
+    GlobalDataTest() : GlobalData("GlobalDataTest") {}
+
+    int x = 2;
+
+    void populateLuaData() override
+    {
+        auto type = CREATEUSERTYPE(GlobalDataTest);
+
+        type["x"] = &GlobalDataTest::x;
+    }
+};
+
+class OtherTest : public Component
+{
+public:
+    OtherTest(std::string name) : Component(name) {}
+
+    int x = 0;
+
+    void populateLuaData() override
+    {
+        auto type = CREATEUSERTYPE(OtherTest);
+
+        type["x"] = &OtherTest::x;
+    }
+};
 
 class CustomTexture : public Component
 {
@@ -20,6 +48,13 @@ public:
     float spin = 0.0f;
 
     EventHandle* handle;
+
+    void populateLuaData() override
+    {
+        auto type = CREATEUSERTYPE(CustomTexture);
+
+        type["spin"] = &spin;
+    }
 
     void _on_create() override
     {
@@ -47,41 +82,24 @@ public:
     }
 };
 
-template <class T>
-std::unique_ptr<Component> registerComponentType(std::string name)
-{
-    static_assert(std::is_base_of<Component, T>::value, "Type must inherit from Component.");
-    return std::make_unique<T>(T(name));
-}
-
 int main()
 {
-    Debug::print("Yeah");
     Engine engine = Engine();
 
-    engine.registerComponent("Transform", &registerComponentType<GameTransform>);
-    engine.registerComponent("EngineTextureRect", &registerComponentType<EngineTextureRect>);
+    engine.registerComponent("Transform", &Engine::registerComponentType<GameTransform>);
+    engine.registerComponent("EngineTextureRect", &Engine::registerComponentType<EngineTextureRect>);
+    engine.registerComponent("CustomTexture", &Engine::registerComponentType<CustomTexture>);
+    engine.registerComponent("OtherTest", &Engine::registerComponentType<OtherTest>);
+
+    auto globalDataTest = engine.registerGlobalData(GlobalDataTest());
 
     engine.loadResource(EngineTexture("Texture", "assets/test.png"));
 
-    auto textureRect = engine.addNode(Node("TextureRect"));
-    textureRect->addComponent(EngineTextureRect("TextureRect", "Texture"));
-    auto textureRect1Transform = textureRect->addComponent(GameTransform("Transform", {200, 200, 0}, {{0, 0, 0}, 0}, {1, 1, 1}));
-    // textureRect->addComponent(CustomTexture("CustomTexture"));
-
-    auto textureRect2 = engine.addNode(Node("TextureRect2"));
-    textureRect2->addComponent(CustomTexture("CustomTexture"));
-    textureRect2->addComponent(EngineTextureRect("TextureRect", "Texture"));
-    textureRect2->addComponent(GameTransform("Transform", {250, 250, 0}, {{0, 0, 0}, 0}, {1, 1, 1}));
-
-    textureRect2->getComponentT<GameTransform>("Transform")
-        ->SetParent(textureRect1Transform);
-
     auto luaTest = engine.addNode(Node("LuaTest"), "assets/test.lua");
 
-    Debug::print(luaTest->getComponentT<GameTransform>("c_transform")
-        ->GetLocalPosition().x);
-
+    Debug::print(luaTest->getComponentT<OtherTest>("OtherTest")->x);
+    Debug::print(globalDataTest->x);
+    
     engine.run();
     
     return 0;

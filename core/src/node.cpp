@@ -133,19 +133,27 @@ void Node::populateEnvironment()
     luaEnv.set_function("addComponent",
         [this](std::string_view typeName, std::string name) -> sol::table
         {
-            return addComponent(typeName, name)->luaEnv;
+            //TODO: Breaks with segfault if the component doesnt exist
+            // Probably true for any returning lambdas
+            return addComponent(typeName, name)->luaEnv[name];
         });
     luaEnv.set_function("addLuaComponent",
-        [this](std::string scriptName, std::string name) -> sol::table
+        [this](std::string scriptName, std::string name) -> sol::table&
         {
             return addComponent(Component(name), scriptName)->luaEnv;
         });
     
     luaEnv.set_function("getComponent",
-        [this](std::string_view component) -> sol::table
+        [this](std::string_view component) -> sol::table&
         {
             return getComponent(component)->luaEnv;
         });
+    
+    // luaEnv.set_function("getGlobalData",
+    //     [this](std::string_view name) -> sol::table&
+    //     {
+    //         return engine->getGlobalData(name)->luaEnv;
+    //     });
 
     luaEnv.set_function("addEventListener",
         [this](std::string eventName, sol::function function) -> EventHandle*

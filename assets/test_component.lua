@@ -1,3 +1,6 @@
+-- print(GlobalDataTest.name)
+-- GlobalDataTest.x = 990
+
 var = 6
 
 function _on_create()
@@ -25,6 +28,6 @@ node:addEventListener("component_event", _on_test_component3)
 
 node:removeEventListener("component_event", v)
 
-transform = node:getComponent("c_transform")
-
 node:runEvent("component_event", 8, 9)
+--TODO: fix running event setup in c++
+node.engine:getNode("TextureRect2"):runEvent("test", 8, 9)

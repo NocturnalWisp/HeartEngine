@@ -4,28 +4,22 @@
 
 #include <sol.hpp>
 
-#include "debug.h"
-
-#include "event.h"
-
 #include "lua_environment.h"
 
 class Engine;
-class Node;
 
-class Component : public LuaEnvironment
+class GlobalData : public LuaEnvironment
 {
     friend class Engine;
-    friend class Node;
 public:
-    Component(std::string name) : name(name) {}
+    GlobalData(std::string name) : name(name) {}
 
-    Node* node;
+    virtual void _on_load();
+    virtual void _on_unload();
+
+    Engine* engine;
 
     std::string name;
-
-    virtual void _on_create();
-    virtual void _on_destroy();
 private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
     void populateEnvironment() override;

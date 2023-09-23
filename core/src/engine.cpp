@@ -6,8 +6,6 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include <sol.hpp>
-
 Engine::Engine()
 {
     SetTraceLogLevel(4);
@@ -113,17 +111,32 @@ void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(
     componentRegistry[typeName] = creator;
 }
 
+GlobalData* Engine::getGlobalData(std::string_view name) const
+{
+    GlobalData *foundGlobalData;
+
+    for (const auto &globalDataObject : globalDataObjects)
+    {
+        if (globalDataObject->name.compare(name) == 0)
+        {
+            foundGlobalData = globalDataObject.get();
+        }
+    }
+
+    return foundGlobalData;
+}
+
 void Engine::populateBasicLua()
 {
     // Engine
-    auto enginetype = lua->new_usertype<Engine>("Engine");
+    auto engineType = lua->new_usertype<Engine>("Engine");
 
-    enginetype["getNode"] = &Engine::getNode;
-    enginetype["addNode"] = [](Engine& self, std::string name) -> Node*
+    engineType["getNode"] = &Engine::getNode;
+    engineType["addNode"] = [](Engine& self, std::string name) -> Node*
         { return self.addNode<Node>(Node(name)); };
-    enginetype["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name) -> Node*
+    engineType["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name) -> Node*
         { return self.addNode<Node>(Node(name), scriptName); };
-    enginetype["removeNode"] = &Engine::removeNode;
+    engineType["removeNode"] = &Engine::removeNode;
 
     // Node
     auto nodeType = lua->new_usertype<Node>("Node");

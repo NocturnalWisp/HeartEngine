@@ -19,7 +19,9 @@
 
 void GameTransform::populateLuaData()
 {
-    luaEnv["position"] = &position;
+    auto type = CREATEUSERTYPE(GameTransform);
+
+    type["position"] = &GameTransform::position;
 }
 
 Matrix QuatToMat(Quaternion q)
@@ -54,7 +56,7 @@ GameTransform::GameTransform(std::string name) : Component(name)
     const Vector3 origin = {0, 0, 0};
     SetLocalPosition(origin);
     SetLocalRotation({ {0, 0, 0}, 0 });
-    SetLocalScale(origin);
+    SetLocalScale({1, 1, 1});
     // Root node.
     parent = nullptr;
 }

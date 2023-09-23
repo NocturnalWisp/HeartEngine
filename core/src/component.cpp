@@ -19,14 +19,16 @@ void Component::setupLuaState(sol::state& p_luaState, std::string scriptName)
     // Create lua environment.
     luaEnv = sol::environment(*luaState, sol::create, luaState->globals());
 
-    populateEnvironment();
-    if (scriptName.compare("") == 0)
+    if (scriptName.compare("") != 0)
     {
-        populateLuaData();
+        // Lua Scripted Component
+        populateEnvironment();
+        luaState->script_file(scriptName, luaEnv);
     }
     else
     {
-        luaState->script_file(scriptName, luaEnv);
+        // C++ component.
+        populateLuaData();
     }
 
     if (node->engine->started)

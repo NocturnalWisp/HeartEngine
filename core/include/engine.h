@@ -1,6 +1,6 @@
 #pragma once
 
-#define SOL_ALL_SAFETIES_ON 0
+#define SOL_ALL_SAFETIES_ON 1
 
 #include <vector>
 #include <map>
@@ -12,10 +12,11 @@
 #include "node.h"
 
 #include "resource.h"
+#include "global_data.h"
 
 #include "event.h"
 
-namespace sol { class state; }
+#include <sol.hpp>
 
 constexpr auto SCREEN_WIDTH  = 800;
 constexpr auto SCREEN_HEIGHT = 450;
@@ -93,6 +94,40 @@ public:
 
     void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name));
 
+    template <class T>
+    static std::unique_ptr<Component> registerComponentType(std::string name)
+    {
+        static_assert(std::is_base_of<Component, T>::value, "Type must inherit from Component.");
+        return std::make_unique<T>(T(name));
+    }
+
+    template <class T>
+    T* registerGlobalData(T globalDataObject, std::string scriptName = "")
+    {
+        static_assert(std::is_base_of<GlobalData, T>::value, "Class must derive from Global Data.");
+
+        std::unique_ptr<T> globalData = std::make_unique<T>(std::move(globalDataObject));
+
+        auto globalDataPtr = globalData.get();
+
+        globalDataObjects.push_back(std::move(globalData));
+
+        globalDataPtr->engine = this;
+
+        globalDataPtr->setupLuaState(*lua.get(), scriptName);
+
+        return globalDataPtr;
+    }
+
+    GlobalData* getGlobalData(std::string_view name) const;
+
+    template<class T>
+    T* getGlobalDataT(std::string_view name) const
+    {
+        static_assert(std::is_convertible<T, GlobalData>::value, "Class must derive from Global Data.");
+        return static_cast<T*>(getGlobalData(name));
+    }
+
     bool started = false;
 
     // Events
@@ -107,6 +142,7 @@ private:
     bool checkResourceRelease = false;
 
     std::vector<std::shared_ptr<Resource>> resources;
+    std::vector<std::unique_ptr<GlobalData>> globalDataObjects;
     std::vector<std::unique_ptr<Node>> nodes;
 
     std::map<std::string, std::unique_ptr<Component>(*)(std::string name)> componentRegistry;

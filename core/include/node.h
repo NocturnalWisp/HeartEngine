@@ -11,11 +11,12 @@
 
 #include "event.h"
 
+#include "lua_environment.h"
 #include "component.h"
 
 class Engine;
 
-class Node
+class Node : LuaEnvironment
 {
     friend class Engine;
     friend class Component;

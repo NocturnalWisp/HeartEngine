@@ -89,13 +89,13 @@ protected:
     std::list<GameTransform*> children;
 
     // (X, Y, Z) coordinates of position.
-    Vector3 position;
+    Vector3 position = {0, 0, 0};
     // (W, X, Y, Z) quaternion describing rotation.
-    Quaternion rotation;
+    Quaternion rotation = {0, 0, 0, 1};
     // (X, Y, Z) scalar amounts.
-    Vector3 scale;
+    Vector3 scale = {1, 1, 1};
     // Used as rotation axis.
-    Vector3 origin;
+    Vector3 origin = {0, 0, 0};
 
     // Matrices.
     Matrix MakeLocalToParent() const;
