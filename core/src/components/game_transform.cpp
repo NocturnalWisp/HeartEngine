@@ -53,10 +53,45 @@ const float EPSILON = 0.001;
 GameTransform::GameTransform(std::string name) : Component(name)
 {
     // Zero out data, exists at (0, 0, 0) world space.
-    const Vector3 origin = {0, 0, 0};
-    SetLocalPosition(origin);
+    SetLocalPosition({0, 0, 0});
     SetLocalRotation({ {0, 0, 0}, 0 });
     SetLocalScale({1, 1, 1});
+    // Root node.
+    parent = nullptr;
+}
+
+//TODO: Move the following two to utility header somewhere.
+Vector3 tableToVector3(const std::vector<float>& table)
+{
+    Vector3 result;
+    result.x = table[0];
+    result.y = table[1];
+    result.z = table[2];
+    return result;
+}
+
+RotationAxisAngle tableToRotationAxisAngle(const std::vector<float>& table)
+{
+    RotationAxisAngle result;
+    result.axis.x = table[0];
+    result.axis.y = table[1];
+    result.axis.z = table[2];
+    result.angle = table[3];
+    return result;
+}
+
+GameTransform::GameTransform(std::string name, sol::variadic_args args) : Component(name)
+{
+    //TODO: seg fault if bad table given.
+    // Zero out data, exists at (0, 0, 0) world space.
+    if (args.size() > 0)
+        SetLocalPosition(tableToVector3(args[0].as<std::vector<float>>()));
+    if (args.size() > 1)
+        SetLocalRotation(tableToRotationAxisAngle(args[1].as<std::vector<float>>()));
+    if (args.size() > 2)
+        SetLocalScale(tableToVector3(args[2].as<std::vector<float>>()));
+    
+    Debug::print(position.y);
     // Root node.
     parent = nullptr;
 }

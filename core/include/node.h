@@ -50,7 +50,7 @@ public:
         return static_cast<T*>(getComponent(name));
     }
 
-    Component* addComponent(std::string_view typeName, std::string name);
+    Component* addComponent(std::string_view typeName, std::string name, sol::variadic_args va);
     void removeComponent(std::string_view name);
 
     void destroy();

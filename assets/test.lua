@@ -1,15 +1,5 @@
-transform = addComponent("Transform", "Transform")
-other_test = addComponent("OtherTest", "OtherTest")
--- texture_rect = addComponent("EngineTextureRect", "TextureRect", "Texture")
--- addComponent("CustomTexture", "CustomTexture")
-
-print("Bleg")
-print(other_test.x)
-other_test.x = 30
-print(other_test.x)
+transform = addComponent("Transform", "Transform", {200, 200, 0}, {0, 0, 0, 1}, {1, 1, 1})
+texture_rect = addComponent("EngineTextureRect", "TextureRect", "Texture")
+addComponent("CustomTexture", "CustomTexture")
 
 -- addLuaComponent("assets/test_component.lua", "c_test")
-
-GlobalDataTest.x = 200
-
--- runEvent("component_event", 6, 8)

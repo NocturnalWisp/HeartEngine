@@ -43,6 +43,7 @@ public:
     // INITIALIZATION.
     // Default constructor.
     GameTransform(std::string name);
+    GameTransform(std::string name, sol::variadic_args va);
     // Verbose constructor in local space.
     GameTransform(std::string name, Vector3 localPosition, RotationAxisAngle rotation, Vector3 localScale);
     // Default destructor.

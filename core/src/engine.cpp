@@ -93,20 +93,20 @@ bool Engine::removeNode(std::string_view name)
 
 template <> Node* Engine::addNode(Node n, std::string);
 
-std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name)
+std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va)
 {
     for (const auto &componentType : componentRegistry)
     {
         if (componentType.first.compare(typeName) == 0)
         {
-            return componentType.second(name);
+            return componentType.second(name, va);
         }
     }
 
     return nullptr;
 }
 
-void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name))
+void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args))
 {
     componentRegistry[typeName] = creator;
 }
@@ -142,8 +142,8 @@ void Engine::populateBasicLua()
     auto nodeType = lua->new_usertype<Node>("Node");
 
     nodeType["name"] = &Node::name;
-    nodeType["addComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::table args)
-        { self.addComponent(typeName, name); },
+    nodeType["addComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::variadic_args va)
+        { self.addComponent(typeName, name, va); },
     //TODO: add child class LuaComponent to user type
     // nodeType["addLuaComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::table args)
     //     { self.addLuaComponent(typeName, name); },

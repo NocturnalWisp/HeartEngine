@@ -32,9 +32,9 @@ void Node::destroy()
     engine->checkEarlyResourceRelease();
 }
 
-Component* Node::addComponent(std::string_view typeName, std::string name)
+Component* Node::addComponent(std::string_view typeName, std::string name, sol::variadic_args va)
 {
-    auto component = engine->getComponentFromRegistry(typeName, name);
+    auto component = engine->getComponentFromRegistry(typeName, name, va);
 
     if (component != nullptr)
     {
@@ -131,11 +131,12 @@ void Node::populateEnvironment()
     luaEnv["engine"] = engine;
 
     luaEnv.set_function("addComponent",
-        [this](std::string_view typeName, std::string name) -> sol::table
+        [this](std::string_view typeName, std::string name, sol::variadic_args va) -> sol::table
         {
+            //TODO: Breaks with error expected table recieved nil if populateLuaData is not setup.
             //TODO: Breaks with segfault if the component doesnt exist
             // Probably true for any returning lambdas
-            return addComponent(typeName, name)->luaEnv[name];
+            return addComponent(typeName, name, va)->luaEnv[name];
         });
     luaEnv.set_function("addLuaComponent",
         [this](std::string scriptName, std::string name) -> sol::table&

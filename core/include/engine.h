@@ -90,15 +90,15 @@ public:
         return found;
     }
 
-    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name);
+    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
 
-    void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string name));
+    void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args));
 
     template <class T>
-    static std::unique_ptr<Component> registerComponentType(std::string name)
+    static std::unique_ptr<Component> registerComponentType(std::string name, sol::variadic_args va)
     {
         static_assert(std::is_base_of<Component, T>::value, "Type must inherit from Component.");
-        return std::make_unique<T>(T(name));
+        return std::make_unique<T>(T(name, va));
     }
 
     template <class T>
@@ -145,5 +145,5 @@ private:
     std::vector<std::unique_ptr<GlobalData>> globalDataObjects;
     std::vector<std::unique_ptr<Node>> nodes;
 
-    std::map<std::string, std::unique_ptr<Component>(*)(std::string name)> componentRegistry;
+    std::map<std::string, std::unique_ptr<Component>(*)(std::string name, sol::variadic_args va)> componentRegistry;
 };

@@ -6,36 +6,6 @@
 #include "components/engine_texture_rect.h"
 #include "components/game_transform.h"
 
-class GlobalDataTest : public GlobalData
-{
-public:
-    GlobalDataTest() : GlobalData("GlobalDataTest") {}
-
-    int x = 2;
-
-    void populateLuaData() override
-    {
-        auto type = CREATEUSERTYPE(GlobalDataTest);
-
-        type["x"] = &GlobalDataTest::x;
-    }
-};
-
-class OtherTest : public Component
-{
-public:
-    OtherTest(std::string name) : Component(name) {}
-
-    int x = 0;
-
-    void populateLuaData() override
-    {
-        auto type = CREATEUSERTYPE(OtherTest);
-
-        type["x"] = &OtherTest::x;
-    }
-};
-
 class CustomTexture : public Component
 {
 private:
@@ -44,6 +14,7 @@ private:
 public:
     CustomTexture(std::string name)
         : Component(name) {  }
+    CustomTexture(std::string name, sol::variadic_args va) : Component(name) {}
     
     float spin = 0.0f;
 
@@ -53,7 +24,7 @@ public:
     {
         auto type = CREATEUSERTYPE(CustomTexture);
 
-        type["spin"] = &spin;
+        type["spin"] = &CustomTexture::spin;
     }
 
     void _on_create() override
@@ -89,17 +60,11 @@ int main()
     engine.registerComponent("Transform", &Engine::registerComponentType<GameTransform>);
     engine.registerComponent("EngineTextureRect", &Engine::registerComponentType<EngineTextureRect>);
     engine.registerComponent("CustomTexture", &Engine::registerComponentType<CustomTexture>);
-    engine.registerComponent("OtherTest", &Engine::registerComponentType<OtherTest>);
-
-    auto globalDataTest = engine.registerGlobalData(GlobalDataTest());
 
     engine.loadResource(EngineTexture("Texture", "assets/test.png"));
 
     auto luaTest = engine.addNode(Node("LuaTest"), "assets/test.lua");
 
-    Debug::print(luaTest->getComponentT<OtherTest>("OtherTest")->x);
-    Debug::print(globalDataTest->x);
-    
     engine.run();
     
     return 0;
