@@ -2,22 +2,24 @@
 
 #include "engine.h"
 
-#include "resources/engine_texture.h"
-#include "game_transform.h"
+#include "resources/texture.h"
+#include "transform.h"
 
-class EngineTextureRect : public Component
+namespace HeartEngine
+{
+class TextureRect : public Component
 {
 private:
     std::string textureName;
 protected:
-    GameTransform* transform;
+    Transform3D* transform;
 public:
-    std::shared_ptr<EngineTexture> texture = nullptr;
+    std::shared_ptr<Texture> texture = nullptr;
 
-    EngineTextureRect(std::string name, std::string p_texture)
+    TextureRect(std::string name, std::string p_texture)
         : Component(name), textureName(p_texture) {}
-    EngineTextureRect(std::string name) : Component(name) {}
-    EngineTextureRect(std::string name, sol::variadic_args va) : Component(name)
+    TextureRect(std::string name) : Component(name) {}
+    TextureRect(std::string name, sol::variadic_args va) : Component(name)
     {
         if (va.size() > 0)
             textureName = va[0];
@@ -25,19 +27,19 @@ public:
 
     void populateLuaData() override
     {
-        auto type = CREATEUSERTYPE(EngineTextureRect);
+        auto type = CREATEUSERTYPE(TextureRect);
 
         //TODO: Introduce texture type to lua somewhere (Probs engine.)
-        type["texture"] = &EngineTextureRect::texture;
+        type["texture"] = &TextureRect::texture;
     }
 
     void _on_create() override
     {
         node->engine->drawEvent.addListener([this](){_on_draw(); });
 
-        texture = node->engine->getResource<EngineTexture>(textureName);
+        texture = node->engine->getResource<Texture>(textureName);
 
-        transform = static_cast<GameTransform*>(node->getComponent("Transform"));
+        transform = static_cast<Transform3D*>(node->getComponent("Transform"));
     }
 
     void _on_destroy() override
@@ -65,6 +67,7 @@ public:
     void set_texture(std::string p_textureName)
     {
         textureName = p_textureName;
-        texture = node->engine->getResource<EngineTexture>(textureName);
+        texture = node->engine->getResource<Texture>(textureName);
     }
 };
+}

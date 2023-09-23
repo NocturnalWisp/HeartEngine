@@ -7,6 +7,8 @@
 
 #include <sol.hpp>
 
+namespace HeartEngine
+{
 class EventBus;
 
 struct EventManager
@@ -181,3 +183,4 @@ private:
 
     bool inside_run = false;
 };
+}

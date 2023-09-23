@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+namespace HeartEngine
+{
 class Debug
 {
 public:
@@ -32,3 +34,4 @@ public:
         std::cerr << std::endl;
     }
 };
+}

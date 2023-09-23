@@ -6,6 +6,8 @@
 
 #include "lua_environment.h"
 
+namespace HeartEngine
+{
 class Engine;
 
 class GlobalData : public LuaEnvironment
@@ -24,3 +26,4 @@ private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
     void populateEnvironment() override;
 };
+}

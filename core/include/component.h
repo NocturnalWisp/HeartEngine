@@ -10,6 +10,8 @@
 
 #include "lua_environment.h"
 
+namespace HeartEngine
+{
 class Engine;
 class Node;
 
@@ -30,3 +32,4 @@ private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
     void populateEnvironment() override;
 };
+}

@@ -3,14 +3,16 @@
 
 #include "engine.h"
 
-#include "components/engine_texture_rect.h"
-#include "components/game_transform.h"
+#include "components/texture_rect.h"
+#include "components/transform.h"
 
+namespace HeartEngine
+{
 class CustomTexture : public Component
 {
 private:
-    EngineTextureRect* textureRect;
-    GameTransform* transform;
+    TextureRect* textureRect;
+    Transform3D* transform;
 public:
     CustomTexture(std::string name)
         : Component(name) {  }
@@ -29,8 +31,8 @@ public:
 
     void _on_create() override
     {
-        transform = node->getComponentT<GameTransform>("Transform");
-        textureRect = node->getComponentT<EngineTextureRect>("TextureRect");
+        transform = node->getComponentT<Transform3D>("Transform");
+        textureRect = node->getComponentT<TextureRect>("TextureRect");
 
         node->engine->updateEvent.addListener([this](){ _update(); });
 
@@ -52,16 +54,18 @@ public:
         transform->SetLocalRotation({{0, 0, 1}, DEG2RAD * spin});
     }
 };
+}
 
 int main()
 {
+    using namespace HeartEngine;
     Engine engine = Engine();
 
-    engine.registerComponent("Transform", &Engine::registerComponentType<GameTransform>);
-    engine.registerComponent("EngineTextureRect", &Engine::registerComponentType<EngineTextureRect>);
+    engine.registerComponent("Transform", &Engine::registerComponentType<Transform3D>);
+    engine.registerComponent("TextureRect", &Engine::registerComponentType<TextureRect>);
     engine.registerComponent("CustomTexture", &Engine::registerComponentType<CustomTexture>);
 
-    engine.loadResource(EngineTexture("Texture", "assets/test.png"));
+    engine.loadResource(HeartEngine::Texture("Texture", "assets/test.png"));
 
     auto luaTest = engine.addNode(Node("LuaTest"), "assets/test.lua");
 

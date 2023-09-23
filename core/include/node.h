@@ -14,6 +14,8 @@
 #include "lua_environment.h"
 #include "component.h"
 
+namespace HeartEngine
+{
 class Engine;
 
 class Node : LuaEnvironment
@@ -85,3 +87,4 @@ private:
 
     EventManager events;
 };
+}

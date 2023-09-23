@@ -2,10 +2,12 @@
 
 #include <raylib.h>
 
-class EngineTexture : public Resource
+namespace HeartEngine
+{
+class Texture : public Resource
 {
 public:
-    EngineTexture(std::string name, std::string p_path) : Resource(name), path(p_path) {}
+    Texture(std::string name, std::string p_path) : Resource(name), path(p_path) {}
 
     std::string path;
     Texture2D texture;
@@ -20,3 +22,4 @@ public:
         UnloadTexture(texture);
     }
 };
+}

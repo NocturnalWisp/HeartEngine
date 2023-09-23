@@ -18,6 +18,8 @@
 
 #include <sol.hpp>
 
+namespace HeartEngine
+{
 constexpr auto SCREEN_WIDTH  = 800;
 constexpr auto SCREEN_HEIGHT = 450;
 
@@ -147,3 +149,4 @@ private:
 
     std::map<std::string, std::unique_ptr<Component>(*)(std::string name, sol::variadic_args va)> componentRegistry;
 };
+}

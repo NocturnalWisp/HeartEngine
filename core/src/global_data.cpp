@@ -2,6 +2,8 @@
 
 #include "engine.h"
 
+namespace HeartEngine
+{
 void GlobalData::_on_load()
 {
     luaEnv["_on_load"]();
@@ -45,4 +47,5 @@ void GlobalData::populateEnvironment()
 {
     luaEnv["name"] = &name;
     luaEnv["engine"] = engine;
+}
 }

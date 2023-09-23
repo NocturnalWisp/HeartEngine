@@ -2,6 +2,8 @@
 
 #include "engine.h"
 
+namespace HeartEngine
+{
 void Component::_on_create()
 {
     luaEnv["_on_create"]();
@@ -41,4 +43,5 @@ void Component::populateEnvironment()
 {
     luaEnv["name"] = &name;
     luaEnv["node"] = node;
+}
 }

@@ -6,6 +6,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
+namespace HeartEngine
+{
 Engine::Engine()
 {
     SetTraceLogLevel(4);
@@ -190,4 +192,5 @@ void Engine::checkEarlyResourceRelease()
             ++it;
         }
     }
+}
 }

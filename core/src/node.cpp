@@ -5,6 +5,8 @@
 
 const float EPSILON = 0.001;
 
+namespace HeartEngine
+{
 Component* Node::getComponent(std::string_view name) const
 {
     Component *foundComponent;
@@ -164,4 +166,5 @@ void Node::populateEnvironment()
     luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent), this);
     luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent), this);
     luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent), this);
+}
 }

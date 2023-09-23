@@ -1,7 +1,7 @@
 /*******************************************************************************************
 *
-*   GameTransform.h
-*   Definition of a GameTransform component. Gives an object a position, rotation,
+*   Transform3D.h
+*   Definition of a Transform3D component. Gives an object a position, rotation,
 *   and scale in world and local space. Rotation is get/set by euler angles, but uses
 *   quaternions under the hood to avoid gimbal lock and other problems.
 *
@@ -28,6 +28,8 @@
 
 namespace sol { class state; }
 
+namespace HeartEngine
+{
 //typedef std::pair<Vector3, float> RotationAxisAngle;
 typedef struct RotationAxisAngle
 {
@@ -35,19 +37,19 @@ typedef struct RotationAxisAngle
     float   angle;
 } RotationAxisAngle;
 
-class GameTransform : public Component
+class Transform3D : public Component
 {
 public:
     void populateLuaData() override;
 
     // INITIALIZATION.
     // Default constructor.
-    GameTransform(std::string name);
-    GameTransform(std::string name, sol::variadic_args va);
+    Transform3D(std::string name);
+    Transform3D(std::string name, sol::variadic_args va);
     // Verbose constructor in local space.
-    GameTransform(std::string name, Vector3 localPosition, RotationAxisAngle rotation, Vector3 localScale);
+    Transform3D(std::string name, Vector3 localPosition, RotationAxisAngle rotation, Vector3 localScale);
     // Default destructor.
-    virtual ~GameTransform();
+    virtual ~Transform3D();
 
     // POSITION PROPERTY.
     // Local.
@@ -81,13 +83,13 @@ public:
     static Vector3 ExtractScale(Matrix transform);
 
     // HIERARCHY OPERATIONS.
-    void SetParent(GameTransform* newParent, unsigned int childIndex = 0);
+    void SetParent(Transform3D* newParent, unsigned int childIndex = 0);
 
 protected:
     // Parent transform.
-    GameTransform* parent;
+    Transform3D* parent;
     // Child transforms.
-    std::list<GameTransform*> children;
+    std::list<Transform3D*> children;
 
     // (X, Y, Z) coordinates of position.
     Vector3 position = {0, 0, 0};
@@ -102,3 +104,4 @@ protected:
     Matrix MakeLocalToParent() const;
     Matrix MakeParentToLocal() const;
 };
+}

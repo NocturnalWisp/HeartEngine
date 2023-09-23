@@ -3,6 +3,8 @@
 #include <string>
 #include <memory>
 
+namespace HeartEngine
+{
 class Resource
 {
     friend class Engine;
@@ -34,3 +36,4 @@ private:
 
     bool loaded = false;
 };
+}

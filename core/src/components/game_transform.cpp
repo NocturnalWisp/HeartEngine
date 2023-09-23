@@ -1,7 +1,7 @@
 /*******************************************************************************************
 *
-*   GameTransform.cpp
-*   Implementation of a GameTransform component. Gives an object a position, rotation,
+*   Transform3D.cpp
+*   Implementation of a Transform3D component. Gives an object a position, rotation,
 *   and scale in world and local space.
 *   
 *   Partially inspired by http://graphics.cs.cmu.edu/courses/15-466-f17/notes/hierarchy.html.
@@ -13,15 +13,17 @@
 *
 *******************************************************************************************/
 
-#include "components/game_transform.h"
+#include "components/transform.h"
 
 #include <sol.hpp>
 
-void GameTransform::populateLuaData()
+namespace HeartEngine
 {
-    auto type = CREATEUSERTYPE(GameTransform);
+void Transform3D::populateLuaData()
+{
+    auto type = CREATEUSERTYPE(Transform3D);
 
-    type["position"] = &GameTransform::position;
+    type["position"] = &Transform3D::position;
 }
 
 Matrix QuatToMat(Quaternion q)
@@ -50,7 +52,7 @@ Matrix QuatToMat(Quaternion q)
 
 const float EPSILON = 0.001;
 
-GameTransform::GameTransform(std::string name) : Component(name)
+Transform3D::Transform3D(std::string name) : Component(name)
 {
     // Zero out data, exists at (0, 0, 0) world space.
     SetLocalPosition({0, 0, 0});
@@ -80,7 +82,7 @@ RotationAxisAngle tableToRotationAxisAngle(const std::vector<float>& table)
     return result;
 }
 
-GameTransform::GameTransform(std::string name, sol::variadic_args args) : Component(name)
+Transform3D::Transform3D(std::string name, sol::variadic_args args) : Component(name)
 {
     //TODO: seg fault if bad table given.
     // Zero out data, exists at (0, 0, 0) world space.
@@ -96,7 +98,7 @@ GameTransform::GameTransform(std::string name, sol::variadic_args args) : Compon
     parent = nullptr;
 }
 
-GameTransform::GameTransform(
+Transform3D::Transform3D(
     std::string name,
     Vector3 localPosition,
     RotationAxisAngle localRotation,
@@ -109,10 +111,10 @@ GameTransform::GameTransform(
     parent = nullptr;
 }
 
-GameTransform::~GameTransform()
+Transform3D::~Transform3D()
 {
     // Remove dangling pointers from children and parent.
-    for (GameTransform* child: children)
+    for (Transform3D* child: children)
     {
         child->SetParent(nullptr);
     }
@@ -122,17 +124,17 @@ GameTransform::~GameTransform()
     }
 }
 
-Vector3 GameTransform::GetLocalPosition() const
+Vector3 Transform3D::GetLocalPosition() const
 {
     return position;
 }
 
-void GameTransform::SetLocalPosition(Vector3 localPosition)
+void Transform3D::SetLocalPosition(Vector3 localPosition)
 {
     position = localPosition;
 }
 
-Vector3 GameTransform::GetWorldPosition() const
+Vector3 Transform3D::GetWorldPosition() const
 {
     // Get transformation matrix.
     Matrix ltwMat = GetLocalToWorldMatrix();
@@ -140,7 +142,7 @@ Vector3 GameTransform::GetWorldPosition() const
     return ExtractTranslation(ltwMat);
 }
 
-RotationAxisAngle GameTransform::GetLocalRotation() const
+RotationAxisAngle Transform3D::GetLocalRotation() const
 {
     Vector3 rotationAxis = {0, 0, 0};
     float rotationAngle = 0;
@@ -148,12 +150,12 @@ RotationAxisAngle GameTransform::GetLocalRotation() const
     return { rotationAxis, rotationAngle * RAD2DEG };
 }
 
-void GameTransform::SetLocalRotation(RotationAxisAngle rotation)
+void Transform3D::SetLocalRotation(RotationAxisAngle rotation)
 {
     this->rotation = QuaternionFromAxisAngle(rotation.axis, rotation.angle * DEG2RAD);
 }
 
-RotationAxisAngle GameTransform::GetWorldRotation() const
+RotationAxisAngle Transform3D::GetWorldRotation() const
 {
     // Get transformation matrix.
     Matrix ltwMat = GetLocalToWorldMatrix();
@@ -180,17 +182,17 @@ RotationAxisAngle GameTransform::GetWorldRotation() const
     return { rotationAxis, rotationAngle * RAD2DEG };
 }
 
-Vector3 GameTransform::GetLocalScale() const
+Vector3 Transform3D::GetLocalScale() const
 {
     return scale;
 }
 
-void GameTransform::SetLocalScale(Vector3 localScale)
+void Transform3D::SetLocalScale(Vector3 localScale)
 {
     scale = localScale;
 }
 
-Vector3 GameTransform::GetWorldScale() const
+Vector3 Transform3D::GetWorldScale() const
 {
     // Get transformation matrix.
     Matrix ltwMat = GetLocalToWorldMatrix();
@@ -198,7 +200,7 @@ Vector3 GameTransform::GetWorldScale() const
     return ExtractScale(ltwMat);
 }
 
-Matrix GameTransform::GetLocalToWorldMatrix() const
+Matrix Transform3D::GetLocalToWorldMatrix() const
 {
     if (parent)
     {
@@ -215,12 +217,12 @@ Matrix GameTransform::GetLocalToWorldMatrix() const
     }
 }
 
-Matrix GameTransform::GetWorldToLocalMatrix() const
+Matrix Transform3D::GetWorldToLocalMatrix() const
 {
     return MatrixInvert(GetLocalToWorldMatrix());
 }
 
-Matrix GameTransform::MakeLocalToParent() const
+Matrix Transform3D::MakeLocalToParent() const
 {
     // Get matrices for transformation from local to parent.
     Matrix scaleMatrix = MatrixScale(scale.x, scale.y, scale.z);
@@ -231,12 +233,12 @@ Matrix GameTransform::MakeLocalToParent() const
     return MatrixMultiply(MatrixMultiply(scaleMatrix, rotationMatrix), translationMatrix);
 }
 
-Matrix GameTransform::MakeParentToLocal() const
+Matrix Transform3D::MakeParentToLocal() const
 {
     return MatrixInvert(MakeLocalToParent());
 }
 
-Vector3 GameTransform::ExtractTranslation(Matrix transform)
+Vector3 Transform3D::ExtractTranslation(Matrix transform)
 {
     float position_x = transform.m12;
     float position_y = transform.m13;
@@ -244,7 +246,7 @@ Vector3 GameTransform::ExtractTranslation(Matrix transform)
     return { position_x, position_y, position_z };
 }
 
-Matrix GameTransform::ExtractRotation(Matrix transform)
+Matrix Transform3D::ExtractRotation(Matrix transform)
 {
     // Extract scale.
     Vector3 scale = ExtractScale(transform);
@@ -257,7 +259,7 @@ Matrix GameTransform::ExtractRotation(Matrix transform)
     };
 }
 
-Vector3 GameTransform::ExtractScale(Matrix transform)
+Vector3 Transform3D::ExtractScale(Matrix transform)
 {
     float scale_x = Vector3Length({ transform.m0, transform.m1, transform.m2 });
     float scale_y = Vector3Length({ transform.m4, transform.m5, transform.m6 });
@@ -269,7 +271,7 @@ Vector3 GameTransform::ExtractScale(Matrix transform)
     };
 }
 
-void GameTransform::SetParent(GameTransform* newParent, unsigned int childIndex)
+void Transform3D::SetParent(Transform3D* newParent, unsigned int childIndex)
 {
     if (parent)
     {
@@ -285,4 +287,5 @@ void GameTransform::SetParent(GameTransform* newParent, unsigned int childIndex)
         std::advance(iterator, childIndex);
         parent->children.insert(iterator, this);
     }
+}
 }
