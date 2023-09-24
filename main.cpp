@@ -62,13 +62,19 @@ int main()
 {
     HeartEngine::FileManager fileManager;
 
-    std::string textureString = fileManager.getString("test.png");
+    sol::state lua;
 
-    Image image = {
-        .data = fileManager.getCharData("test.png")
-    };
+    fileManager.loadScript("test.lua", lua);
 
-    HeartEngine::Debug::print(LoadTextureFromImage(image).width);
+    // auto imageData = fileManager.getCharData("test.png");
+
+    // HeartEngine::Debug::print(std::get<0>(imageData).size());
+
+    // SaveFileData("test.png", std::get<0>(imageData).data(), std::get<1>(imageData));
+
+    // raylib::Image image = raylib::LoadImageFromMemory(".png", std::get<0>(imageData).data(), std::get<1>(imageData));
+
+    // HeartEngine::Debug::print(LoadTextureFromImage(image).width);
 
     using namespace HeartEngine;
 

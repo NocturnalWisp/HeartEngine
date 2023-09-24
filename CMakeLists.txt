@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 
 # Settings
-set(ENGINE_MODE 0)
+set(EDITOR 0)
 
 
 

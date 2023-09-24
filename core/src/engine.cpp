@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <functional>
 
-#include <raylib.h>
+#include <raylib-cpp.hpp>
 #include <raymath.h>
 
 namespace HeartEngine

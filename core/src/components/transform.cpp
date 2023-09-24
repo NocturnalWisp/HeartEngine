@@ -50,8 +50,6 @@ Matrix QuatToMat(Quaternion q)
     return result;
 }
 
-const float EPSILON = 0.001;
-
 Transform3D::Transform3D(std::string name) : Component(name)
 {
     // Zero out data, exists at (0, 0, 0) world space.

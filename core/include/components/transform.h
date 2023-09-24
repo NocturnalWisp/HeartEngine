@@ -21,8 +21,7 @@
 #include <iostream>
 #include <string>
 
-#include <raylib.h>
-#include <raymath.h>
+#include <raylib-cpp.hpp>
 
 #include "component.h"
 

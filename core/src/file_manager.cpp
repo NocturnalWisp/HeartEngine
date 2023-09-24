@@ -1,12 +1,13 @@
 #include "file_manager.h"
 
 #include <string.h>
+#include <tuple>
 
 namespace HeartEngine
 {
 FileManager::FileManager()
 {
-    packageFile = std::ifstream("data.heart", std::ios::binary);
+    packageFile = std::ifstream("data.heart", std::ios::in | std::ios::binary);
 
     if (packageFile)
     {
@@ -31,7 +32,6 @@ FileManager::FileManager()
                 resourcePaths[pathName] = fileByteCount;
             }
             fileDataStart = packageFile.tellg();
-            Debug::print("File data start is: ", fileDataStart);
         }
     }
 }
@@ -40,6 +40,23 @@ FileManager::~FileManager()
 {
     if (packageFile)
         packageFile.close();
+}
+
+void FileManager::loadScript(std::string_view path, sol::state& lua, sol::environment* env)
+{
+#if EDITOR
+    lua.script_file("assets/" + path);
+#else
+    if (env != nullptr)
+        lua.script(getString(path), *env, sol::detail::default_chunk_name(), sol::load_mode::binary);
+    else
+        lua.script(getString(path), sol::detail::default_chunk_name(), sol::load_mode::binary);
+#endif
+}
+
+raylib::Image FileManager::loadImage(std::string_view path)
+{
+    return raylib::Image();
 }
 
 std::vector<std::byte> FileManager::getBytes(std::string_view path)
@@ -66,19 +83,18 @@ std::string FileManager::getString(std::string_view path)
     return string;
 }
 
-unsigned char* FileManager::getCharData(std::string_view path)
+std::tuple<std::vector<unsigned char>, std::uint32_t> FileManager::getCharData(std::string_view path)
 {
-    std::string string;
-
-    if (auto size = findResource(path))
+    uint32_t* size;
+    if (size = findResource(path))
     {
-        string.resize(*size);
-        packageFile.read(&string[0], *size);
+        std::vector<unsigned char> data(*size);
+        packageFile.read(reinterpret_cast<char*>(data.data()), *size);
+
+        return std::make_tuple(data, *size);
     }
 
-    auto result = (unsigned char*)string.c_str();
-    Debug::print("Test: ", sizeof(result));
-    return result;
+    return std::make_tuple(std::vector<unsigned char>(), *size);
 }
 
 void FileManager::seekPath(std::string_view path)

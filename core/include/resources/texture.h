@@ -1,6 +1,6 @@
 #include "resource.h"
 
-#include <raylib.h>
+#include <raylib-cpp.hpp>
 
 namespace HeartEngine
 {

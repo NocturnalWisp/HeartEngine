@@ -5,6 +5,10 @@
 #include <map>
 #include <string>
 #include <cstdint>
+#include <memory>
+
+#include <raylib-cpp.hpp>
+#include <sol.hpp>
 
 #include "debug.h"
 
@@ -16,9 +20,12 @@ public:
     FileManager();
     ~FileManager();
 
+    void loadScript(std::string_view path, sol::state& lua, sol::environment* env = nullptr);
+    raylib::Image loadImage(std::string_view path);
+
     std::vector<std::byte> getBytes(std::string_view path);
     std::string getString(std::string_view path);
-    unsigned char* getCharData(std::string_view path);
+    std::tuple<std::vector<unsigned char>, std::uint32_t> getCharData(std::string_view path);
 private:
     // Seekg to the appropriate data location.
     void seekPath(std::string_view path);
