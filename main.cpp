@@ -6,6 +6,8 @@
 #include "components/texture_rect.h"
 #include "components/transform.h"
 
+#include "file_manager.h"
+
 namespace HeartEngine
 {
 class CustomTexture : public Component
@@ -58,7 +60,18 @@ public:
 
 int main()
 {
+    HeartEngine::FileManager fileManager;
+
+    std::string textureString = fileManager.getString("test.png");
+
+    Image image = {
+        .data = fileManager.getCharData("test.png")
+    };
+
+    HeartEngine::Debug::print(LoadTextureFromImage(image).width);
+
     using namespace HeartEngine;
+
     Engine engine = Engine();
 
     engine.registerComponent("Transform", &Engine::registerComponentType<Transform3D>);

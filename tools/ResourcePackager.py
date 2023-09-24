@@ -30,19 +30,18 @@ header = []
 data = []
 
 # Number of files
-header.append(len(pathlist).to_bytes(b_maxFileCount))
+header.append(len(pathlist).to_bytes(b_maxFileCount, "little"))
 
 for path in pathlist:
     pathBytes = bytes(str(path.relative_to(directory)), 'utf-8')
 
     # Path Length
-    header.append(len(pathBytes).to_bytes(b_maxPathLength))
+    header.append(len(pathBytes).to_bytes(b_maxPathLength, "little"))
     # Path
     header.append(pathBytes)
 
     byteData = bytes()
     if path.suffix == ".lua":
-        print(argv[1])
         subprocess.call([argv[1] + "/luac54.exe", str(path)])
 
         with open("luac.out", 'rb') as luaByteCode:
@@ -53,7 +52,7 @@ for path in pathlist:
         byteData = path.read_bytes()
     
     # Data length
-    header.append(len(byteData).to_bytes(b_maxDataLength))
+    header.append(len(byteData).to_bytes(b_maxDataLength, "little"))
     # Data
     data.append(byteData)
 
