@@ -25,7 +25,7 @@ void Component::setupLuaState(sol::state& p_luaState, std::string scriptName)
     {
         // Lua Scripted Component
         populateEnvironment();
-        luaState->script_file(scriptName, luaEnv);
+        node->engine->fileManager.loadScript(scriptName, *luaState, &luaEnv);
     }
     else
     {

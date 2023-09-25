@@ -91,7 +91,6 @@ Transform3D::Transform3D(std::string name, sol::variadic_args args) : Component(
     if (args.size() > 2)
         SetLocalScale(tableToVector3(args[2].as<std::vector<float>>()));
     
-    Debug::print(position.y);
     // Root node.
     parent = nullptr;
 }

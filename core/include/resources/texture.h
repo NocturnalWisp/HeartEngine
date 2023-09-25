@@ -14,7 +14,7 @@ public:
 
     void _load() override
     {
-        texture = LoadTexture(path.c_str());
+        texture = engine->fileManager.loadImage(path).LoadTexture();
     }
 
     void _unload() override

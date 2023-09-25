@@ -3,8 +3,6 @@
 
 #include <algorithm>
 
-const float EPSILON = 0.001;
-
 namespace HeartEngine
 {
 Component* Node::getComponent(std::string_view name) const
@@ -118,7 +116,7 @@ void Node::setupLuaState(sol::state& p_luaState, std::string scriptName)
 
         populateEnvironment();
 
-        luaState->script_file(scriptName, luaEnv);
+        engine->fileManager.loadScript(scriptName, *luaState, &luaEnv);
     }
 
     if (engine->started)

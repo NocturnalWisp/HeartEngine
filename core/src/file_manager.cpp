@@ -2,12 +2,13 @@
 
 #include <string.h>
 #include <tuple>
+#include <filesystem>
 
 namespace HeartEngine
 {
 FileManager::FileManager()
 {
-    packageFile = std::ifstream("data.heart", std::ios::in | std::ios::binary);
+    packageFile = std::ifstream(std::filesystem::current_path().append("data.heart"),  std::ios::binary);
 
     if (packageFile)
     {
@@ -15,7 +16,6 @@ FileManager::FileManager()
         std::uint16_t fileCount;
         if (packageFile.read(reinterpret_cast<char*>(&fileCount), 2))
         {
-            Debug::print(fileCount);
             for (int i = 0; i < fileCount; i++)
             {
                 std::uint8_t pathSize;
@@ -24,7 +24,6 @@ FileManager::FileManager()
                 std::string pathName;
                 pathName.resize(pathSize);
                 packageFile.read(&pathName[0], pathSize);
-                Debug::print(pathName);
 
                 std::uint32_t fileByteCount;
                 packageFile.read(reinterpret_cast<char*>(&fileByteCount), 4);
@@ -34,6 +33,7 @@ FileManager::FileManager()
             fileDataStart = packageFile.tellg();
         }
     }
+    //TODO: Throw failed to find file error.
 }
 
 FileManager::~FileManager()
@@ -44,8 +44,11 @@ FileManager::~FileManager()
 
 void FileManager::loadScript(std::string_view path, sol::state& lua, sol::environment* env)
 {
-#if EDITOR
-    lua.script_file("assets/" + path);
+#if EDITOR == 1
+    if (env != nullptr)
+        lua.script_file("assets/" + std::string(path), *env);
+    else
+        lua.script_file("assets/" + std::string(path));
 #else
     if (env != nullptr)
         lua.script(getString(path), *env, sol::detail::default_chunk_name(), sol::load_mode::binary);
@@ -56,7 +59,21 @@ void FileManager::loadScript(std::string_view path, sol::state& lua, sol::enviro
 
 raylib::Image FileManager::loadImage(std::string_view path)
 {
+#if EDITOR == 1
+    return raylib::LoadImage("assets/" + std::string(path));
+#else
+    auto imageData = getCharData(path);
+
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos != std::string::npos && dotPos < path.length() - 1)
+    {
+        auto extension = std::string(path.substr(dotPos+1)).insert(0, ".");
+        return raylib::LoadImageFromMemory(extension, std::get<0>(imageData).data(), std::get<1>(imageData));
+    }
+
+    //TODO: Throw failure error or somethin.
     return raylib::Image();
+#endif
 }
 
 std::vector<std::byte> FileManager::getBytes(std::string_view path)
@@ -94,7 +111,8 @@ std::tuple<std::vector<unsigned char>, std::uint32_t> FileManager::getCharData(s
         return std::make_tuple(data, *size);
     }
 
-    return std::make_tuple(std::vector<unsigned char>(), *size);
+    //TODO: Really need better error handling.
+    return std::make_tuple(std::vector<unsigned char>(), 0);
 }
 
 void FileManager::seekPath(std::string_view path)

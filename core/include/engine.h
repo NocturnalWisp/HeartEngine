@@ -6,6 +6,8 @@
 #include <memory>
 #include <type_traits>
 
+#include <sol.hpp>
+
 #include "debug.h"
 #include "node.h"
 
@@ -14,7 +16,7 @@
 
 #include "event.h"
 
-#include <sol.hpp>
+#include "file_manager.h"
 
 namespace HeartEngine
 {
@@ -59,6 +61,8 @@ public:
         static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
 
         auto res = std::make_shared<T>(resource);
+
+        res->engine = this;
 
         resources.push_back(res);
 
@@ -127,6 +131,8 @@ public:
         static_assert(std::is_convertible<T, GlobalData>::value, "Class must derive from Global Data.");
         return static_cast<T*>(getGlobalData(name));
     }
+
+    FileManager fileManager = {};
 
     bool started = false;
 

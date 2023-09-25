@@ -14,6 +14,8 @@ public:
     virtual void _load() {}
     virtual void _unload() {}
 
+    Engine* engine;
+
     std::string name;
 private:
     friend void load(const std::shared_ptr<Resource>& res)

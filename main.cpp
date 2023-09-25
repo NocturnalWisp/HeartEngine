@@ -60,22 +60,6 @@ public:
 
 int main()
 {
-    HeartEngine::FileManager fileManager;
-
-    sol::state lua;
-
-    fileManager.loadScript("test.lua", lua);
-
-    // auto imageData = fileManager.getCharData("test.png");
-
-    // HeartEngine::Debug::print(std::get<0>(imageData).size());
-
-    // SaveFileData("test.png", std::get<0>(imageData).data(), std::get<1>(imageData));
-
-    // raylib::Image image = raylib::LoadImageFromMemory(".png", std::get<0>(imageData).data(), std::get<1>(imageData));
-
-    // HeartEngine::Debug::print(LoadTextureFromImage(image).width);
-
     using namespace HeartEngine;
 
     Engine engine = Engine();
@@ -84,9 +68,9 @@ int main()
     engine.registerComponent("TextureRect", &Engine::registerComponentType<TextureRect>);
     engine.registerComponent("CustomTexture", &Engine::registerComponentType<CustomTexture>);
 
-    engine.loadResource(HeartEngine::Texture("Texture", "assets/test.png"));
+    engine.loadResource(HeartEngine::Texture("Texture", "test.png"));
 
-    auto luaTest = engine.addNode(Node("LuaTest"), "assets/test.lua");
+    auto luaTest = engine.addNode(Node("LuaTest"), "test.lua");
 
     engine.run();
     
