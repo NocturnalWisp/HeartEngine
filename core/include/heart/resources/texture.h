@@ -1,4 +1,4 @@
-#include "resource.h"
+#include "heart/resource.h"
 
 #include <raylib-cpp.hpp>
 

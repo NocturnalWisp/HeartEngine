@@ -1,8 +1,8 @@
 #pragma once
 
-#include "module.h"
+#include "heart/module.h"
 
-#include "debug.h"
+#include "heart/debug.h"
 
 namespace HeartModules
 {

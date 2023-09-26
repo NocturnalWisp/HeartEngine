@@ -1,8 +1,8 @@
-#include "node.h"
+#include "heart/node.h"
 
-#include "engine.h"
+#include "heart/engine.h"
 
-#include "resources/texture.h"
+#include "heart/resources/texture.h"
 #include "transform.h"
 
 namespace HeartEngine

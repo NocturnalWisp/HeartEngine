@@ -58,7 +58,7 @@ endif()
 
 target_compile_definitions(LuaEngine PUBLIC SOL_ALL_SAFETIES_ON=1)
 
-target_include_directories(LuaEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(LuaEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/heart)
 target_include_directories(LuaEngine PUBLIC ${raylib_SOURCE_DIR}/include)
 target_include_directories(LuaEngine PUBLIC ${raylib_cpp_SOURCE_DIR}/include)
 target_include_directories(LuaEngine PUBLIC ${sol2_SOURCE_DIR}/include)

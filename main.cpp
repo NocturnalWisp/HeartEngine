@@ -5,12 +5,12 @@
 #define EDITOR
 #endif
 
-#include "engine.h"
+#include "heart/engine.h"
 
-#include "components/texture_rect.h"
-#include "components/transform.h"
+#include "heart/components/texture_rect.h"
+#include "heart/components/transform.h"
 
-#include "file_manager.h"
+#include "heart/file_manager.h"
 
 #include "heart_raymath/module.hpp"
 

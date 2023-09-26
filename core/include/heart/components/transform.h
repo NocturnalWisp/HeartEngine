@@ -23,7 +23,7 @@
 
 #include <raylib-cpp.hpp>
 
-#include "component.h"
+#include "../component.h"
 
 namespace sol { class state; }
 
