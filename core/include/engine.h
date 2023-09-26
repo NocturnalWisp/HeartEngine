@@ -9,14 +9,16 @@
 #include <sol/sol.hpp>
 
 #include "debug.h"
-#include "node.h"
+
+#include "file_manager.h"
+
+#include "module.h"
 
 #include "resource.h"
 #include "global_data.h"
+#include "node.h"
 
 #include "event.h"
-
-#include "file_manager.h"
 
 namespace HeartEngine
 {
@@ -32,6 +34,24 @@ public:
     Engine();
 
     int run();
+
+    template<class T>
+    T* registerModule(T moduleObject)
+    {
+        static_assert(std::is_base_of<Module, T>::value, "T must derive from Module.");
+
+        std::unique_ptr<T> module = std::make_unique<T>(std::move(moduleObject));
+
+        auto modulePtr = module.get();
+
+        moduleRegistry.push_back(std::move(module));
+
+        modulePtr->engine = this;
+
+        modulePtr->registerTypes();
+
+        return modulePtr;
+    }
 
     Node* getNode(std::string_view name);
 
@@ -121,9 +141,9 @@ public:
         return static_cast<T*>(getGlobalData(name));
     }
 
-    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
-
     void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args));
+
+    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
 
     template <class T>
     static std::unique_ptr<Component> registerComponentType(std::string name, sol::variadic_args va)
@@ -152,5 +172,6 @@ private:
     std::vector<std::unique_ptr<Node>> nodes;
 
     std::map<std::string, std::unique_ptr<Component>(*)(std::string name, sol::variadic_args va)> componentRegistry;
+    std::vector<std::unique_ptr<Module>> moduleRegistry;
 };
 }

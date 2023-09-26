@@ -12,6 +12,8 @@
 
 #include "file_manager.h"
 
+#include "heart_raymath/module.hpp"
+
 namespace HeartEngine
 {
 class CustomTexture : public Component
@@ -67,6 +69,8 @@ int main()
     using namespace HeartEngine;
 
     Engine engine = Engine();
+
+    engine.registerModule(HeartModules::RayMath());
 
     engine.registerComponent("Transform", &Engine::registerComponentType<Transform3D>);
     engine.registerComponent("TextureRect", &Engine::registerComponentType<TextureRect>);
