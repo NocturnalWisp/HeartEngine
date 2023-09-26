@@ -5,7 +5,7 @@
 #include <map>
 #include <variant>
 
-#include <sol.hpp>
+#include <sol/sol.hpp>
 
 namespace HeartEngine
 {

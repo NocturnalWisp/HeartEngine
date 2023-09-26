@@ -9,7 +9,7 @@
 #include <optional>
 
 #include <raylib-cpp.hpp>
-#include <sol.hpp>
+#include <sol/sol.hpp>
 
 #include "debug.h"
 

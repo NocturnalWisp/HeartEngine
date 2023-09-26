@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(LuaGame)
 
 set(CMAKE_CXX_STANDARD 17)
-set(USE_EDITOR OFF)
+set(USE_EDITOR ON)
 
 add_subdirectory(core)
 

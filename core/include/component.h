@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <sol.hpp>
+#include <sol/sol.hpp>
 
 #include "debug.h"
 

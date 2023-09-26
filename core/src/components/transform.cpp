@@ -15,7 +15,7 @@
 
 #include "components/transform.h"
 
-#include <sol.hpp>
+#include <sol/sol.hpp>
 
 namespace HeartEngine
 {

@@ -5,7 +5,7 @@
 #include <memory>
 #include <type_traits>
 
-#include <sol.hpp>
+#include <sol/sol.hpp>
 
 #include "debug.h"
 

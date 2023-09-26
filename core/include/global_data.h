@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <sol.hpp>
+#include <sol/sol.hpp>
 
 #include "lua_environment.h"
 
