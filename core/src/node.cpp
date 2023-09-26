@@ -5,19 +5,17 @@
 
 namespace HeartEngine
 {
-Component* Node::getComponent(std::string_view name) const
+Component& Node::getComponent(std::string_view name) const
 {
-    Component *foundComponent;
-
     for (const auto &component : components)
     {
         if (component->name.compare(name) == 0)
         {
-            foundComponent = component.get();
+            return *component.get();
         }
     }
 
-    return foundComponent;
+    throw HeartException({"No component found with name: ", name, " on node: ", this->name});
 }
 
 void Node::removeComponent(std::string_view name)
@@ -32,24 +30,23 @@ void Node::destroy()
     engine->checkEarlyResourceRelease();
 }
 
-Component* Node::addComponent(std::string_view typeName, std::string name, sol::variadic_args va)
+Component& Node::addComponent(std::string_view typeName, std::string name, sol::variadic_args va)
 {
     auto component = engine->getComponentFromRegistry(typeName, name, va);
 
-    if (component != nullptr)
+    if (component == nullptr)
     {
-        auto componentPtr = component.get();
-
-        components.push_back(std::move(component));
-
-        componentPtr->node = this;
-
-        componentPtr->setupLuaState(*luaState, "");
-
-        return componentPtr;
+        throw HeartException({"Could not find component: ", typeName, " in the registry. Make sure to register the component with the engine before trying to use it."});
     }
 
-    return nullptr;
+    Component* componentPtr = component.get();
+
+    components.push_back(std::move(component));
+
+    componentPtr->node = this;
+    componentPtr->setupLuaState(*luaState, "");
+
+    return *componentPtr;
 }
 
 void Node::onCreate()
@@ -116,7 +113,7 @@ void Node::setupLuaState(sol::state& p_luaState, std::string scriptName)
 
         populateEnvironment();
 
-        engine->fileManager.loadScript(scriptName, *luaState, &luaEnv);
+        engine->fileManager.loadScript(scriptName, *luaState, std::make_optional(luaEnv));
     }
 
     if (engine->started)
@@ -130,39 +127,32 @@ void Node::populateEnvironment()
     luaEnv.set("name", &name);
     luaEnv["engine"] = engine;
 
-    luaEnv.set_function("addComponent",
+    luaEnv["addComponent"] =
         [this](std::string_view typeName, std::string name, sol::variadic_args va) -> sol::table
         {
             //TODO: Breaks with error expected table recieved nil if populateLuaData is not setup.
-            //TODO: Breaks with segfault if the component doesnt exist
-            // Probably true for any returning lambdas
-            return addComponent(typeName, name, va)->luaEnv[name];
-        });
-    luaEnv.set_function("addLuaComponent",
+            return addComponent(typeName, name, va).luaEnv[name];
+        };
+    luaEnv["addLuaComponent"] =
         [this](std::string scriptName, std::string name) -> sol::table&
         {
-            return addComponent(Component(name), scriptName)->luaEnv;
-        });
+            return addComponent(LuaComponent(name), scriptName).luaEnv;
+        };
     
-    luaEnv.set_function("getComponent",
+    luaEnv["getComponent"] =
         [this](std::string_view component) -> sol::table&
         {
-            return getComponent(component)->luaEnv;
-        });
-    
-    // luaEnv.set_function("getGlobalData",
-    //     [this](std::string_view name) -> sol::table&
-    //     {
-    //         return engine->getGlobalData(name)->luaEnv;
-    //     });
+            return getComponent(component).luaEnv;
+        };
 
-    luaEnv.set_function("addEventListener",
+    luaEnv["addEventListener"] =
         [this](std::string eventName, sol::function function) -> EventHandle*
         {
             return addEventListener(eventName, [function](sol::object obj1, sol::object obj2){ function(obj1, obj2); });
-        });
-    luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string)>(&Node::runEvent), this);
-    luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent), this);
-    luaEnv.set_function("runEvent", static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent), this);
+        };
+    luaEnv["removeEventListener"] = &Node::removeEventListener;
+    luaEnv["runEvent"] = static_cast<void(Node::*)(std::string)>(&runEvent);
+    luaEnv["runEvent"] = static_cast<void(Node::*)(std::string, sol::object)>(&runEvent);
+    luaEnv["runEvent"] = static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&runEvent);
 }
 }

@@ -26,9 +26,9 @@ public:
     Node(std::string p_name) : name(p_name) {}
 
     template <class T>
-    T* addComponent(T c, std::string scriptName = "")
+    T& addComponent(T c, std::string scriptName = "")
     {
-        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
+        static_assert(std::is_base_of<Component, T>::value, "Class must inherit component");
 
         auto component = std::make_unique<T>(std::move(c));
 
@@ -37,22 +37,21 @@ public:
         components.push_back(std::move(component));
 
         componentPtr->node = this;
-
         componentPtr->setupLuaState(*luaState, scriptName);
 
-        return componentPtr;
+        return *componentPtr;
     }
 
-    Component* getComponent(std::string_view name) const;
+    Component& getComponent(std::string_view name) const;
 
     template<class T>
-    T* getComponentT(std::string_view name) const
+    T& getComponentT(std::string_view name) const
     {
-        static_assert(std::is_convertible<T, Component>::value, "Class must inherit component");
-        return static_cast<T*>(getComponent(name));
+        static_assert(std::is_base_of<Component, T>::value, "Class must inherit component");
+        return static_cast<T&>(getComponent(name));
     }
 
-    Component* addComponent(std::string_view typeName, std::string name, sol::variadic_args va);
+    Component& addComponent(std::string_view typeName, std::string name, sol::variadic_args va);
     void removeComponent(std::string_view name);
 
     void destroy();

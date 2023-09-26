@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
 project(LuaEngine)
 
+# Settings
+option(USE_EDITOR "Allow for editing game source after compilation." ON)
+option(USE_DEBUG "Allow the engine to print to the console." ON)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(RAYLIB_VERSION 4.5.0)
@@ -23,8 +27,6 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOL_ALL_SAFETIES_ON 1)
-
 # Setting parameters for raylib
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
 set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # or games
@@ -35,6 +37,16 @@ add_subdirectory(libs/raylib-cpp)
 
 file(GLOB_RECURSE lua_engine_sources CONFIGURE_DEPENDS src/*.cpp)
 add_library(LuaEngine ${lua_engine_sources})
+
+if (USE_EDITOR)
+    target_compile_definitions(LuaEngine PUBLIC EDITOR)
+endif()
+
+if (USE_DEBUG)
+    target_compile_definitions(LuaEngine PUBLIC DEBUG)
+endif()
+
+target_compile_definitions(LuaEngine PUBLIC SOL_ALL_SAFETIES_ON=1)
 
 target_include_directories(LuaEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_include_directories(LuaEngine PUBLIC ${CMAKE_CURRENT_LIST_DIR}/libs/sol)

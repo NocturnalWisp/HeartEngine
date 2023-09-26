@@ -6,6 +6,7 @@
 #include <string>
 #include <cstdint>
 #include <memory>
+#include <optional>
 
 #include <raylib-cpp.hpp>
 #include <sol.hpp>
@@ -20,7 +21,7 @@ public:
     FileManager();
     ~FileManager();
 
-    void loadScript(std::string_view path, sol::state& lua, sol::environment* env = nullptr);
+    void loadScript(std::string_view path, sol::state& lua, std::optional<sol::environment> env = std::nullopt);
     raylib::Image loadImage(std::string_view path);
 
     std::vector<std::byte> getBytes(std::string_view path);
@@ -30,7 +31,7 @@ private:
     // Seekg to the appropriate data location.
     void seekPath(std::string_view path);
 
-    std::uint32_t* findResource(std::string_view path);
+    std::uint32_t findResource(std::string_view path);
 
     // Path - File Byte Count
     std::map<std::string, std::uint32_t, std::less<>> resourcePaths;

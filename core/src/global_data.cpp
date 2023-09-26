@@ -25,7 +25,7 @@ void GlobalData::setupLuaState(sol::state& p_luaState, std::string scriptName)
 
     if (scriptName.compare("") != 0)
     {
-        engine->fileManager.loadScript(scriptName, *luaState, &luaEnv);
+        engine->fileManager.loadScript(scriptName, *luaState, std::make_optional(luaEnv));
 
         // Set a table up in the main state for quick and easy access as global data.
         (*luaState)[name] = luaEnv;

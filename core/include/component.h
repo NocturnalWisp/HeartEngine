@@ -22,6 +22,8 @@ class Component : public LuaEnvironment
 public:
     Component(std::string name) : name(name) {}
 
+    virtual void populateLuaData() override = 0;
+
     Node* node;
 
     std::string name;
@@ -31,5 +33,13 @@ public:
 private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
     void populateEnvironment() override;
+};
+
+class LuaComponent : public Component
+{
+public:
+    LuaComponent(std::string name) : Component(name) {}
+
+    void populateLuaData() override {}
 };
 }

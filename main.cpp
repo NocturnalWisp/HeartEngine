@@ -1,6 +1,10 @@
 #include <map>
 #include <memory>
 
+#ifndef EDITOR
+#define EDITOR
+#endif
+
 #include "engine.h"
 
 #include "components/texture_rect.h"
@@ -33,8 +37,8 @@ public:
 
     void _on_create() override
     {
-        transform = node->getComponentT<Transform3D>("Transform");
-        textureRect = node->getComponentT<TextureRect>("TextureRect");
+        transform = &node->getComponentT<Transform3D>("Transform");
+        textureRect = &node->getComponentT<TextureRect>("TextureRect");
 
         node->engine->updateEvent.addListener([this](){ _update(); });
 
@@ -46,7 +50,7 @@ public:
 
     void test()
     {
-        Debug::print("blegh");
+        Debug::PRINT("blegh", 2);
     }
 
     void _update()

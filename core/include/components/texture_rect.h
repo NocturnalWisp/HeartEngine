@@ -39,7 +39,7 @@ public:
 
         texture = node->engine->getResource<Texture>(textureName);
 
-        transform = static_cast<Transform3D*>(node->getComponent("Transform"));
+        transform = &node->getComponentT<Transform3D>("Transform");
     }
 
     void _on_destroy() override

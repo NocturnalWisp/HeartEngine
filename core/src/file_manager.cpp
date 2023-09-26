@@ -33,7 +33,12 @@ FileManager::FileManager()
             fileDataStart = packageFile.tellg();
         }
     }
-    //TODO: Throw failed to find file error.
+    else
+    {
+#ifndef EDITOR
+        throw HeartException({"Failed to find resource file data.heart at: ", std::filesystem::current_path().append("data.heart").u8string()});
+#endif
+    }
 }
 
 FileManager::~FileManager()
@@ -42,16 +47,16 @@ FileManager::~FileManager()
         packageFile.close();
 }
 
-void FileManager::loadScript(std::string_view path, sol::state& lua, sol::environment* env)
+void FileManager::loadScript(std::string_view path, sol::state& lua, std::optional<sol::environment> env)
 {
-#if EDITOR == 1
-    if (env != nullptr)
-        lua.script_file("assets/" + std::string(path), *env);
+#ifdef EDITOR
+    if (env.has_value())
+        lua.script_file("assets/" + std::string(path), env.value());
     else
         lua.script_file("assets/" + std::string(path));
 #else
-    if (env != nullptr)
-        lua.script(getString(path), *env, sol::detail::default_chunk_name(), sol::load_mode::binary);
+    if (env.has_value())
+        lua.script(getString(path), env.value(), sol::detail::default_chunk_name(), sol::load_mode::binary);
     else
         lua.script(getString(path), sol::detail::default_chunk_name(), sol::load_mode::binary);
 #endif
@@ -59,60 +64,50 @@ void FileManager::loadScript(std::string_view path, sol::state& lua, sol::enviro
 
 raylib::Image FileManager::loadImage(std::string_view path)
 {
-#if EDITOR == 1
+#ifdef EDITOR
     return raylib::LoadImage("assets/" + std::string(path));
 #else
     auto imageData = getCharData(path);
 
     size_t dotPos = path.find_last_of('.');
-    if (dotPos != std::string::npos && dotPos < path.length() - 1)
-    {
-        auto extension = std::string(path.substr(dotPos+1)).insert(0, ".");
-        return raylib::LoadImageFromMemory(extension, std::get<0>(imageData).data(), std::get<1>(imageData));
-    }
+    if (dotPos == std::string::npos || dotPos >= path.length() - 1)
+        throw HeartException({"Path does not have a proper extension. Please add a valid extension (.png, .jpeg, etc...) for file: ", path});
 
-    //TODO: Throw failure error or somethin.
-    return raylib::Image();
+    auto extension = std::string(path.substr(dotPos+1)).insert(0, ".");
+
+    return raylib::LoadImageFromMemory(extension, std::get<0>(imageData).data(), std::get<1>(imageData));
 #endif
 }
 
 std::vector<std::byte> FileManager::getBytes(std::string_view path)
 {
+    auto size = findResource(path);
+
     std::vector<std::byte> bytes;
-    if (auto size = findResource(path))
-    {
-        packageFile.read(reinterpret_cast<char*>(&bytes), *size);
-    }
+    packageFile.read(reinterpret_cast<char*>(&bytes), size);
 
     return bytes;
 }
 
 std::string FileManager::getString(std::string_view path)
 {
+    auto size = findResource(path);
     std::string string;
 
-    if (auto size = findResource(path))
-    {
-        string.resize(*size);
-        packageFile.read(&string[0], *size);
-    }
+    string.resize(size);
+    packageFile.read(&string[0], size);
 
     return string;
 }
 
 std::tuple<std::vector<unsigned char>, std::uint32_t> FileManager::getCharData(std::string_view path)
 {
-    uint32_t* size;
-    if (size = findResource(path))
-    {
-        std::vector<unsigned char> data(*size);
-        packageFile.read(reinterpret_cast<char*>(data.data()), *size);
+    auto size = findResource(path);
 
-        return std::make_tuple(data, *size);
-    }
+    std::vector<unsigned char> data(size);
+    packageFile.read(reinterpret_cast<char*>(data.data()), size);
 
-    //TODO: Really need better error handling.
-    return std::make_tuple(std::vector<unsigned char>(), 0);
+    return std::make_tuple(data, size);
 }
 
 void FileManager::seekPath(std::string_view path)
@@ -123,7 +118,7 @@ void FileManager::seekPath(std::string_view path)
     {
         if (resourcePathPair.first.compare(path) == 0)
         {
-            // Found path, now break out.
+            // Found path at g, now break out.
             return;
         }
         else
@@ -133,7 +128,7 @@ void FileManager::seekPath(std::string_view path)
     }
 }
 
-std::uint32_t* FileManager::findResource(std::string_view path)
+std::uint32_t FileManager::findResource(std::string_view path)
 {
     if (packageFile)
     {
@@ -141,10 +136,14 @@ std::uint32_t* FileManager::findResource(std::string_view path)
 
         if (auto search = resourcePaths.find(path); search != resourcePaths.end())
         {
-            return &search->second;
+            return search->second;
+        }
+        else
+        {
+            throw HeartException({"Invalid file path: ", path});
         }
     }
 
-    return nullptr;
+    throw HeartException("Unable to open binary data to access any resources.");
 }
 }

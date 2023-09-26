@@ -144,19 +144,21 @@ void Engine::populateBasicLua()
     auto nodeType = lua->new_usertype<Node>("Node");
 
     nodeType["name"] = &Node::name;
-    nodeType["addComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::variadic_args va)
-        { self.addComponent(typeName, name, va); },
-    //TODO: add child class LuaComponent to user type
-    // nodeType["addLuaComponent"] = [](Node& self, std::string_view typeName, std::string name, sol::table args)
-    //     { self.addLuaComponent(typeName, name); },
-    nodeType["getComponent"] =
-        [](Node& self, std::string_view component) -> sol::table
+    nodeType["addComponent"] =
+        [](Node& self, std::string_view typeName, std::string name, sol::variadic_args va) -> sol::table&
         {
-            return self.getComponent(component)->luaEnv;
+            return self.addComponent(typeName, name, va).luaEnv;
+        },
+    nodeType["addLuaComponent"] =
+        [](Node& self, std::string scriptName, std::string name) -> sol::table&
+        {
+            return self.addComponent(LuaComponent(name), scriptName).luaEnv;
         };
-    // lua.set_function("addLuaComponent",
-    //     [this](std::string_view scriptName, std::string name)
-    //     { addLuaComponent(scriptName, name); });
+    nodeType["getComponent"] =
+        [](Node& self, std::string_view component) -> sol::table&
+        {
+            return self.getComponent(component).luaEnv;
+        };
 
     //TODO: remove component should remove any table usage.
     // nodeType["removeComponent"] = &Node::removeComponent;
