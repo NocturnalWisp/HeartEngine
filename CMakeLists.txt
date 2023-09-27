@@ -1,20 +1,20 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.5)
 project(LuaGame)
+
+set(UNITY_BUILD ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(USE_EDITOR OFF)
 
 add_subdirectory(core)
-add_subdirectory(modules/raymath)
-
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp)
-add_executable(${PROJECT_NAME} main.cpp)
-
 include_directories(${PROJECT_NAME} PUBLIC core/include)
-include_directories(${PROJECT_NAME} PUBLIC modules/raymath/include)
+link_libraries(LuaEngine)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC LuaEngine)
-target_link_libraries(${PROJECT_NAME} PUBLIC heart_raymath)
+add_subdirectory(modules/raymath)
+include_directories(${PROJECT_NAME} PUBLIC modules/raymath/include)
+link_libraries(heart_raymath)
+
+add_executable(${PROJECT_NAME} main.cpp)
 
 if (USE_EDITOR)
     add_custom_target(copy_assets

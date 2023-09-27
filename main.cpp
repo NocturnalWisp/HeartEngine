@@ -12,10 +12,11 @@
 
 #include "heart/file_manager.h"
 
-#include "heart_raymath/module.hpp"
+#include "heart/module.h"
+#include "module/raymath.h"
 
-namespace HeartEngine
-{
+using namespace HeartEngine;
+
 class CustomTexture : public Component
 {
 private:
@@ -42,6 +43,7 @@ public:
         transform = &node->getComponentT<Transform3D>("Transform");
         textureRect = &node->getComponentT<TextureRect>("TextureRect");
 
+
         node->engine->updateEvent.addListener([this](){ _update(); });
 
         transform->SetLocalPosition({200, 200, 0});
@@ -62,19 +64,24 @@ public:
         transform->SetLocalRotation({{0, 0, 1}, DEG2RAD * spin});
     }
 };
-}
+
+class TestModule : public Module
+{
+public:
+    void registerTypes(sol::state& lua)
+    {
+        registerComponent("Transform", &componentBuilder<Transform3D>);
+        registerComponent("TextureRect", &componentBuilder<TextureRect>);
+        registerComponent("CustomTexture", &componentBuilder<CustomTexture>);
+    }
+};
 
 int main()
 {
-    using namespace HeartEngine;
-
     Engine engine = Engine();
 
     engine.registerModule(HeartModules::RayMath());
-
-    engine.registerComponent("Transform", &Engine::registerComponentType<Transform3D>);
-    engine.registerComponent("TextureRect", &Engine::registerComponentType<TextureRect>);
-    engine.registerComponent("CustomTexture", &Engine::registerComponentType<CustomTexture>);
+    engine.registerModule(TestModule());
 
     engine.loadResource(HeartEngine::Texture("Texture", "test.png"));
 

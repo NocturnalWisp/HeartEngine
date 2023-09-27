@@ -5,6 +5,9 @@
 
 namespace HeartEngine
 {
+template <> Component& Node::addComponent(Component, std::string);
+template <> Component& Node::getComponentT(std::string_view) const;
+
 Component& Node::getComponent(std::string_view name) const
 {
     for (const auto &component : components)
@@ -32,7 +35,7 @@ void Node::destroy()
 
 Component& Node::addComponent(std::string_view typeName, std::string name, sol::variadic_args va)
 {
-    auto component = engine->getComponentFromRegistry(typeName, name, va);
+    auto component = engine->findComponentInRegistry(typeName, name, va);
 
     if (component == nullptr)
     {

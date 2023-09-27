@@ -69,6 +69,19 @@ int Engine::run()
     return 0;
 }
 
+std::unique_ptr<Component> Engine::findComponentInRegistry(std::string_view typeName, std::string name, sol::variadic_args va)
+{
+    for (auto& module : moduleRegistry)
+    {
+        if (auto component = module->getComponentFromRegistry(typeName, name, va))
+        {
+            return component;
+        }
+    }
+
+    return nullptr;
+}
+
 Node* Engine::getNode(std::string_view name)
 {
     Node* foundNode;
@@ -94,24 +107,6 @@ bool Engine::removeNode(std::string_view name)
 }
 
 template <> Node* Engine::addNode(Node n, std::string);
-
-std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va)
-{
-    for (const auto &componentType : componentRegistry)
-    {
-        if (componentType.first.compare(typeName) == 0)
-        {
-            return componentType.second(name, va);
-        }
-    }
-
-    return nullptr;
-}
-
-void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args))
-{
-    componentRegistry[typeName] = creator;
-}
 
 GlobalData* Engine::getGlobalData(std::string_view name) const
 {
@@ -172,13 +167,6 @@ void Engine::populateBasicLua()
     nodeType["runEvent"] = static_cast<void(Node::*)(std::string)>(&Node::runEvent);
     nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent);
     nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent);
-
-    // Other
-    lua->new_usertype<Vector3>("Vector3",
-        "x", &Vector3::x,
-        "y", &Vector3::y,
-        "z", &Vector3::z
-    );
 }
 
 void Engine::checkEarlyResourceRelease()

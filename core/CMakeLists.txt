@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.5)
 project(LuaEngine)
 
 cmake_policy(SET CMP0079 NEW)
+cmake_policy(SET CMP0077 NEW)
 
 # Settings
 option(USE_EDITOR "Allow for editing game source after compilation." ON)

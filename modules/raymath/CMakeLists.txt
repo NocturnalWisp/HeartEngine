@@ -1,14 +1,16 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.5)
 project(heart_raymath VERSION 1.0.0)
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../core")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Os")
 
-find_package(LuaEngine REQUIRED)
+add_library(heart_raymath src/raymath.cpp)
 
-add_library(heart_raymath INTERFACE)
+find_library(LuaEngine LuaEngine)
 
-target_include_directories(heart_raymath INTERFACE .)
+target_include_directories(heart_raymath PUBLIC ${LuaEngine_SOURCE_DIR}/include)
 
-target_include_directories(heart_raymath INTERFACE ${LuaEngine_INCLUDE_DIR}/include)
+target_include_directories(heart_raymath PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(heart_raymath PUBLIC ${sol2_SOURCE_DIR}/include)
 
-target_link_libraries(heart_raymath INTERFACE LuaEngine)
+target_link_libraries(heart_raymath sol2::sol2)
+target_link_libraries(heart_raymath LuaEngine)
