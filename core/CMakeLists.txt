@@ -39,8 +39,6 @@ FetchContent_Declare(sol2
 )
 FetchContent_MakeAvailable(sol2)
 
-set(CMAKE_CXX_STANDARD 17)
-
 # Add Library
 file(GLOB_RECURSE lua_engine_sources CONFIGURE_DEPENDS src/*.cpp)
 add_library(LuaEngine ${lua_engine_sources})
@@ -77,11 +75,17 @@ if (USE_EDITOR)
     add_dependencies(LuaEngine copy_assets)
 else()
     find_package(Python3 REQUIRED)
-    add_custom_command(
-      TARGET LuaEngine POST_BUILD
+
+    add_custom_target(ResourcePackagerCommand ALL
       COMMAND Python3 ${CMAKE_CURRENT_SOURCE_DIR}/../tools/Resourcepackager.py
         ${CMAKE_CURRENT_BINARY_DIR}/../_deps/lua-build
         ${CMAKE_CURRENT_SOURCE_DIR}/../assets
         ${CMAKE_CURRENT_BINARY_DIR}/../data.heart
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/../_deps/lua-build/luac.exe
+    )
+
+    add_custom_command(
+      TARGET LuaEngine POST_BUILD
+      COMMAND ${ResourcePackagerCommand}
     )
 endif()
