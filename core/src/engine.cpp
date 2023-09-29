@@ -75,19 +75,6 @@ int Engine::run()
     return 0;
 }
 
-std::unique_ptr<Component> Engine::findComponentInRegistry(std::string_view typeName, std::string name, sol::variadic_args va)
-{
-    for (auto& module : moduleRegistry)
-    {
-        if (auto component = module->getComponentFromRegistry(typeName, name, va))
-        {
-            return component;
-        }
-    }
-
-    return nullptr;
-}
-
 Node* Engine::getNode(std::string_view name)
 {
     Node* foundNode;
@@ -188,5 +175,23 @@ void Engine::checkEarlyResourceRelease()
             ++it;
         }
     }
+}
+
+void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args))
+{
+    componentRegistry[typeName] = creator;
+}
+
+std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va)
+{
+    for (const auto &componentType : componentRegistry)
+    {
+        if (componentType.first.compare(typeName) == 0)
+        {
+            return componentType.second(name, va);
+        }
+    }
+
+    return nullptr;
 }
 }

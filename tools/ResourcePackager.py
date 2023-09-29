@@ -42,7 +42,7 @@ for path in pathlist:
 
     byteData = bytes()
     if path.suffix == ".lua":
-        subprocess.call([argv[1] + "/luac54.exe", str(path)])
+        subprocess.call([argv[1] + "/luac.exe", str(path)])
 
         with open("luac.out", 'rb') as luaByteCode:
             byteData = luaByteCode.read()

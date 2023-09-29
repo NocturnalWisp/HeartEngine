@@ -35,7 +35,7 @@ void Node::destroy()
 
 Component& Node::addComponent(std::string_view typeName, std::string name, sol::variadic_args va)
 {
-    auto component = engine->findComponentInRegistry(typeName, name, va);
+    auto component = engine->getComponentFromRegistry(typeName, name, va);
 
     if (component == nullptr)
     {

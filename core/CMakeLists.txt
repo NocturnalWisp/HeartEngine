@@ -4,13 +4,13 @@ project(LuaEngine)
 cmake_policy(SET CMP0079 NEW)
 cmake_policy(SET CMP0077 NEW)
 
+set(CMAKE_CXX_STANDARD 17)
+
+set(RAYLIB_VERSION 4.5.0)
+
 # Settings
 option(USE_EDITOR "Allow for editing game source after compilation." ON)
 option(USE_DEBUG "Allow the engine to print to the console." ON)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-set(RAYLIB_VERSION 4.5.0)
 
 include(FetchContent)
 
@@ -41,14 +41,11 @@ FetchContent_MakeAvailable(sol2)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Setting parameters for raylib
-# set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
-# set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # or games
-# set(BUILD_RAYLIB_CPP_EXAMPLES OFF CACHE BOOL "" FORCE)
-
+# Add Library
 file(GLOB_RECURSE lua_engine_sources CONFIGURE_DEPENDS src/*.cpp)
 add_library(LuaEngine ${lua_engine_sources})
 
+# Set defines.
 if (USE_EDITOR)
     target_compile_definitions(LuaEngine PUBLIC EDITOR)
 endif()
@@ -71,3 +68,20 @@ target_link_libraries(LuaEngine lua_static)
 target_link_libraries(LuaEngine sol2::sol2)
 target_link_libraries(LuaEngine raylib)
 target_link_libraries(LuaEngine raylib_cpp)
+
+# Move/binary zip assets.
+if (USE_EDITOR)
+    add_custom_target(copy_assets
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/../assets ${CMAKE_CURRENT_BINARY_DIR}/../assets
+    )
+    add_dependencies(LuaEngine copy_assets)
+else()
+    find_package(Python3 REQUIRED)
+    add_custom_command(
+      TARGET LuaEngine POST_BUILD
+      COMMAND Python3 ${CMAKE_CURRENT_SOURCE_DIR}/../tools/Resourcepackager.py
+        ${CMAKE_CURRENT_BINARY_DIR}/../_deps/lua-build
+        ${CMAKE_CURRENT_SOURCE_DIR}/../assets
+        ${CMAKE_CURRENT_BINARY_DIR}/../data.heart
+    )
+endif()

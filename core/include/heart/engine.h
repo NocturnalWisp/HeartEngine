@@ -46,12 +46,10 @@ public:
 
         moduleRegistry.push_back(std::move(module));
 
-        modulePtr->registerTypes(*lua);
+        modulePtr->registerTypes(*this, *lua);
 
         return modulePtr;
     }
-
-    std::unique_ptr<Component> findComponentInRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
 
     Node* getNode(std::string_view name);
 
@@ -141,6 +139,18 @@ public:
         return static_cast<T*>(getGlobalData(name));
     }
 
+    // Component Registry
+    template <class T>
+    static std::unique_ptr<Component> componentBuilder(std::string name, sol::variadic_args va)
+    {
+        static_assert(std::is_base_of<Component, T>::value, "Type must inherit from Component.");
+        return std::make_unique<T>(T(name, va));
+    }
+
+    void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args));
+
+    std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
+
     FileManager fileManager = {};
 
     bool started = false;
@@ -165,5 +175,6 @@ private:
     std::vector<std::unique_ptr<Node>> nodes;
 
     std::vector<std::unique_ptr<Module>> moduleRegistry;
+    std::map<std::string, std::unique_ptr<Component>(*)(std::string name, sol::variadic_args va)> componentRegistry;
 };
 }

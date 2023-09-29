@@ -68,11 +68,11 @@ public:
 class TestModule : public Module
 {
 public:
-    void registerTypes(sol::state& lua)
+    void registerTypes(Engine& engine, sol::state& lua)
     {
-        registerComponent("Transform", &componentBuilder<Transform3D>);
-        registerComponent("TextureRect", &componentBuilder<TextureRect>);
-        registerComponent("CustomTexture", &componentBuilder<CustomTexture>);
+        engine.registerComponent("Transform", &Engine::componentBuilder<Transform3D>);
+        engine.registerComponent("TextureRect", &Engine::componentBuilder<TextureRect>);
+        engine.registerComponent("CustomTexture", &Engine::componentBuilder<CustomTexture>);
     }
 };
 
@@ -80,7 +80,7 @@ int main()
 {
     Engine engine = Engine();
 
-    engine.registerModule(HeartModules::RayMath());
+    engine.registerModule(HeartModules::RayMath(true));
     engine.registerModule(TestModule());
 
     engine.loadResource(HeartEngine::Texture("Texture", "test.png"));
