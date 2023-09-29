@@ -13,11 +13,11 @@
 *
 *******************************************************************************************/
 
-#include "components/transform.h"
+#include "module/transform_3d.h"
 
 #include <sol/sol.hpp>
 
-namespace HeartEngine
+namespace HeartModules
 {
 void Transform3D::populateLuaData()
 {

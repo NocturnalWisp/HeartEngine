@@ -39,6 +39,7 @@ Component& Node::addComponent(std::string_view typeName, std::string name, sol::
 
     if (component == nullptr)
     {
+        //TODO: Implemnted custom sol2 exception handling for proper display of errors.
         throw HeartException({"Could not find component: ", typeName, " in the registry. Make sure to register the component with the engine before trying to use it."});
     }
 

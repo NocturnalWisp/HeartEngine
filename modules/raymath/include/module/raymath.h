@@ -5,8 +5,6 @@
 
 #include "heart/module.h"
 
-#include "heart/debug.h"
-
 namespace HeartEngine { class Engine; }
 
 namespace HeartModules
@@ -25,8 +23,6 @@ public:
 
     void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override
     {
-        sol::table table = lua.create_named_table("RayMath");
-
         if (includeVector2)
             SetupVector2(lua);
         if (includeVector3)

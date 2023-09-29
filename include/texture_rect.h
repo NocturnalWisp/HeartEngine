@@ -3,7 +3,7 @@
 #include "heart/engine.h"
 
 #include "heart/resources/texture.h"
-#include "transform.h"
+#include "module/transform_3d.h"
 
 namespace HeartEngine
 {
@@ -12,7 +12,7 @@ class TextureRect : public Component
 private:
     std::string textureName;
 protected:
-    Transform3D* transform;
+    HeartModules::Transform3D* transform;
 public:
     std::shared_ptr<Texture> texture = nullptr;
 
@@ -39,7 +39,8 @@ public:
 
         texture = node->engine->getResource<Texture>(textureName);
 
-        transform = &node->getComponentT<Transform3D>("Transform");
+        //TODO: Add component requirements (Allow referencing other components during constructor setup.)
+        transform = &node->getComponentT<HeartModules::Transform3D>("Transform");
     }
 
     void _on_destroy() override

@@ -23,11 +23,11 @@
 
 #include <raylib-cpp.hpp>
 
-#include "../component.h"
+#include "heart/component.h"
 
 namespace sol { class state; }
 
-namespace HeartEngine
+namespace HeartModules
 {
 //typedef std::pair<Vector3, float> RotationAxisAngle;
 typedef struct RotationAxisAngle
@@ -36,7 +36,7 @@ typedef struct RotationAxisAngle
     float   angle;
 } RotationAxisAngle;
 
-class Transform3D : public Component
+class Transform3D : public HeartEngine::Component
 {
 public:
     void populateLuaData() override;
