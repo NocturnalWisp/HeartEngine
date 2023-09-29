@@ -152,6 +152,10 @@ private:
     void populateBasicLua();
     void checkEarlyResourceRelease();
 
+    // Update
+    double nextUpdate = GetTime();
+    double currentTime = GetTime();
+
     std::unique_ptr<sol::state> lua;
 
     bool checkResourceRelease = false;

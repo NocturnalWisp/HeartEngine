@@ -36,7 +36,13 @@ int Engine::run()
     while (!WindowShouldClose())
     {
         // Update
-        updateEvent.run();
+        currentTime = GetTime();
+
+        while (nextUpdate < currentTime && GetFrameTime() != 0)
+        {
+            updateEvent.run();
+            nextUpdate += GetFrameTime();
+        }
 
         BeginDrawing();
 

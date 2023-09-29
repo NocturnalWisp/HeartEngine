@@ -35,12 +35,12 @@ public:
 
     void removeListener(EventHandle& handle);
 
-    void run(sol::object obj1 = sol::nil, sol::object obj2 = sol::nil);
+    void run(sol::object obj1 = sol::nil, sol::object obj2 = sol::nil) const;
 
 private:
     std::map<std::unique_ptr<EventHandle>, EventListener> eventHandlers;
 
-    bool inside_run = false;
+    mutable bool inside_run = false;
 };
 
 // A single function listener.

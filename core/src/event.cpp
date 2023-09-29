@@ -59,7 +59,7 @@ void EventBus::removeListener(EventHandle& handle)
     }
 }
 
-void EventBus::run(sol::object obj1, sol::object obj2)
+void EventBus::run(sol::object obj1, sol::object obj2) const
 {
     inside_run = true;
     for (const auto& pair : eventHandlers)
