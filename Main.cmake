@@ -4,4 +4,4 @@ function(load_module modulePath includePath moduleName)
     link_libraries(${moduleName})
 endfunction()
 
-load_module(core core/include LuaEngine)
+load_module(core core/include HeartEngine)

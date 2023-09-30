@@ -1,8 +1,14 @@
-#include "heart/resource.h"
+#pragma once
 
 #include <raylib-cpp.hpp>
 
-namespace HeartEngine
+#include "heart/resource.h"
+
+#include "module/raylib_textures.h"
+
+using namespace HeartEngine;
+
+namespace HeartModules
 {
 class Texture : public Resource
 {
@@ -14,7 +20,7 @@ public:
 
     void _load() override
     {
-        texture = engine->fileManager.loadImage(path).LoadTexture();
+        texture = RayLibTextures::loadImage(*engine, path).LoadTexture();
     }
 
     void _unload() override

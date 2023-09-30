@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sol/sol.hpp>
-#include <raylib-cpp.hpp>
+#include <raylib.h>
 
 #include "heart/module.h"
 

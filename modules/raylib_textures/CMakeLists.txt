@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.5)
+project(heart_raylib_textures VERSION 1.0.0)
+
+set(RAYLIB_CPP_VERSION 4.5.0)
+
+include(../ModuleHelper.cmake)
+
+include_directories(include)
+add_library(heart_raylib_textures src/raylib_textures.cpp)
+
+FetchLibraryGit(heart_raylib_textures raylib https://github.com/raysan5/raylib.git ${RAYLIB_VERSION})
+FetchLibraryGit(heart_raylib_textures raylib_cpp https://github.com/RobLoach/raylib-cpp.git v${RAYLIB_CPP_VERSION})

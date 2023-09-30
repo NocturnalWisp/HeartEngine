@@ -3,17 +3,10 @@
 #include <algorithm>
 #include <functional>
 
-#include <raylib-cpp.hpp>
-#include <raymath.h>
-
 namespace HeartEngine
 {
 Engine::Engine()
 {
-    SetTraceLogLevel(4);
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Window title");
-    SetTargetFPS(60);
-
     lua = std::make_unique<sol::state>(sol::state());
     lua->open_libraries(sol::lib::base);
 
@@ -26,32 +19,42 @@ int Engine::run()
 
     // Creation
     for (auto& node : nodes)
-    {
         node->onCreate();
-    }
 
     if (checkResourceRelease)
         checkEarlyResourceRelease();
+    
+    double previousTime = getTime();
+    double lag = 0.0;
 
-    while (!WindowShouldClose())
+    while (!shouldCloseWindow)
     {
         // Update
-        currentTime = GetTime();
+        double currentTime = getTime();
+        double elapsed = (currentTime - previousTime) / 1000;
+        if (elapsed > 0.25)
+            elapsed = 0.25;
+        previousTime = currentTime;
 
-        while (nextUpdate < currentTime && GetFrameTime() != 0)
+        lag += elapsed;
+
+        while (lag >= MS_PER_UPDATE)
         {
             events["update"].run();
-            nextUpdate += GetFrameTime();
+            lag -= MS_PER_UPDATE;
         }
 
-        BeginDrawing();
+        for (auto& mod : moduleRegistry)
+            mod->duringUpdate(*this);
 
-        ClearBackground(RAYWHITE);
+        for (auto& mod : moduleRegistry)
+            mod->startDraw(*this);
 
         // Draw
         events["draw"].run();
 
-        EndDrawing();
+        for (auto& mod : moduleRegistry)
+            mod->endDraw(*this);
 
         // Handle hanging resources
         //TODO: Iterating on the list every loop is especially unessecary.
@@ -61,16 +64,13 @@ int Engine::run()
 
     // Destruction
     for (auto& node : nodes)
-    {
         node->onDestroy();
-    }
 
     for (auto& res : resources)
-    {
         unload(res);
-    }
 
-    CloseWindow();
+    for (auto& mod : moduleRegistry)
+        mod->closeApplication(*this);
 
     return 0;
 }

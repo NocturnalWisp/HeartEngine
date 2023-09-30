@@ -9,6 +9,7 @@
 #include "module/raylib_input.h"
 #include "module/raymath.h"
 #include "module/transforms.h"
+#include "module/resources/texture.h"
 
 using namespace HeartEngine;
 using namespace HeartModules;
@@ -32,7 +33,7 @@ int main()
     engine.registerModule(HeartModules::Transforms());
     engine.registerModule(TestModule());
 
-    engine.loadResource(HeartEngine::Texture("Texture", "test.png"));
+    engine.loadResource(HeartModules::Texture("Texture", "test.png"));
 
     auto luaTest = engine.addNode(Node("LuaTest"), "test.lua");
 

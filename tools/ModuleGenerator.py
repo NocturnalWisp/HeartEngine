@@ -4,6 +4,8 @@
 from sys import argv
 import os
 from os.path import join
+from os.path import isdir
+from os import _exit
 from string import Formatter
 
 if len(argv) < 2:
@@ -18,6 +20,10 @@ if not isinstance(argv[2], str):
 modulesDir = "../modules"
 moduleName = argv[1]
 className = argv[2]
+
+if isdir(join(modulesDir, moduleName)):
+    print("Module with that name all ready exists.")
+    _exit(2)
 
 os.makedirs(join(modulesDir, moduleName, "include", "module"), exist_ok=True)
 os.makedirs(join(modulesDir, moduleName, "src"), exist_ok=True)

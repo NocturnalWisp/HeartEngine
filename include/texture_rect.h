@@ -1,8 +1,10 @@
+#pragma once
+
 #include "heart/node.h"
 
 #include "heart/engine.h"
 
-#include "heart/resources/texture.h"
+#include "module/resources/texture.h"
 #include "module/transform_3d.h"
 
 namespace HeartEngine
@@ -14,7 +16,7 @@ private:
 protected:
     HeartModules::Transform3D* transform;
 public:
-    std::shared_ptr<Texture> texture = nullptr;
+    std::shared_ptr<HeartModules::Texture> texture = nullptr;
 
     TextureRect(std::string name, std::string p_texture)
         : Component(name), textureName(p_texture) {}
@@ -37,7 +39,7 @@ public:
     {
         node->engine->events["draw"].addListener([this](){_on_draw(); });
 
-        texture = node->engine->getResource<Texture>(textureName);
+        texture = node->engine->getResource<HeartModules::Texture>(textureName);
 
         //TODO: Add component requirements (Allow referencing other components during constructor setup.)
         transform = &node->getComponentT<HeartModules::Transform3D>("Transform");
@@ -68,7 +70,7 @@ public:
     void set_texture(std::string p_textureName)
     {
         textureName = p_textureName;
-        texture = node->engine->getResource<Texture>(textureName);
+        texture = node->engine->getResource<HeartModules::Texture>(textureName);
     }
 };
 }

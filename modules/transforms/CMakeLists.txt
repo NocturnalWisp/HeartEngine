@@ -7,3 +7,5 @@ include_directories(include)
 add_library(heart_transforms src/transforms.cpp
     src/transform_3d.cpp
 )
+
+FetchLibraryGit(heart_transforms raylib https://github.com/raysan5/raylib.git ${RAYLIB_VERSION})

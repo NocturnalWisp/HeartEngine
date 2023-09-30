@@ -8,7 +8,6 @@
 #include <memory>
 #include <optional>
 
-#include <raylib-cpp.hpp>
 #include <sol/sol.hpp>
 
 #include "debug.h"
@@ -22,7 +21,6 @@ public:
     ~FileManager();
 
     void loadScript(std::string_view path, sol::state& lua, sol::environment* env = nullptr);
-    raylib::Image loadImage(std::string_view path);
 
     std::vector<std::byte> getBytes(std::string_view path);
     std::string getString(std::string_view path);

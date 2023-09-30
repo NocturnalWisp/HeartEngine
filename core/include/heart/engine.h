@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <type_traits>
+#include <chrono>
 
 #include <sol/sol.hpp>
 
@@ -22,9 +23,6 @@
 
 namespace HeartEngine
 {
-constexpr auto SCREEN_WIDTH  = 800;
-constexpr auto SCREEN_HEIGHT = 450;
-
 class Engine
 {
     friend class Node;
@@ -151,6 +149,11 @@ public:
 
     std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
 
+    double getTime()
+    {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
+    }
+
     FileManager fileManager = {};
 
     bool started = false;
@@ -158,13 +161,11 @@ public:
     // Events
     EventManager events;
 
+    bool shouldCloseWindow = false;
+
 private:
     void populateBasicLua();
     void checkEarlyResourceRelease();
-
-    // Update
-    double nextUpdate = GetTime();
-    double currentTime = GetTime();
 
     std::unique_ptr<sol::state> lua;
 
@@ -176,5 +177,9 @@ private:
 
     std::vector<std::unique_ptr<Module>> moduleRegistry;
     std::map<std::string, std::unique_ptr<Component>(*)(std::string name, sol::variadic_args va)> componentRegistry;
+
+    std::chrono::_V2::system_clock::time_point startTime = std::chrono::system_clock::now();
+
+    const double MS_PER_UPDATE = 0.01;
 };
 }

@@ -21,7 +21,7 @@
 #include <iostream>
 #include <string>
 
-#include <raylib-cpp.hpp>
+#include <raymath.h>
 
 #include "heart/component.h"
 

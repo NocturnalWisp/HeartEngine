@@ -5,3 +5,5 @@ include(../ModuleHelper.cmake)
 
 include_directories(include)
 add_library(heart_raylib_input src/raylib_input.cpp)
+
+FetchLibraryGit(heart_raylib_input raylib https://github.com/raysan5/raylib.git ${RAYLIB_VERSION})
