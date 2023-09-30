@@ -9,6 +9,9 @@ include(Main.cmake)
 load_module(modules/raylib_core modules/raylib_core/include heart_raylib_core)
 # Raymath
 load_module(modules/raymath modules/raymath/include heart_raymath)
+# Raylib Core
+load_module(modules/raylib_input modules/raylib_input/include heart_raylib_input)
+
 # Transforms
 load_module(modules/transforms modules/transforms/include heart_transforms)
 
