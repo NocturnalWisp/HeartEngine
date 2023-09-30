@@ -202,6 +202,9 @@ void RayMath::SetupQuaternion(sol::state& lua)
 }
 void RayMath::SetupOther(sol::state& lua)
 {
+    lua["deg2rad"] = DEG2RAD;
+    lua["rad2deg"] = RAD2DEG;
+
     ADD_LUA_FUNCTION(lua, Clamp);
     ADD_LUA_FUNCTION(lua, Normalize);
     ADD_LUA_FUNCTION(lua, Remap);

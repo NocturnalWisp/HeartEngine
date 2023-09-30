@@ -17,13 +17,34 @@
 
 #include <sol/sol.hpp>
 
+#include "heart/module.h"
+
+using namespace HeartEngine;
+
 namespace HeartModules
 {
 void Transform3D::populateLuaData()
 {
     auto type = CREATEUSERTYPE(Transform3D);
 
-    type["position"] = &Transform3D::position;
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getLocalPosition);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, setLocalPosition);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getWorldPosition);
+
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getLocalRotation);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, setLocalRotation);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getWorldRotation);
+
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getLocalScale);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, setLocalScale);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getWorldScale);
+
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getLocalToWorldMatrix);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, getWorldToLocalMatrix);
+
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, extractTranslation);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, extractRotation);
+    ADD_LUA_FUNCTION_W_TYPE(type, Transform3D, extractScale);
 }
 
 Matrix QuatToMat(Quaternion q)
@@ -53,9 +74,9 @@ Matrix QuatToMat(Quaternion q)
 Transform3D::Transform3D(std::string name) : Component(name)
 {
     // Zero out data, exists at (0, 0, 0) world space.
-    SetLocalPosition({0, 0, 0});
-    SetLocalRotation({ {0, 0, 0}, 0 });
-    SetLocalScale({1, 1, 1});
+    setLocalPosition({0, 0, 0});
+    setLocalRotation({ {0, 0, 0}, 0 });
+    setLocalScale({1, 1, 1});
     // Root node.
     parent = nullptr;
 }
@@ -85,11 +106,11 @@ Transform3D::Transform3D(std::string name, sol::variadic_args args) : Component(
     //TODO: seg fault if bad table given.
     // Zero out data, exists at (0, 0, 0) world space.
     if (args.size() > 0)
-        SetLocalPosition(tableToVector3(args[0].as<std::vector<float>>()));
+        setLocalPosition(tableToVector3(args[0].as<std::vector<float>>()));
     if (args.size() > 1)
-        SetLocalRotation(tableToRotationAxisAngle(args[1].as<std::vector<float>>()));
+        setLocalRotation(tableToRotationAxisAngle(args[1].as<std::vector<float>>()));
     if (args.size() > 2)
-        SetLocalScale(tableToVector3(args[2].as<std::vector<float>>()));
+        setLocalScale(tableToVector3(args[2].as<std::vector<float>>()));
     
     // Root node.
     parent = nullptr;
@@ -101,9 +122,9 @@ Transform3D::Transform3D(
     RotationAxisAngle localRotation,
     Vector3 localScale) : Component(name)
 {
-    SetLocalPosition(localPosition);
-    SetLocalRotation(localRotation);
-    SetLocalScale(localScale);
+    setLocalPosition(localPosition);
+    setLocalRotation(localRotation);
+    setLocalScale(localScale);
     // Root node.
     parent = nullptr;
 }
@@ -113,33 +134,33 @@ Transform3D::~Transform3D()
     // Remove dangling pointers from children and parent.
     for (Transform3D* child: children)
     {
-        child->SetParent(nullptr);
+        child->setParent(nullptr);
     }
     if (parent)
     {
-        this->SetParent(nullptr);
+        this->setParent(nullptr);
     }
 }
 
-Vector3 Transform3D::GetLocalPosition() const
+Vector3 Transform3D::getLocalPosition() const
 {
     return position;
 }
 
-void Transform3D::SetLocalPosition(Vector3 localPosition)
+void Transform3D::setLocalPosition(Vector3 localPosition)
 {
     position = localPosition;
 }
 
-Vector3 Transform3D::GetWorldPosition() const
+Vector3 Transform3D::getWorldPosition() const
 {
     // Get transformation matrix.
-    Matrix ltwMat = GetLocalToWorldMatrix();
+    Matrix ltwMat = getLocalToWorldMatrix();
     // Extract translation.
-    return ExtractTranslation(ltwMat);
+    return extractTranslation(ltwMat);
 }
 
-RotationAxisAngle Transform3D::GetLocalRotation() const
+RotationAxisAngle Transform3D::getLocalRotation() const
 {
     Vector3 rotationAxis = {0, 0, 0};
     float rotationAngle = 0;
@@ -147,16 +168,16 @@ RotationAxisAngle Transform3D::GetLocalRotation() const
     return { rotationAxis, rotationAngle * RAD2DEG };
 }
 
-void Transform3D::SetLocalRotation(RotationAxisAngle rotation)
+void Transform3D::setLocalRotation(RotationAxisAngle rotation)
 {
     this->rotation = QuaternionFromAxisAngle(rotation.axis, rotation.angle * DEG2RAD);
 }
 
-RotationAxisAngle Transform3D::GetWorldRotation() const
+RotationAxisAngle Transform3D::getWorldRotation() const
 {
     // Get transformation matrix.
-    Matrix ltwMat = GetLocalToWorldMatrix();
-    Matrix rotationMatrix = ExtractRotation(ltwMat);
+    Matrix ltwMat = getLocalToWorldMatrix();
+    Matrix rotationMatrix = extractRotation(ltwMat);
 
     // Check to see if rotation is non-zero.
     float matrixAngle = acos((rotationMatrix.m0 + rotationMatrix.m5 + rotationMatrix.m10 - 1) / 2);
@@ -179,30 +200,30 @@ RotationAxisAngle Transform3D::GetWorldRotation() const
     return { rotationAxis, rotationAngle * RAD2DEG };
 }
 
-Vector3 Transform3D::GetLocalScale() const
+Vector3 Transform3D::getLocalScale() const
 {
     return scale;
 }
 
-void Transform3D::SetLocalScale(Vector3 localScale)
+void Transform3D::setLocalScale(Vector3 localScale)
 {
     scale = localScale;
 }
 
-Vector3 Transform3D::GetWorldScale() const
+Vector3 Transform3D::getWorldScale() const
 {
     // Get transformation matrix.
-    Matrix ltwMat = GetLocalToWorldMatrix();
+    Matrix ltwMat = getLocalToWorldMatrix();
     // Extract world scale.
-    return ExtractScale(ltwMat);
+    return extractScale(ltwMat);
 }
 
-Matrix Transform3D::GetLocalToWorldMatrix() const
+Matrix Transform3D::getLocalToWorldMatrix() const
 {
     if (parent)
     {
         // Get parent matrix.
-        Matrix parentMatrix = parent->GetLocalToWorldMatrix();
+        Matrix parentMatrix = parent->getLocalToWorldMatrix();
         Matrix childMatrix = MakeLocalToParent();
         // Multiply matrices.
         return MatrixMultiply(childMatrix, parentMatrix);
@@ -214,9 +235,9 @@ Matrix Transform3D::GetLocalToWorldMatrix() const
     }
 }
 
-Matrix Transform3D::GetWorldToLocalMatrix() const
+Matrix Transform3D::getWorldToLocalMatrix() const
 {
-    return MatrixInvert(GetLocalToWorldMatrix());
+    return MatrixInvert(getLocalToWorldMatrix());
 }
 
 Matrix Transform3D::MakeLocalToParent() const
@@ -235,7 +256,7 @@ Matrix Transform3D::MakeParentToLocal() const
     return MatrixInvert(MakeLocalToParent());
 }
 
-Vector3 Transform3D::ExtractTranslation(Matrix transform)
+Vector3 Transform3D::extractTranslation(Matrix transform)
 {
     float position_x = transform.m12;
     float position_y = transform.m13;
@@ -243,10 +264,10 @@ Vector3 Transform3D::ExtractTranslation(Matrix transform)
     return { position_x, position_y, position_z };
 }
 
-Matrix Transform3D::ExtractRotation(Matrix transform)
+Matrix Transform3D::extractRotation(Matrix transform)
 {
     // Extract scale.
-    Vector3 scale = ExtractScale(transform);
+    Vector3 scale = extractScale(transform);
     // Extract rotation matrix.
     return {
         transform.m0 / scale.x, transform.m4 / scale.y, transform.m8 / scale.z,  0.0f,
@@ -256,7 +277,7 @@ Matrix Transform3D::ExtractRotation(Matrix transform)
     };
 }
 
-Vector3 Transform3D::ExtractScale(Matrix transform)
+Vector3 Transform3D::extractScale(Matrix transform)
 {
     float scale_x = Vector3Length({ transform.m0, transform.m1, transform.m2 });
     float scale_y = Vector3Length({ transform.m4, transform.m5, transform.m6 });
@@ -268,7 +289,7 @@ Vector3 Transform3D::ExtractScale(Matrix transform)
     };
 }
 
-void Transform3D::SetParent(Transform3D* newParent, unsigned int childIndex)
+void Transform3D::setParent(Transform3D* newParent, unsigned int childIndex)
 {
     if (parent)
     {

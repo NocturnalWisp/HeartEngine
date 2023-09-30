@@ -52,37 +52,37 @@ public:
 
     // POSITION PROPERTY.
     // Local.
-    Vector3 GetLocalPosition() const;
-    void SetLocalPosition(Vector3 localPosition);
+    Vector3 getLocalPosition() const;
+    void setLocalPosition(Vector3 localPosition);
     // World.
-    Vector3 GetWorldPosition() const;
+    Vector3 getWorldPosition() const;
 
     // ROTATION PROPERTY.
     // Local.
-    RotationAxisAngle GetLocalRotation() const;
-    void SetLocalRotation(RotationAxisAngle rotation);
+    RotationAxisAngle getLocalRotation() const;
+    void setLocalRotation(RotationAxisAngle rotation);
     // World.
-    RotationAxisAngle GetWorldRotation() const;
+    RotationAxisAngle getWorldRotation() const;
 
     // SCALE PROPERTY.
     // Local.
-    Vector3 GetLocalScale() const;
-    void SetLocalScale(Vector3 localScale);
+    Vector3 getLocalScale() const;
+    void setLocalScale(Vector3 localScale);
     // World.
-    Vector3 GetWorldScale() const;
+    Vector3 getWorldScale() const;
 
     // SPACE TRANSFORMATIONS.
     // Local to world space.
-    Matrix GetLocalToWorldMatrix() const;
+    Matrix getLocalToWorldMatrix() const;
     // World to local space.
-    Matrix GetWorldToLocalMatrix() const;
+    Matrix getWorldToLocalMatrix() const;
 
-    static Vector3 ExtractTranslation(Matrix transform);
-    static Matrix  ExtractRotation(Matrix transform);
-    static Vector3 ExtractScale(Matrix transform);
+    static Vector3 extractTranslation(Matrix transform);
+    static Matrix  extractRotation(Matrix transform);
+    static Vector3 extractScale(Matrix transform);
 
     // HIERARCHY OPERATIONS.
-    void SetParent(Transform3D* newParent, unsigned int childIndex = 0);
+    void setParent(Transform3D* newParent, unsigned int childIndex = 0);
 
 protected:
     // Parent transform.

@@ -53,9 +53,9 @@ public:
         if (texture == nullptr)
             return;
 
-        auto position = transform->GetWorldPosition();
-        auto scale = transform->GetWorldScale();
-        auto rotation = transform->GetWorldRotation();
+        auto position = transform->getWorldPosition();
+        auto scale = transform->getWorldScale();
+        auto rotation = transform->getWorldRotation();
 
         DrawTexturePro(texture->texture,
         {0, 0, texture->texture.width * 1.0f, texture->texture.height * 1.0f},
