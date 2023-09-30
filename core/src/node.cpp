@@ -110,9 +110,17 @@ void Node::populateEnvironment()
         };
     
     luaEnv["getComponent"] =
-        [this](std::string_view component) -> sol::table&
+        [this](std::string_view component) -> sol::table
         {
-            return getComponent(component).luaEnv;
+            auto foundComponent = &getComponent(component);
+            if (foundComponent->isLuaScript)
+            {
+                return foundComponent->luaEnv;
+            }
+            else
+            {
+                return foundComponent->luaEnv[component];
+            }
         };
     
     luaEnv["events"] = &events;

@@ -154,9 +154,9 @@ void Engine::populateBasicLua()
 
     nodeType["name"] = &Node::name;
     nodeType["addComponent"] =
-        [](Node& self, std::string_view typeName, std::string name, sol::variadic_args va) -> sol::table&
+        [](Node& self, std::string_view typeName, std::string name, sol::variadic_args va) -> sol::table
         {
-            return self.addComponent(typeName, name, va).luaEnv;
+            return self.addComponent(typeName, name, va).luaEnv[name];
         },
     nodeType["addLuaComponent"] =
         [](Node& self, std::string scriptName, std::string name) -> sol::table&
@@ -164,9 +164,17 @@ void Engine::populateBasicLua()
             return self.addComponent(LuaComponent(name), scriptName).luaEnv;
         };
     nodeType["getComponent"] =
-        [](Node& self, std::string_view component) -> sol::table&
+        [](Node& self, std::string_view component) -> sol::table
         {
-            return self.getComponent(component).luaEnv;
+            auto foundComponent = &self.getComponent(component);
+            if (foundComponent->isLuaScript)
+            {
+                return foundComponent->luaEnv;
+            }
+            else
+            {
+                return foundComponent->luaEnv[component];
+            }
         };
 
     //TODO: remove component should remove any table usage.

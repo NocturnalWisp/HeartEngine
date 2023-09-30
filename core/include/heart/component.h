@@ -33,6 +33,8 @@ public:
 private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
     void populateEnvironment() override;
+
+    bool isLuaScript = false;
 };
 
 class LuaComponent : public Component
