@@ -156,8 +156,8 @@ public:
     bool started = false;
 
     // Events
-    EventBus updateEvent;
-    EventBus drawEvent;
+    EventManager events;
+
 private:
     void populateBasicLua();
     void checkEarlyResourceRelease();

@@ -46,12 +46,12 @@ public:
         textureRect = &node->getComponentT<TextureRect>("TextureRect");
 
 
-        node->engine->updateEvent.addListener([this](){ _update(); });
+        node->engine->events["update"].addListener([this](){ _update(); });
 
         transform->SetLocalPosition({200, 200, 0});
 
         std::function<void()> function = std::bind(&test, this);
-        handle = node->addEventListener("test", function);
+        handle = node->events["test"].addListener(function);
     }
 
     void test()

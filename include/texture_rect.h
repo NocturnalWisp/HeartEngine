@@ -35,7 +35,7 @@ public:
 
     void _on_create() override
     {
-        node->engine->drawEvent.addListener([this](){_on_draw(); });
+        node->engine->events["draw"].addListener([this](){_on_draw(); });
 
         texture = node->engine->getResource<Texture>(textureName);
 

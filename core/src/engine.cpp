@@ -40,7 +40,7 @@ int Engine::run()
 
         while (nextUpdate < currentTime && GetFrameTime() != 0)
         {
-            updateEvent.run();
+            events["update"].run();
             nextUpdate += GetFrameTime();
         }
 
@@ -49,7 +49,7 @@ int Engine::run()
         ClearBackground(RAYWHITE);
 
         // Draw
-        drawEvent.run();
+        events["draw"].run();
 
         EndDrawing();
 
@@ -118,6 +118,25 @@ GlobalData* Engine::getGlobalData(std::string_view name) const
 
 void Engine::populateBasicLua()
 {
+    // Events
+    auto eventManagerType = lua->new_usertype<EventManager>("EventManager");
+
+    eventManagerType["deleteEvent"] = &EventManager::deleteEvent;
+    eventManagerType[sol::meta_function::index] = &EventManager::operator[];
+    // eventManagerType["getEvent"] = [](EventManager& self, std::string eventName) -> EventBus&
+    //     {
+    //         return self.events[eventName];
+    //     };
+
+    auto eventBusType = lua->new_usertype<EventBus>("EventBus");
+
+    eventBusType["addListener"] = [](EventBus& self, sol::function function) -> EventHandle*
+        {
+            return self.addListener(function);
+        };
+    eventBusType["removeListener"] = &EventBus::removeListener;
+    eventBusType["run"] = &EventBus::run;
+
     // Engine
     auto engineType = lua->new_usertype<Engine>("Engine");
 
@@ -127,6 +146,8 @@ void Engine::populateBasicLua()
     engineType["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name) -> Node*
         { return self.addNode<Node>(Node(name), scriptName); };
     engineType["removeNode"] = &Engine::removeNode;
+
+    engineType["events"] = &Engine::events;
 
     // Node
     auto nodeType = lua->new_usertype<Node>("Node");
@@ -152,14 +173,7 @@ void Engine::populateBasicLua()
     // nodeType["removeComponent"] = &Node::removeComponent;
     nodeType["engine"] = &Node::engine;
 
-    nodeType["addEventListener"] = [](Node& self, std::string eventName, sol::function function) -> EventHandle*
-        {
-            return self.addEventListener(eventName, [function](sol::object obj1, sol::object obj2){ function(obj1, obj2); });
-        };
-    nodeType["removeEventListener"] = &Node::removeEventListener;
-    nodeType["runEvent"] = static_cast<void(Node::*)(std::string)>(&Node::runEvent);
-    nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object)>(&Node::runEvent);
-    nodeType["runEvent"] = static_cast<void(Node::*)(std::string, sol::object, sol::object)>(&Node::runEvent);
+    nodeType["events"] = &Node::events;
 }
 
 void Engine::checkEarlyResourceRelease()

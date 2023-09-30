@@ -19,7 +19,6 @@ void Transforms::SetupTransform2D(Engine& engine, sol::state& lua)
 void Transforms::SetupTransform3D(Engine& engine, sol::state& lua)
 {
     engine.registerComponent("Transform3D", &Engine::componentBuilder<Transform3D>);
-    Debug::print("sehiofhsadf");
 
     auto transform3DType = lua.new_usertype<Transform3D>("Transform3D");
 

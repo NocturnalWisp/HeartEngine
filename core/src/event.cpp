@@ -7,9 +7,9 @@ namespace HeartEngine
 // EventBus
 EventHandle* EventBus::addListener(std::function<void()> function)
 {
-    std::unique_ptr<EventHandle> handle = std::make_unique<EventHandle>(EventHandle::Create());
+    EventHandle handle = EventHandle::Create();
 
-    auto ptr = handle.get();
+    auto ptr = &handle;
 
     eventHandlers[std::move(handle)].event = function;
 
@@ -18,9 +18,9 @@ EventHandle* EventBus::addListener(std::function<void()> function)
 
 EventHandle* EventBus::addListener(std::function<void(sol::object)> function)
 {
-    std::unique_ptr<EventHandle> handle = std::make_unique<EventHandle>(EventHandle::Create());
+    EventHandle handle = EventHandle::Create();
 
-    auto ptr = handle.get();
+    auto ptr = &handle;
 
     eventHandlers[std::move(handle)].event = function;
 
@@ -29,11 +29,22 @@ EventHandle* EventBus::addListener(std::function<void(sol::object)> function)
 
 EventHandle* EventBus::addListener(std::function<void(sol::object, sol::object)> function)
 {
-    std::unique_ptr<EventHandle> handle = std::make_unique<EventHandle>(EventHandle::Create());
+    EventHandle handle = EventHandle::Create();
 
-    auto ptr = handle.get();
+    auto ptr = &handle;
 
     eventHandlers[std::move(handle)].event = function;
+
+    return ptr;
+}
+
+EventHandle* EventBus::addListener(sol::function function)
+{
+    EventHandle handle = EventHandle::Create();
+
+    auto ptr = &handle;
+
+    eventHandlers[std::move(handle)].event = std::move(function);
 
     return ptr;
 }
@@ -48,7 +59,7 @@ void EventBus::removeListener(EventHandle& handle)
     for (auto iter = eventHandlers.cbegin();
         iter != eventHandlers.cend();)
     {
-        if (iter->first->identifier == handle.identifier)
+        if (iter->first.identifier == handle.identifier)
         {
             eventHandlers.erase(iter++);
         }
@@ -74,6 +85,9 @@ void EventBus::run(sol::object obj1, sol::object obj2) const
                 break;
             case 2:
                 std::get<2>(pair.second.event)(obj1, obj2);
+                break;
+            case 3:
+                std::get<3>(pair.second.event).call(obj1, obj2);
                 break;
         }
     }

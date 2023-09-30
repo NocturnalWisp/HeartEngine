@@ -21,6 +21,12 @@ struct EventManager
 
     void deleteEvent(std::string eventName) { events.erase(eventName); }
 
+    EventBus& operator[](std::string index)
+    {
+        return events[index];
+    }
+
+private:
     std::map<std::string, EventBus> events;
 };
 
@@ -32,13 +38,14 @@ public:
     EventHandle* addListener(std::function<void()> function);
     EventHandle* addListener(std::function<void(sol::object)> function);
     EventHandle* addListener(std::function<void(sol::object, sol::object)> function);
+    EventHandle* addListener(sol::function function);
 
     void removeListener(EventHandle& handle);
 
     void run(sol::object obj1 = sol::nil, sol::object obj2 = sol::nil) const;
 
 private:
-    std::map<std::unique_ptr<EventHandle>, EventListener> eventHandlers;
+    std::map<EventHandle, EventListener> eventHandlers;
 
     mutable bool inside_run = false;
 };
@@ -48,13 +55,23 @@ class EventListener
 {
 public:
     EventListener() {}
+    ~EventListener()
+    {
+        // VERY IMPORTANT. Need to abandon the reference to any lua functions;
+        // otherwise causes segfault during the dereference process.
+        if (event.index() == 3)
+        {
+            std::get<3>(event).abandon();
+        }
+    }
 
     EventListener(const EventListener& t) { event = t.event; }
 
     std::variant<
         std::function<void()>,
         std::function<void(sol::object)>,
-        std::function<void(sol::object, sol::object)>
+        std::function<void(sol::object, sol::object)>,
+        sol::function
     > event;
 };
 

@@ -65,25 +65,13 @@ public:
 
     std::string name;
 
-public:
-    EventHandle* addEventListener(std::string eventName, std::function<void()>);
-    EventHandle* addEventListener(std::string eventName, std::function<void(sol::object)>);
-    EventHandle* addEventListener(std::string eventName, std::function<void(sol::object, sol::object)>);
+    EventManager events;
 
-    void removeEventListener(std::string eventName, EventHandle& handle);
-
-    void runEvent(std::string eventName);
-    void runEvent(std::string eventName, sol::object);
-    void runEvent(std::string eventName, sol::object, sol::object);
-
-    void deleteEvent(std::string eventName);
 private:
     void setupLuaState(sol::state& state, std::string scriptName);
     void populateEnvironment();
 
     sol::state* luaState;
     sol::environment luaEnv;
-
-    EventManager events;
 };
 }

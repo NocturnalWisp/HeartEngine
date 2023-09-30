@@ -47,7 +47,7 @@ FileManager::~FileManager()
         packageFile.close();
 }
 
-void FileManager::loadScript(std::string_view path, sol::state& lua, std::optional<sol::environment> env)
+void FileManager::loadScript(std::string_view path, sol::state& lua, sol::environment* env)
 {
 #ifdef EDITOR
     if (env.has_value())
@@ -55,8 +55,8 @@ void FileManager::loadScript(std::string_view path, sol::state& lua, std::option
     else
         lua.script_file("assets/" + std::string(path));
 #else
-    if (env.has_value())
-        lua.script(getString(path), env.value(), sol::detail::default_chunk_name(), sol::load_mode::binary);
+    if (env != nullptr)
+        lua.script(getString(path), *env, sol::detail::default_chunk_name(), sol::load_mode::binary);
     else
         lua.script(getString(path), sol::detail::default_chunk_name(), sol::load_mode::binary);
 #endif
