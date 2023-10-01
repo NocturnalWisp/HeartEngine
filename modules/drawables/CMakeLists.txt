@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.5)
+project(heart_drawables VERSION 1.0.0)
+
+include(../ModuleHelper.cmake)
+
+add_library(heart_drawables src/drawables.cpp)
+target_include_directories(heart_drawables PUBLIC include)
+
+FetchLibraryGit(heart_drawables raylib https://github.com/raysan5/raylib.git ${RAYLIB_VERSION})
+FetchLibraryGit(heart_drawables raylib_cpp https://github.com/RobLoach/raylib-cpp.git v${RAYLIB_CPP_VERSION})
+
+LinkLibrary(heart_drawables heart_raylib_textures)

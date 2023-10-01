@@ -7,7 +7,7 @@
 #include "module/resources/texture.h"
 #include "module/transform_3d.h"
 
-namespace HeartEngine
+namespace HeartModules
 {
 class TextureRect : public Component
 {

@@ -1,7 +1,7 @@
 
 #include "heart/engine.h"
 
-#include "texture_rect.h"
+#include "module/texture_rect.h"
 
 #include "heart/module.h"
 
@@ -10,6 +10,7 @@
 #include "module/raymath.h"
 #include "module/transforms.h"
 #include "module/resources/texture.h"
+#include "module/drawables.h"
 
 using namespace HeartEngine;
 using namespace HeartModules;
@@ -19,7 +20,6 @@ class TestModule : public Module
 public:
     void registerTypes(Engine& engine, sol::state& lua)
     {
-        engine.registerComponent("TextureRect", &Engine::componentBuilder<TextureRect>);
     }
 };
 
@@ -31,6 +31,7 @@ int main()
     engine.registerModule(HeartModules::RayLibInput());
     engine.registerModule(HeartModules::RayMath(true, true, false, true));
     engine.registerModule(HeartModules::Transforms());
+    engine.registerModule(HeartModules::Drawables());
     engine.registerModule(TestModule());
 
     engine.loadResource(HeartModules::Texture("Texture", "test.png"));

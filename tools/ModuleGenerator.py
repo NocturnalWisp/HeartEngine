@@ -9,7 +9,7 @@ from os import _exit
 from string import Formatter
 
 if len(argv) < 2:
-    raise Exception("Expected 2 arguments.")
+    raise Exception("Expected 2 arguments. A module name, and a class name.")
 
 if not isinstance(argv[1], str):
     raise Exception("First argument provided is not of type string. (For module name.)")

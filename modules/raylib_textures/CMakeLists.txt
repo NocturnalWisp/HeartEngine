@@ -5,8 +5,8 @@ set(RAYLIB_CPP_VERSION 4.5.0)
 
 include(../ModuleHelper.cmake)
 
-include_directories(include)
 add_library(heart_raylib_textures src/raylib_textures.cpp)
+target_include_directories(heart_raylib_textures PUBLIC include)
 
 FetchLibraryGit(heart_raylib_textures raylib https://github.com/raysan5/raylib.git ${RAYLIB_VERSION})
 FetchLibraryGit(heart_raylib_textures raylib_cpp https://github.com/RobLoach/raylib-cpp.git v${RAYLIB_CPP_VERSION})

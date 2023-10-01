@@ -18,5 +18,8 @@ load_module(modules/raylib_textures modules/raylib_textures/include heart_raylib
 # Transforms
 load_module(modules/transforms modules/transforms/include heart_transforms)
 
+# Drawables
+load_module(modules/drawables modules/drawables/include heart_drawables)
+
 include_directories(include)
 add_executable(${PROJECT_NAME} main.cpp)
