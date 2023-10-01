@@ -6,20 +6,23 @@ set(USE_EDITOR OFF)
 
 include(Main.cmake)
 
-# Raylib Core
-load_module(modules/raylib_core modules/raylib_core/include heart_raylib_core)
-# Raymath
-load_module(modules/raymath modules/raymath/include heart_raymath)
-# Raylib Input
-load_module(modules/raylib_input modules/raylib_input/include heart_raylib_input)
-# Raylib Textures
-load_module(modules/raylib_textures modules/raylib_textures/include heart_raylib_textures)
-
-# Transforms
-load_module(modules/transforms modules/transforms/include heart_transforms)
-
-# Drawables
-load_module(modules/drawables modules/drawables/include heart_drawables)
-
 include_directories(include)
 add_executable(${PROJECT_NAME} main.cpp)
+
+# Heart Engine
+LoadModule(${PROJECT_NAME} core include HeartEngine)
+
+# Raylib Core
+LoadModule(${PROJECT_NAME} modules/raylib_core include heart_raylib_core)
+# Raymath
+LoadModule(${PROJECT_NAME} modules/raymath include heart_raymath)
+# Raylib Input
+LoadModule(${PROJECT_NAME} modules/raylib_input include heart_raylib_input)
+# Raylib Textures
+LoadModule(${PROJECT_NAME} modules/raylib_textures include heart_raylib_textures)
+
+# Transforms
+LoadModule(${PROJECT_NAME} modules/transforms include heart_transforms)
+
+# Drawables
+LoadModule(${PROJECT_NAME} modules/drawables include heart_drawables)

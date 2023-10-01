@@ -1,7 +1,5 @@
-function(load_module modulePath includePath moduleName)
+function(LoadModule target modulePath includeSubPath moduleName)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${modulePath})
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${includePath})
-    link_libraries(${moduleName})
+    target_include_directories(${target} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${modulePath}/${includeSubPath})
+    target_link_libraries(${target} PUBLIC ${moduleName})
 endfunction()
-
-load_module(core core/include HeartEngine)

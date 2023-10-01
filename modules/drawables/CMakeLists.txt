@@ -10,3 +10,4 @@ FetchLibraryGit(heart_drawables raylib https://github.com/raysan5/raylib.git ${R
 FetchLibraryGit(heart_drawables raylib_cpp https://github.com/RobLoach/raylib-cpp.git v${RAYLIB_CPP_VERSION})
 
 LinkLibrary(heart_drawables heart_raylib_textures)
+LinkLibrary(heart_drawables heart_transforms)
