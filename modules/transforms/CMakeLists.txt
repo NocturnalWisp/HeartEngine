@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(heart_transforms VERSION 1.0.0)
 
-include(../ModuleHelper.cmake)
+include(../../tools/ModuleHelper.cmake)
 
 add_library(heart_transforms
     src/transforms.cpp
@@ -10,3 +10,5 @@ add_library(heart_transforms
 target_include_directories(heart_transforms PUBLIC include)
 
 FetchLibraryGit(heart_transforms raylib https://github.com/raysan5/raylib.git ${RAYLIB_VERSION})
+
+LinkLibrary(heart_transforms HeartEngine)

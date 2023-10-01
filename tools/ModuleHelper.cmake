@@ -8,10 +8,6 @@ function(LinkLibrary target name)
     target_link_libraries(${target} PUBLIC ${name})
 endfunction()
 
-find_library(HeartEngine HeartEngine)
-include_directories(${HeartEngine_SOURCE_DIR}/include)
-link_libraries(HeartEngine)
-
 function(FetchLibraryGit target name repo tag)
     FetchContent_Declare(${name}
     GIT_REPOSITORY     ${repo}
