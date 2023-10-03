@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Settings
 option(USE_EDITOR "Allow for editing game source after compilation." OFF)
 option(USE_DEBUG "Allow the engine to print to the console." ON)
+option(BUILD_ALL_MODULES "Builds modules within the modules/ folder." ON)
 
 set(RAYLIB_VERSION 4.5.0)
 set(HEART_ASSETS_PATH ${CMAKE_SOURCE_DIR}/assets)
@@ -27,6 +28,10 @@ FetchContent_Declare(sol2
 )
 FetchContent_MakeAvailable(sol2)
 
+include_directories(${sol2_SOURCE_DIR}/include)
+link_libraries(sol2::sol2)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/core/include)
+
 # Add Library
 file(GLOB_RECURSE heart_engine_sources CONFIGURE_DEPENDS core/src/*.cpp)
 add_library(HeartEngine ${heart_engine_sources})
@@ -44,13 +49,22 @@ target_compile_definitions(HeartEngine PUBLIC SOL_ALL_SAFETIES_ON=1)
 
 target_include_directories(HeartEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/core/include/heart)
 
-target_include_directories(HeartEngine PUBLIC ${sol2_SOURCE_DIR}/include)
 target_include_directories(HeartEngine PUBLIC ${lua_SOURCE_DIR}/lua-5.4.5/include)
 # Sol2 interface lua
 target_include_directories(sol2 INTERFACE $<BUILD_INTERFACE:${lua_SOURCE_DIR}/lua-5.4.5/include>)
 
-target_link_libraries(HeartEngine lua_static)
-target_link_libraries(HeartEngine sol2::sol2)
+target_link_libraries(HeartEngine PUBLIC lua_static)
+target_link_libraries(HeartEngine PUBLIC sol2::sol2)
+
+# Build all modules.
+if (BUILD_ALL_MODULES)
+  add_subdirectory(modules/raylib_core)
+  add_subdirectory(modules/raylib_input)
+  add_subdirectory(modules/raylib_textures)
+  add_subdirectory(modules/raymath)
+  add_subdirectory(modules/transforms)
+  add_subdirectory(modules/raylib_drawables)
+endif()
 
 # Move/binary zip assets.
 if (USE_EDITOR)
