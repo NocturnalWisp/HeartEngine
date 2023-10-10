@@ -9,7 +9,8 @@ set(CMAKE_CXX_STANDARD 17)
 # Settings
 option(USE_EDITOR "Allow for editing game source after compilation." OFF)
 option(USE_DEBUG "Allow the engine to print to the console." ON)
-option(BUILD_ALL_MODULES "Builds modules within the modules/ folder." ON)
+option(BUILD_ALL_MODULES "Builds modules within the modules/ folder." OFF)
+option(BUILD_ALL_EXAMPLES "Builds examples within the examples/ folder." OFF)
 
 set(RAYLIB_VERSION 4.5.0)
 set(HEART_ASSETS_PATH ${CMAKE_SOURCE_DIR}/assets)
@@ -64,6 +65,10 @@ if (BUILD_ALL_MODULES)
   add_subdirectory(modules/raymath)
   add_subdirectory(modules/transforms)
   add_subdirectory(modules/raylib_drawables)
+endif()
+
+if (BUILD_ALL_EXAMPLES)
+  add_subdirectory(examples/pong)
 endif()
 
 # Move/binary zip assets.
