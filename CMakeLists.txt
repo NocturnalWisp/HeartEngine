@@ -82,10 +82,10 @@ else()
 
   add_custom_target(ResourcePackagerCommand ALL
     COMMAND Python3 ${CMAKE_CURRENT_SOURCE_DIR}/tools/Resourcepackager.py
-      ${CMAKE_CURRENT_BINARY_DIR}/_deps/lua-build
+      ${CMAKE_BINARY_DIR}/_deps/lua-build
       ${HEART_ASSETS_PATH}
       ${CMAKE_BINARY_DIR}/data.heart
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/_deps/lua-build/luac.exe
+    DEPENDS ${CMAKE_BINARY_DIR}/_deps/lua-build/luac.exe
   )
 
   add_custom_command(
