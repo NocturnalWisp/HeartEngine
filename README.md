@@ -12,3 +12,6 @@ Heart Engine is a game engine built on raylib C++. My main goals with the engine
 5. Obfuscated game assets. (Assets are stored in a binary file and not directly accessable when built for production.)
 6. Simple (and easy to use) python scripts for build systems and tools.
 7. Easy CMake build system. (Heart Engine aims to make it easy to call certain CMake scripts to do the heavy lifting. No need for complex or annoying manual Fetching.)
+
+Current goals:
+- Create a functioning game with working game loop.
