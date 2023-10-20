@@ -29,13 +29,16 @@ FetchContent_Declare(sol2
 )
 FetchContent_MakeAvailable(sol2)
 
-include_directories(${sol2_SOURCE_DIR}/include)
-link_libraries(sol2::sol2)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/core/include)
 
 # Add Library
 file(GLOB_RECURSE heart_engine_sources CONFIGURE_DEPENDS core/src/*.cpp)
 add_library(HeartEngine ${heart_engine_sources})
+
+target_include_directories(HeartEngine PUBLIC ${sol2_SOURCE_DIR}/include)
+
+get_target_property(INCLUDES HeartEngine INCLUDE_DIRECTORIES)
+message(${INCLUDES})
 
 # Set defines.
 if (USE_EDITOR)
