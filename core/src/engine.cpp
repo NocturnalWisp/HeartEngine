@@ -13,7 +13,7 @@ Engine::Engine()
     populateBasicLua();
 }
 
-int Engine::run()
+void Engine::init()
 {
     started = true;
 
@@ -23,7 +23,10 @@ int Engine::run()
 
     if (checkResourceRelease)
         checkEarlyResourceRelease();
-    
+}
+
+void Engine::run()
+{
     double previousTime = getTime();
     double lag = 0.0;
 
@@ -71,8 +74,6 @@ int Engine::run()
 
     for (auto& mod : moduleRegistry)
         mod->closeApplication(*this);
-
-    return 0;
 }
 
 Node* Engine::getNode(std::string_view name)
@@ -98,8 +99,6 @@ bool Engine::removeNode(std::string_view name)
     nodes.erase(it, nodes.end());
     return any_change;
 }
-
-template <> Node* Engine::addNode(Node n, std::string);
 
 GlobalData* Engine::getGlobalData(std::string_view name) const
 {

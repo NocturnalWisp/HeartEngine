@@ -4,8 +4,6 @@
 
 #include <sol/sol.hpp>
 
-#include "component.h"
-
 namespace HeartEngine
 {
 #define ADD_LUA_FUNCTION(table, name) table[__STRINGIFY(name)] = &name

@@ -31,7 +31,8 @@ class Engine
 public:
     Engine();
 
-    int run();
+    void init();
+    void run();
 
     template<class T>
     T* registerModule(T moduleObject)
