@@ -37,9 +37,6 @@ add_library(HeartEngine ${heart_engine_sources})
 
 target_include_directories(HeartEngine PUBLIC ${sol2_SOURCE_DIR}/include)
 
-get_target_property(INCLUDES HeartEngine INCLUDE_DIRECTORIES)
-message(${INCLUDES})
-
 # Set defines.
 if (USE_EDITOR)
   target_compile_definitions(HeartEngine PUBLIC EDITOR)
@@ -68,6 +65,7 @@ if (BUILD_ALL_MODULES)
   add_subdirectory(modules/raymath)
   add_subdirectory(modules/transforms)
   add_subdirectory(modules/raylib_drawables)
+  add_subdirectory(modules/raylib_gui)
 endif()
 
 if (BUILD_ALL_EXAMPLES)

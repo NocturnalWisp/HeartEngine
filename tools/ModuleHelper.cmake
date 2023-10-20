@@ -2,9 +2,9 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Os")
 
 include(FetchContent)
 
-function(LinkLibrary target name)
+function(LinkLibrary target name includeSubPath)
     find_library(${name} NAMES ${name} NO_DEFAULT_PATH)
-    target_include_directories(${target} PUBLIC ${${name}_SOURCE_DIR}/include)
+    target_include_directories(${target} PUBLIC ${${name}_SOURCE_DIR}/${includeSubPath})
     target_link_libraries(${target} PUBLIC ${name})
 endfunction()
 

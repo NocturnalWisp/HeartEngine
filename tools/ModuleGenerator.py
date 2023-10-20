@@ -79,10 +79,10 @@ with (open(join(modulesDir, moduleName, "src", moduleName + ".cpp"), "w")) as so
 cmakeContents = '''cmake_minimum_required(VERSION 3.5)
 project(heart_{0} VERSION 1.0.0)
 
-include(../ModuleHelper.cmake)
+include(../../tools/ModuleHelper.cmake)
 
-include_directories(include)
-add_library(heart_{0} src/{0}.cpp)'''.format(moduleName)
+add_library(heart_{0} src/{0}.cpp)
+target_include_directories(heart_{0} PUBLIC include)'''.format(moduleName)
 
 with (open(join(modulesDir, moduleName, "CMakeLists.txt"), "w")) as cmake:
     cmake.writelines(cmakeContents)
