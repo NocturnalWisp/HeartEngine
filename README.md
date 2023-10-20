@@ -1,33 +1,17 @@
-# Simple and portable CMake template for raylib
+# Lua scripted game engine built on raylib C++
 
-This is a very basic project template for raylib using CMake and has been tested with Visual Studio, Visual Studio Code and CLion.
+The engine is inspired by Love2D and Godot. Debated on calling it Love3D, but the engine is functionally quite different and needed it's own name.
 
-The raylib source code is included in the libs folder as it is much easier than including prebuilt binaries for every platform and configuration.
+Currently in infancy, but has a rebust module system for easily expanding functionality!
 
-Building from the cmake file will build both raylib and `src/main.c` which includes a basic example of a raylib program.
+Heart Engine is a game engine built on raylib C++. My main goals with the engine are as follows:
+1. Simple game objects with no inheritance trees. (All objects have components and are forced to be their own scenes like Godot. Interactions between nodes (aka scenes) are handled via event systems.)
+2. Simple Lua scripting.
+3. Module engine parts. (All non-core engine is built out in modules/ to keep everything clean and interchangable.)
+4. Raylib is not a requirement. (Interchange raylib with any other C++ game library (Ex. Ogre3D, SDL, SFML) using modules.)
+5. Obfuscated game assets. (Assets are stored in a binary file and not directly accessable when built for production.)
+6. Simple (and easy to use) python scripts for build systems and tools.
+7. Easy CMake build system. (Heart Engine aims to make it easy to call certain CMake scripts to do the heavy lifting. No need for complex or annoying manual Fetching.)
 
-The example in `src/main.c` uses an example image located in the `assets` folder.
-
-The absolute path to the assets folder is defined by a macro `ASSETS_PATH` in the CMake file automatically which is useful during development. If you plan on releasing or sharing your game consider manually setting the value of the `ASSETS_PATH` macro.
-
-## How to use with C++
-To use with C++ simply rename `main.c` to `main.cpp` and then change the following lines in CMakelists.txt:
-
-From:
-```
-project(raylib_template C)
-
-set(CMAKE_C_STANDARD 99)
-
-add_executable(raylib_template src/main.c)
-```
-
-To:
-```
-project(raylib_template CXX)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-add_executable(raylib_template src/main.cpp)
-```
+Current goals:
+- Create a functioning game with working game loop.
