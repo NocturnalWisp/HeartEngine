@@ -9,6 +9,6 @@ add_library(heart_transforms
 )
 target_include_directories(heart_transforms PUBLIC include)
 
-FetchLibraryGit(heart_transforms raylib https://github.com/raysan5/raylib.git ${RAYLIB_VERSION})
+FetchLibraryGit(heart_transforms raylib https://github.com/raysan5/raylib.git 4.3.0)
 
-LinkLibrary(heart_transforms HeartEngine)
+LinkLibrary(heart_transforms HeartEngine core/include)

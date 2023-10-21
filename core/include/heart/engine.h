@@ -53,11 +53,11 @@ public:
     Node* getNode(std::string_view name);
 
     template <class T>
-    T* addNode(T nodeObject, std::string scriptName = "")
+    T* addNode(std::string nodeName, std::string scriptName = "")
     {
         static_assert(std::is_base_of<Node, T>::value, "T must derive from Node.");
 
-        std::unique_ptr<T> node = std::make_unique<T>(std::move(nodeObject));
+        std::unique_ptr<T> node = std::make_unique<T>(Node(nodeName));
 
         auto nodePtr = node.get();
 

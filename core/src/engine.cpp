@@ -141,9 +141,9 @@ void Engine::populateBasicLua()
 
     engineType["getNode"] = &Engine::getNode;
     engineType["addNode"] = [](Engine& self, std::string name) -> Node*
-        { return self.addNode<Node>(Node(name)); };
+        { return self.addNode<Node>(name); };
     engineType["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name) -> Node*
-        { return self.addNode<Node>(Node(name), scriptName); };
+        { return self.addNode<Node>(name, scriptName); };
     engineType["removeNode"] = &Engine::removeNode;
 
     engineType["events"] = &Engine::events;

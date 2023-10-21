@@ -5,6 +5,8 @@
 #include <memory>
 #include <type_traits>
 
+#include <cassert>
+
 #include <sol/sol.hpp>
 
 #include "debug.h"
@@ -23,8 +25,6 @@ class Node : LuaEnvironment
     friend class Engine;
     friend class Component;
 public:
-    Node(std::string p_name) : name(p_name) {}
-
     template <class T>
     T& addComponent(T c, std::string scriptName = "")
     {
@@ -68,6 +68,8 @@ public:
     EventManager events;
 
 private:
+    Node(std::string p_name) : name(p_name) {}
+
     void setupLuaState(sol::state& state, std::string scriptName);
     void populateEnvironment();
 
