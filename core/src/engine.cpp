@@ -160,7 +160,7 @@ void Engine::populateBasicLua()
     nodeType["addLuaComponent"] =
         [](Node& self, std::string scriptName, std::string name) -> sol::table&
         {
-            return self.addComponent(LuaComponent(name), scriptName).luaEnv;
+            return self.addComponent(LuaComponent(name), scriptName)->luaEnv;
         };
     nodeType["getComponent"] =
         [](Node& self, std::string_view component) -> sol::table

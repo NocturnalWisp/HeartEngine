@@ -26,7 +26,7 @@ class Node : LuaEnvironment
     friend class Component;
 public:
     template <class T>
-    T& addComponent(T c, std::string scriptName = "")
+    T* addComponent(T c, std::string scriptName = "")
     {
         static_assert(std::is_base_of<Component, T>::value, "Class must inherit component");
 
@@ -39,7 +39,7 @@ public:
         componentPtr->node = this;
         componentPtr->setupLuaState(*luaState, scriptName);
 
-        return *componentPtr;
+        return componentPtr;
     }
 
     Component& getComponent(std::string_view name) const;

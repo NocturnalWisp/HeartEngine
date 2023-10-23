@@ -5,7 +5,7 @@
 
 namespace HeartEngine
 {
-template <> Component& Node::addComponent(Component, std::string);
+template <> Component* Node::addComponent(Component, std::string);
 template <> Component& Node::getComponentT(std::string_view) const;
 
 Component& Node::getComponent(std::string_view name) const
@@ -57,7 +57,14 @@ void Node::onCreate()
 {
     for (auto &component : components)
     {
-        component->_on_create();
+        if (component->checkHasRequired())
+        {
+            component->_on_create();
+        }
+        else
+        {
+            throw HeartException({"Failed to initialize _on_create. Component requirement has not been satisfied."});
+        }
     }
 }
 void Node::onDestroy()
@@ -106,7 +113,7 @@ void Node::populateEnvironment()
     luaEnv["addLuaComponent"] =
         [this](std::string scriptName, std::string name) -> sol::table&
         {
-            return addComponent(LuaComponent(name), scriptName).luaEnv;
+            return addComponent(LuaComponent(name), scriptName)->luaEnv;
         };
     
     luaEnv["getComponent"] =

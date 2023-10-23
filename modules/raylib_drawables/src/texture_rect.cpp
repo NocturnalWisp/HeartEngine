@@ -4,6 +4,14 @@
 
 namespace HeartModules
 {
+TextureRect::TextureRect(std::string name, sol::variadic_args va) : Component(name)
+{
+    const short textureIndex = 0;
+
+    if (auto p_textureName = checkArg<std::string>(args[textureIndex]))
+        textureName = p_textureName;
+}
+
 void TextureRect::populateLuaData()
 {
     auto type = CREATEUSERTYPE(TextureRect);
@@ -17,9 +25,6 @@ void TextureRect::_on_create()
     node->engine->events["draw"].addListener([this](){_on_draw(); });
 
     texture = node->engine->getResource<HeartModules::Texture>(textureName);
-
-    //TODO: Add component requirements (Allow referencing other components during constructor setup.)
-    transform = &node->getComponentT<HeartModules::Transform3D>("Transform");
 }
 
 void TextureRect::_on_destroy()

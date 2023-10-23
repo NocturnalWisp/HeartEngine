@@ -38,15 +38,15 @@ typedef struct RotationAxisAngle
 
 class Transform3D : public HeartEngine::Component
 {
+    REQUIRE_COMPONENTS()
 public:
     void populateLuaData() override;
 
-    // INITIALIZATION.
-    // Default constructor.
-    Transform3D(std::string name);
+    Transform3D(std::string name,
+        Vector3 position = {0, 0, 0},
+        RotationAxisAngle rotation = {{0, 0, 1}, 0},
+        Vector3 scale = {1, 1, 1});
     Transform3D(std::string name, sol::variadic_args va);
-    // Verbose constructor in local space.
-    Transform3D(std::string name, Vector3 localPosition, RotationAxisAngle rotation, Vector3 localScale);
     // Default destructor.
     virtual ~Transform3D();
 

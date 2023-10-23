@@ -11,6 +11,7 @@ namespace HeartModules
 {
 class TextureRect : public Component
 {
+    REQUIRE_COMPONENTS(transform)
 private:
     std::string textureName;
 protected:
@@ -18,14 +19,9 @@ protected:
 public:
     std::shared_ptr<HeartModules::Texture> texture = nullptr;
 
-    TextureRect(std::string name, std::string p_texture)
-        : Component(name), textureName(p_texture) {}
-    TextureRect(std::string name) : Component(name) {}
-    TextureRect(std::string name, sol::variadic_args va) : Component(name)
-    {
-        if (va.size() > 0)
-            textureName = va[0];
-    }
+    TextureRect(std::string p_name, std::string p_textureName)
+        : Component(p_name), textureName(p_textureName) {}
+    TextureRect(std::string name, sol::variadic_args va);
 
     void populateLuaData() override;
 

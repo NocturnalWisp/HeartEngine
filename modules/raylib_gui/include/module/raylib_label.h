@@ -12,11 +12,13 @@ namespace HeartModules
 {
 class Label : public Component
 {
-protected:
-    HeartModules::Transform3D* transform;
+    REQUIRE_COMPONENTS(transform)
 public:
-    Label(std::string name) : Component(name) {}
-    Label(std::string name, std::string text) : Component(name), text(text) {}
+    Label(std::string name, std::string text = "")
+        : Component(name), text(text) {}
+    Label(std::string name, sol::variadic_args args);
+
+    HeartModules::Transform3D* transform = nullptr;
 
     std::string text;
 

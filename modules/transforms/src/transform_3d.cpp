@@ -71,16 +71,6 @@ Matrix QuatToMat(Quaternion q)
     return result;
 }
 
-Transform3D::Transform3D(std::string name) : Component(name)
-{
-    // Zero out data, exists at (0, 0, 0) world space.
-    setLocalPosition({0, 0, 0});
-    setLocalRotation({ {0, 0, 0}, 0 });
-    setLocalScale({1, 1, 1});
-    // Root node.
-    parent = nullptr;
-}
-
 //TODO: Move the following two to utility header somewhere.
 Vector3 tableToVector3(const std::vector<float>& table)
 {
@@ -101,30 +91,37 @@ RotationAxisAngle tableToRotationAxisAngle(const std::vector<float>& table)
     return result;
 }
 
-Transform3D::Transform3D(std::string name, sol::variadic_args args) : Component(name)
+Transform3D::Transform3D(std::string name,
+    Vector3 position,
+    RotationAxisAngle rotation,
+    Vector3 scale)
+    : Component(name)
 {
     //TODO: seg fault if bad table given.
     // Zero out data, exists at (0, 0, 0) world space.
-    if (args.size() > 0)
-        setLocalPosition(tableToVector3(args[0].as<std::vector<float>>()));
-    if (args.size() > 1)
-        setLocalRotation(tableToRotationAxisAngle(args[1].as<std::vector<float>>()));
-    if (args.size() > 2)
-        setLocalScale(tableToVector3(args[2].as<std::vector<float>>()));
+    setLocalPosition(position);
+    setLocalRotation(rotation);
+    setLocalScale(scale);
     
     // Root node.
     parent = nullptr;
 }
 
-Transform3D::Transform3D(
-    std::string name,
-    Vector3 localPosition,
-    RotationAxisAngle localRotation,
-    Vector3 localScale) : Component(name)
+Transform3D::Transform3D(std::string name, sol::variadic_args args) : Component(name)
 {
-    setLocalPosition(localPosition);
-    setLocalRotation(localRotation);
-    setLocalScale(localScale);
+    const short positionIndex = 0;
+    const short rotationIndex = 1;
+    const short scaleIndex = 2;
+
+    //TODO: seg fault if bad table given.
+    // Zero out data, exists at (0, 0, 0) world space.
+    if (auto position = checkArg<std::vector<float>>(args[positionIndex]))
+        setLocalPosition(tableToVector3(*position));
+    if (auto rotation = checkArg<std::vector<float>>(args[rotationIndex], false))
+        setLocalRotation(tableToRotationAxisAngle(*rotation));
+    if (auto scale = checkArg<std::vector<float>>(args[scaleIndex], false))
+        setLocalScale(tableToVector3(*scale));
+    
     // Root node.
     parent = nullptr;
 }
