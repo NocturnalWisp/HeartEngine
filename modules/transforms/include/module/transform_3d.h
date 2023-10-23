@@ -38,7 +38,6 @@ typedef struct RotationAxisAngle
 
 class Transform3D : public HeartEngine::Component
 {
-    REQUIRE_COMPONENTS()
 public:
     void populateLuaData() override;
 

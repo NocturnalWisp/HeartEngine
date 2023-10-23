@@ -56,7 +56,10 @@ protected:
         }
     }
 
-    virtual std::vector<Component*> requireComponents() = 0;
+    virtual std::vector<Component*> requireComponents()
+    {
+        return {};
+    }
 private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
     void populateEnvironment() override;
