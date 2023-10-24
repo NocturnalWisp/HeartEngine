@@ -53,7 +53,17 @@ void Engine::run()
         for (auto& mod : moduleRegistry)
             mod->startDraw(*this);
 
-        // Draw
+        // Draw modes.
+        for (auto& drawMode : drawModeRegistry)
+        {
+            drawMode.second->startMode();
+
+            events["draw" + drawMode.first].run();
+
+            drawMode.second->endMode();
+        }
+
+        // Draw anything outside a mode overtop.
         events["draw"].run();
 
         for (auto& mod : moduleRegistry)
@@ -214,5 +224,15 @@ std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typ
     }
 
     return nullptr;
+}
+
+void Engine::registerDrawMode(std::string name, std::unique_ptr<DrawMode> drawMode)
+{
+    drawModeRegistry[name] = std::move(drawMode);
+}
+
+void Engine::unregisterDrawMode(std::string name)
+{
+    drawModeRegistry.erase(name);
 }
 }

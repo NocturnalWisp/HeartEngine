@@ -21,6 +21,8 @@
 
 #include "event.h"
 
+#include "draw_mode.h"
+
 namespace HeartEngine
 {
 class Engine
@@ -150,6 +152,9 @@ public:
 
     std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
 
+    void registerDrawMode(std::string name, std::unique_ptr<DrawMode> drawMode);
+    void unregisterDrawMode(std::string name);
+
     double getTime()
     {
         return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
@@ -178,6 +183,8 @@ private:
 
     std::vector<std::unique_ptr<Module>> moduleRegistry;
     std::map<std::string, std::unique_ptr<Component>(*)(std::string name, sol::variadic_args va)> componentRegistry;
+
+    std::map<std::string, std::unique_ptr<DrawMode>> drawModeRegistry;
 
     std::chrono::_V2::system_clock::time_point startTime = std::chrono::system_clock::now();
 
