@@ -2,6 +2,8 @@
 
 #include <raylib-cpp.hpp>
 
+#include "heart/engine.h"
+#include "heart/node.h"
 #include "heart/component.h"
 
 #include "module/transform_3d.h"
@@ -13,6 +15,8 @@ namespace HeartModules
 class Label : public Component
 {
     REQUIRE_COMPONENTS(transform)
+
+    DRAW_CALLABLE(_on_draw())
 public:
     Label(std::string name, std::string text = "")
         : Component(name), text(text) {}

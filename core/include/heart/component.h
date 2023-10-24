@@ -16,13 +16,6 @@ namespace HeartEngine
 class Engine;
 class Node;
 
-#define GET_COMPONENT(type, name) node->getComponentT<type>(__STRINGIFY(name))
-#define REQUIRE_COMPONENTS(...) protected: \
-    std::vector<Component*> requireComponents() override \
-    { \
-        return { __VA_ARGS__ }; \
-    }
-
 class Component : public LuaEnvironment
 {
     friend class Engine;
@@ -93,4 +86,29 @@ public:
         return {};
     }
 };
+
+#define GET_COMPONENT(type, name) \
+    node->getComponentT<type>(__STRINGIFY(name))
+
+// Define the requireComponents method.
+#define REQUIRE_COMPONENTS(...) protected: \
+    std::vector<Component*> requireComponents() override \
+    { \
+        return { __VA_ARGS__ }; \
+    }
+
+// A method for changing which mode to draw to through the engine draw events.
+#define DRAW_CALLABLE(drawMethod) public: \
+    void SetDrawCall(std::string p_drawCall) \
+    { \
+        if (drawHandle != nullptr) \
+        { \
+            node->engine->events[drawCall].removeListener(*drawHandle); \
+        } \
+        drawCall = p_drawCall; \
+        drawHandle = node->engine->events[drawCall].addListener([this](){ drawMethod; }); \
+    } \
+private: \
+    std::string drawCall = "draw"; \
+    EventHandle* drawHandle = nullptr;
 }

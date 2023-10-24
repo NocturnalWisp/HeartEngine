@@ -22,7 +22,7 @@ void Label::populateLuaData()
 
 void Label::_on_create()
 {
-    node->engine->events["draw"].addListener([this](){_on_draw(); });
+    SetDrawCall(drawCall);
 }
 
 void Label::_on_draw()

@@ -12,6 +12,8 @@ namespace HeartModules
 class TextureRect : public Component
 {
     REQUIRE_COMPONENTS(transform)
+
+    DRAW_CALLABLE(_on_draw())
 private:
     std::string textureName;
 protected:

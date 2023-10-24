@@ -22,7 +22,7 @@ void TextureRect::populateLuaData()
 
 void TextureRect::_on_create()
 {
-    node->engine->events["draw"].addListener([this](){_on_draw(); });
+    SetDrawCall(drawCall);
 
     texture = node->engine->getResource<HeartModules::Texture>(textureName);
 }

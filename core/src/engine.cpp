@@ -50,6 +50,7 @@ void Engine::run()
         for (auto& mod : moduleRegistry)
             mod->duringUpdate(*this);
 
+        // Drawing Start
         for (auto& mod : moduleRegistry)
             mod->startDraw(*this);
 

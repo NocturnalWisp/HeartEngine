@@ -18,10 +18,17 @@ public:
 
     raylib::Camera2D camera;
 
+    Vector2 offset;
+    Vector2* target = nullptr;
+    float rotation = 0;
+    float zoom = 1;
+
     void populateLuaData() override;
 
     void _on_create() override;
     void _on_destroy() override;
+
+    void _on_update();
 
     Vector2 GetScreenToWorld(Vector2 position) const
     {
