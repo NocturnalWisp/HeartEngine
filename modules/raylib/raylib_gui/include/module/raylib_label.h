@@ -12,7 +12,7 @@ namespace HeartModules
 {
 class Label : public Component
 {
-    DRAW_CALLABLE(_on_draw())
+    EVENT_CALLABLE(draw, _on_draw())
 public:
     Label(std::string name, std::string text = "",
         Vector2 position = Vector2Zero(), float fontSize = 10, Color color = BLACK)

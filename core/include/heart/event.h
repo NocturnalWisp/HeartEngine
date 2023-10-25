@@ -14,22 +14,6 @@ class EventBus;
 class EventListener;
 class EventHandle;
 
-// Collection of event bus's by name.
-struct EventManager
-{
-    void clearEvents() { events.clear(); }
-
-    void deleteEvent(std::string eventName) { events.erase(eventName); }
-
-    EventBus& operator[](std::string index)
-    {
-        return events[index];
-    }
-
-private:
-    std::map<std::string, EventBus> events;
-};
-
 // A collection of listeners.
 class EventBus
 {
@@ -43,11 +27,46 @@ public:
     void removeListener(const EventHandle& handle);
 
     void run(sol::object obj1 = sol::nil, sol::object obj2 = sol::nil) const;
+    void runAll(sol::object obj1 = sol::nil, sol::object obj2 = sol::nil) const;
+
+    void addSubEvent(std::string name);
+    void deleteSubEvent(std::string eventName);
+
+    // Access sub busses.
+    EventBus& operator [](std::string name);
+
+    EventBus& recursiveGetSubBus(const std::vector<std::string>&, int);
 
 private:
+    std::map<std::string, EventBus> subBuses;
+
     std::map<EventHandle, EventListener> eventHandlers;
 
+    //TODO: Replace inside run logic with a way to do any delete/other operations after the run is complete.
     mutable bool inside_run = false;
+};
+
+// Collection of event bus's by name.
+struct EventManager
+{
+    void clearEvents() { events.clear(); }
+
+    void addEvent(std::string name) { events.emplace(name, EventBus()); }
+    void deleteEvent(std::string eventName) { events.erase(eventName); }
+
+    // Function to call a recursive function to go down a list of sub buses.
+    EventBus& getSubBus(std::vector<std::string> list)
+    {
+        return events[list[0]].recursiveGetSubBus(list, 1);
+    }
+
+    EventBus& operator[](std::string index)
+    {
+        return events[index];
+    }
+
+private:
+    std::map<std::string, EventBus> events;
 };
 
 // A single function listener.

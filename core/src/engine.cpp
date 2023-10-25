@@ -59,7 +59,7 @@ void Engine::run()
         {
             drawMode.second->startMode();
 
-            events["draw" + drawMode.first].run();
+            events["draw"][drawMode.first].run();
 
             drawMode.second->endMode();
         }

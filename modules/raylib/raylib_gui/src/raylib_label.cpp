@@ -42,7 +42,7 @@ void Label::populateLuaData()
 
 void Label::_on_create()
 {
-    SetDrawCall(drawCall);
+    setdrawCall(drawCall);
 }
 
 void Label::_on_draw()
