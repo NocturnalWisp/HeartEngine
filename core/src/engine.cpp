@@ -59,7 +59,7 @@ void Engine::run()
         {
             drawMode.second->startMode();
 
-            events["draw"][drawMode.first].run();
+            events["draw"][drawMode.first].runAll();
 
             drawMode.second->endMode();
         }
@@ -151,10 +151,22 @@ void Engine::populateBasicLua()
     auto engineType = lua->new_usertype<Engine>("Engine");
 
     engineType["getNode"] = &Engine::getNode;
+
+    engineType["addContainer"] = [](Engine& self, std::string name) -> Node*
+        { return self.addNode<Container>(name); };
+    engineType["addContainer"] = [](Engine& self, std::string name, Container* container) -> Node*
+        { return self.addNode<Container>(name, container); };
+
     engineType["addNode"] = [](Engine& self, std::string name) -> Node*
         { return self.addNode<Node>(name); };
+    engineType["addNode"] = [](Engine& self, std::string name, Container* container) -> Node*
+        { return self.addNode<Node>(name, container); };
+
     engineType["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name) -> Node*
-        { return self.addNode<Node>(name, scriptName); };
+        { return self.addNode<Node>(name, nullptr, scriptName); };
+    engineType["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name, Container* container) -> Node*
+        { return self.addNode<Node>(name, container, scriptName); };
+
     engineType["removeNode"] = &Engine::removeNode;
 
     engineType["events"] = &Engine::events;

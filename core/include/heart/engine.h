@@ -28,6 +28,7 @@ namespace HeartEngine
 class Engine
 {
     friend class Node;
+    friend class Container;
     friend class Component;
     friend class Resource;
 public:
@@ -55,15 +56,22 @@ public:
     Node* getNode(std::string_view name);
 
     template <class T>
-    T* addNode(std::string nodeName, std::string scriptName = "")
+    T* addNode(std::string nodeName, Container* container = nullptr, std::string scriptName = "")
     {
         static_assert(std::is_base_of<Node, T>::value, "T must derive from Node.");
 
-        std::unique_ptr<T> node = std::make_unique<T>(Node(nodeName));
+        std::unique_ptr<Node> node = std::unique_ptr<Node>(new T(nodeName));
 
-        auto nodePtr = node.get();
+        T* nodePtr = static_cast<T*>(node.get());
 
-        nodes.push_back(std::move(node));
+        if (container != nullptr)
+        {
+            container->nodes.push_back(std::move(node));
+        }
+        else
+        {
+            nodes.push_back(std::move(node));
+        }
 
         nodePtr->engine = this;
 

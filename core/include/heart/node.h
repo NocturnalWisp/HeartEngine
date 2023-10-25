@@ -19,11 +19,13 @@
 namespace HeartEngine
 {
 class Engine;
+class Container;
 
 class Node : LuaEnvironment
 {
     friend class Engine;
     friend class Component;
+    friend class Container;
 public:
     template <class T>
     T* addComponent(T c, std::string scriptName = "")
@@ -75,5 +77,33 @@ private:
 
     sol::state* luaState;
     sol::environment luaEnv;
+};
+
+// Will allow for organizing nodes better.
+class Container : private Node
+{
+    friend class Engine;
+    friend class Node;
+
+private:
+    Container(std::string p_name) : Node(p_name) {}
+
+    void onCreate() override
+    {
+        for (auto& node : nodes)
+        {
+            node->onCreate();
+        }
+    }
+
+    void onDestroy() override
+    {
+        for (auto& node : nodes)
+        {
+            node->onDestroy();
+        }
+    }
+
+    std::vector<std::unique_ptr<Node>> nodes;
 };
 }
