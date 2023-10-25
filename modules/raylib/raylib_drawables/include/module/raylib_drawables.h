@@ -6,7 +6,7 @@
 
 namespace HeartEngine { class Engine; }
 
-namespace HeartModules
+namespace HeartRayLib
 {
 class Drawables : public HeartEngine::Module
 {

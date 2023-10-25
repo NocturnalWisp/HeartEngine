@@ -4,7 +4,7 @@
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 void RayLibTextures::Setup(HeartEngine::Engine& engine, sol::state& lua)
 {

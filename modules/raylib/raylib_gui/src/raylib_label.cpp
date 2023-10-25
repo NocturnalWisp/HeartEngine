@@ -2,19 +2,10 @@
 
 #include "heart/engine.h"
 
-namespace HeartModules
-{
-Color tableToColor(const std::vector<float>& table)
-{
-    Color result;
-    result.r = table[0];
-    result.g = table[1];
-    result.b = table[2];
-    if (table.size() > 3)
-        result.a = table[3];
-    return result;
-}
+#include "module/utils.h"
 
+namespace HeartRayLib
+{
 Label::Label(std::string p_name, sol::variadic_args args)
     : Component(p_name)
 {
@@ -35,7 +26,7 @@ Label::Label(std::string p_name, sol::variadic_args args)
 
 void Label::populateLuaData()
 {
-    auto type = CREATEUSERTYPE(Label);
+    auto type = CREATE_USER_TYPE(Label);
 
     type["text"] = &Label::text;
 }

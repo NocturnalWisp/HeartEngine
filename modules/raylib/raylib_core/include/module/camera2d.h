@@ -6,7 +6,7 @@
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 class RayLibCamera2D : public Component
 {

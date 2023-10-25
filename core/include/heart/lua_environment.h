@@ -6,10 +6,6 @@
 
 namespace HeartEngine
 {
-#define CREATEUSERTYPE(t)\
-    luaState->new_usertype<t>(__STRINGIFY(t));\
-    luaEnv[name] = this
-
 class LuaEnvironment
 {
 public:

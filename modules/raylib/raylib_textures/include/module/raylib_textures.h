@@ -10,7 +10,7 @@
 
 namespace HeartEngine { class Engine; }
 
-namespace HeartModules
+namespace HeartRayLib
 {
 class RayLibTextures : public HeartEngine::Module
 {

@@ -1,10 +1,11 @@
 #include "module/camera2d.h"
 
+#include "heart/utils.h"
 #include "heart/engine.h"
 
 #include "module/raylib_draw_mode.h"
 
-namespace HeartModules
+namespace HeartRayLib
 {
 void RayLibCamera2D::populateLuaData()
 {

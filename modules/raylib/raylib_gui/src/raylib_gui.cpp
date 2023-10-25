@@ -7,7 +7,7 @@
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 void RayLibGUI::Setup(HeartEngine::Engine& engine, sol::state& lua)
 {

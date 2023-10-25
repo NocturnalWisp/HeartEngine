@@ -15,3 +15,4 @@ add_subdirectory(${raygui_SOURCE_DIR}/projects/CMake
     ${raygui_BINARY_DIR})
 
 LinkLibrary(heart_raylib_gui HeartEngine core/include)
+LinkLibrary(heart_raylib_gui heart_raylib_core include)

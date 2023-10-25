@@ -6,7 +6,7 @@
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 void Drawables::SetupTextures(HeartEngine::Engine& engine, sol::state& lua)
 {

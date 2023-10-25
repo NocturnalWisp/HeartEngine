@@ -36,7 +36,7 @@ headerContents = '''#pragma once
 
 namespace HeartEngine {{ class Engine; }}
 
-namespace HeartModules
+namespace HeartRayLib
 {{
 class {0} : public HeartEngine::Module
 {{
@@ -65,7 +65,7 @@ sourceContents = '''#include "module/{0}.h"
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {{
 void {1}::Setup(HeartEngine::Engine& engine, sol::state& lua)
 {{
@@ -78,8 +78,6 @@ with (open(join(modulesDir, moduleName, "src", moduleName + ".cpp"), "w")) as so
 
 cmakeContents = '''cmake_minimum_required(VERSION 3.5)
 project(heart_{0} VERSION 1.0.0)
-
-include(../../tools/ModuleHelper.cmake)
 
 add_library(heart_{0} src/{0}.cpp)
 target_include_directories(heart_{0} PUBLIC include)'''.format(moduleName)

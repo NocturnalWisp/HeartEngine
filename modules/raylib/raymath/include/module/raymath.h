@@ -7,7 +7,7 @@
 
 namespace HeartEngine { class Engine; }
 
-namespace HeartModules
+namespace HeartRayLib
 {
 class RayMath : public HeartEngine::Module
 {

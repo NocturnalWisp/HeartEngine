@@ -4,7 +4,7 @@
 
 #include "heart/draw_mode.h"
 
-namespace HeartModules
+namespace HeartRayLib
 {
 class DrawModeCamera2D : public DrawMode
 {

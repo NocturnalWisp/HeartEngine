@@ -8,10 +8,10 @@ namespace HeartEngine { class Engine; }
 
 namespace HeartRayLib
 {
-class RayLibGUI : public HeartEngine::Module
+class RayLibTransforms : public HeartEngine::Module
 {
 public:
-    RayLibGUI(bool includeSetting = true)
+    RayLibTransforms(bool includeSetting = true)
         : includeSetting(includeSetting) {}
 
     void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override

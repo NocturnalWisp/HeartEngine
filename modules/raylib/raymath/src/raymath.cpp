@@ -1,6 +1,6 @@
 #include "module/raymath.h"
 
-namespace HeartModules
+namespace HeartRayLib
 {
 void RayMath::SetupVector2(sol::state& lua)
 {

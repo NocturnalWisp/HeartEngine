@@ -10,7 +10,7 @@
 
 namespace HeartEngine { class Engine; }
 
-namespace HeartModules
+namespace HeartRayLib
 {
 constexpr auto SCREEN_WIDTH  = 800;
 constexpr auto SCREEN_HEIGHT = 450;

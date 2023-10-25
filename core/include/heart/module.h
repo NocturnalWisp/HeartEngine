@@ -6,11 +6,6 @@
 
 namespace HeartEngine
 {
-#define ADD_LUA_FUNCTION(table, name) table[__STRINGIFY(name)] = &name
-#define ADD_LUA_FUNCTION_W_TYPE(table, type, name) table[__STRINGIFY(name)] = &type::name
-
-#define ADD_LUA_COPY(table, name) table[__STRINGIFY(name)] = name
-
 class Engine;
 
 class Module

@@ -1,10 +1,11 @@
 #include "module/raylib_core.h"
 
 #include "heart/engine.h"
+#include "heart/utils.h"
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 void RayLibCore::SetupWindow(HeartEngine::Engine& engine, sol::state& lua)
 {

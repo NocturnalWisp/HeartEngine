@@ -79,12 +79,11 @@ private:
     sol::environment luaEnv;
 };
 
-// Will allow for organizing nodes better.
+// Allow better organization for nodes.
 class Container : private Node
 {
     friend class Engine;
     friend class Node;
-
 private:
     Container(std::string p_name) : Node(p_name) {}
 

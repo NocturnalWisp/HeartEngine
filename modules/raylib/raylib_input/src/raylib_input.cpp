@@ -4,7 +4,7 @@
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 void RayLibInput::SetupKeyboard(sol::state& input)
 {

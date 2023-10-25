@@ -3,16 +3,17 @@
 #include <raylib-cpp.hpp>
 
 #include "heart/engine.h"
+#include "heart/utils.h"
 #include "heart/node.h"
 #include "heart/component.h"
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 class Label : public Component
 {
-    EVENT_CALLABLE(draw, _on_draw())
+    EVENT_CALLABLE(draw, _on_draw());
 public:
     Label(std::string name, std::string text = "",
         Vector2 position = Vector2Zero(), float fontSize = 10, Color color = BLACK)

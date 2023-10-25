@@ -8,7 +8,7 @@
 
 using namespace HeartEngine;
 
-namespace HeartModules
+namespace HeartRayLib
 {
 class Texture : public Resource
 {
