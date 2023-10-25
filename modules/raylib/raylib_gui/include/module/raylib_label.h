@@ -6,25 +6,24 @@
 #include "heart/node.h"
 #include "heart/component.h"
 
-#include "module/transform_3d.h"
-
 using namespace HeartEngine;
 
 namespace HeartModules
 {
 class Label : public Component
 {
-    REQUIRE_COMPONENTS(transform)
-
     DRAW_CALLABLE(_on_draw())
 public:
-    Label(std::string name, std::string text = "")
-        : Component(name), text(text) {}
+    Label(std::string name, std::string text = "",
+        Vector2 position = Vector2Zero(), float fontSize = 10, Color color = BLACK)
+        : Component(name),
+          text(text), position(position), fontSize(fontSize), color(color) {}
     Label(std::string name, sol::variadic_args args);
 
-    HeartModules::Transform3D* transform = nullptr;
-
     std::string text;
+    Vector2 position;
+    float fontSize;
+    Color color;
 
     void populateLuaData() override;
 

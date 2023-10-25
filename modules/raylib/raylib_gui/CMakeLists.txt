@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(heart_raylib_gui VERSION 1.0.0)
 
-include(../../tools/ModuleHelper.cmake)
-
 add_library(heart_raylib_gui src/raylib_gui.cpp
     src/raylib_label.cpp
 )
@@ -16,5 +14,4 @@ FetchContent_GetProperties(raygui)
 add_subdirectory(${raygui_SOURCE_DIR}/projects/CMake
     ${raygui_BINARY_DIR})
 
-# LinkLibrary(heart_raylib_gui HeartEngine core/include)
-LinkLibrary(heart_raylib_gui heart_transforms include)
+LinkLibrary(heart_raylib_gui HeartEngine core/include)

@@ -3,8 +3,6 @@ project(heart_raylib_core VERSION 1.0.0)
 
 set(RAYLIB_VERSION 4.5.0)
 
-include(../../tools/ModuleHelper.cmake)
-
 add_library(heart_raylib_core
     src/raylib_core.cpp
     src/camera2d.cpp

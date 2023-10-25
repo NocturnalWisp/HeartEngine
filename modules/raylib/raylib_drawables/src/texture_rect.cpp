@@ -4,12 +4,10 @@
 
 namespace HeartModules
 {
-TextureRect::TextureRect(std::string name, sol::variadic_args va) : Component(name)
+TextureRect::TextureRect(std::string name, sol::variadic_args args) : Component(name)
 {
-    const short textureIndex = 0;
-
-    if (auto p_textureName = checkArg<std::string>(args[textureIndex]))
-        textureName = p_textureName;
+    // Texture Name
+    CHECK_ARG(0, std::string, textureName = *result);
 }
 
 void TextureRect::populateLuaData()

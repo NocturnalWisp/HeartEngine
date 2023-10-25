@@ -1,7 +1,5 @@
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Os")
 
-include(FetchContent)
-
 function(LinkLibrary target name includeSubPath)
     find_library(${name} ${CMAKE_BINARY_DIR}/${name})
     if (NOT TARGET ${name})

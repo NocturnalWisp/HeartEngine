@@ -3,8 +3,6 @@ project(heart_raylib_textures VERSION 1.0.0)
 
 set(RAYLIB_CPP_VERSION 4.5.0)
 
-include(../../tools/ModuleHelper.cmake)
-
 add_library(heart_raylib_textures src/raylib_textures.cpp)
 target_include_directories(heart_raylib_textures PUBLIC include)
 

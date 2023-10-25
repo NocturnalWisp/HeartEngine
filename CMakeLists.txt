@@ -16,6 +16,7 @@ set(RAYLIB_VERSION 4.5.0)
 set(HEART_ASSETS_PATH ${CMAKE_SOURCE_DIR}/assets)
 
 include(FetchContent)
+include(tools/ModuleHelper.cmake)
 
 FetchContent_Declare(lua
   GIT_REPOSITORY     https://github.com/walterschell/Lua.git
@@ -59,17 +60,13 @@ target_link_libraries(HeartEngine PUBLIC sol2::sol2)
 
 # Build all modules.
 if (BUILD_ALL_MODULES)
-  add_subdirectory(modules/raylib_core)
-  add_subdirectory(modules/raylib_input)
-  add_subdirectory(modules/raylib_textures)
-  add_subdirectory(modules/raymath)
-  add_subdirectory(modules/transforms)
-  add_subdirectory(modules/raylib_drawables)
-  add_subdirectory(modules/raylib_gui)
-endif()
-
-if (BUILD_ALL_EXAMPLES)
-  add_subdirectory(examples/pong)
+  add_subdirectory(modules/raylib/raylib_core)
+  add_subdirectory(modules/raylib/raylib_input)
+  add_subdirectory(modules/raylib/raylib_textures)
+  add_subdirectory(modules/raylib/raymath)
+  add_subdirectory(modules/raylib/transforms)
+  add_subdirectory(modules/raylib/raylib_drawables)
+  add_subdirectory(modules/raylib/raylib_gui)
 endif()
 
 # Move/binary zip assets.

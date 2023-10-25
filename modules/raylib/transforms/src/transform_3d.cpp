@@ -109,19 +109,16 @@ Transform3D::Transform3D(std::string name,
 
 Transform3D::Transform3D(std::string name, sol::variadic_args args) : Component(name)
 {
-    const short positionIndex = 0;
-    const short rotationIndex = 1;
-    const short scaleIndex = 2;
-
     //TODO: seg fault if bad table given.
     // Zero out data, exists at (0, 0, 0) world space.
-    if (auto position = checkArg<std::vector<float>>(args[positionIndex]))
-        setLocalPosition(tableToVector3(*position));
-    if (auto rotation = checkArg<std::vector<float>>(args[rotationIndex], false))
-        setLocalRotation(tableToRotationAxisAngle(*rotation));
-    if (auto scale = checkArg<std::vector<float>>(args[scaleIndex], false))
-        setLocalScale(tableToVector3(*scale));
-    
+
+    // Position
+    CHECK_ARG(0, std::vector<float>, setLocalPosition(tableToVector3(*result)));
+    // Rotation
+    CHECK_ARG(1, std::vector<float>, setLocalRotation(tableToRotationAxisAngle(*result)));
+    // Scale
+    CHECK_ARG(2, std::vector<float>, setLocalScale(tableToVector3(*result)));
+
     // Root node.
     parent = nullptr;
 }
