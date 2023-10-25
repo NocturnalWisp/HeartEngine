@@ -35,12 +35,12 @@ class EventBus
 {
     friend class EventHandle;
 public:
-    EventHandle* addListener(std::function<void()> function);
-    EventHandle* addListener(std::function<void(sol::object)> function);
-    EventHandle* addListener(std::function<void(sol::object, sol::object)> function);
-    EventHandle* addListener(sol::function function);
+    const EventHandle* addListener(std::function<void()> function);
+    const EventHandle* addListener(std::function<void(sol::object)> function);
+    const EventHandle* addListener(std::function<void(sol::object, sol::object)> function);
+    const EventHandle* addListener(sol::function function);
 
-    void removeListener(EventHandle& handle);
+    void removeListener(const EventHandle& handle);
 
     void run(sol::object obj1 = sol::nil, sol::object obj2 = sol::nil) const;
 
@@ -54,7 +54,16 @@ private:
 class EventListener
 {
 public:
+typedef 
+    std::variant<
+        std::function<void()>,
+        std::function<void(sol::object)>,
+        std::function<void(sol::object, sol::object)>,
+        sol::function
+    > EventFunction;
+
     EventListener() {}
+    EventListener(EventFunction event) : event(event) {}
     ~EventListener()
     {
         // VERY IMPORTANT. Need to abandon the reference to any lua functions;
@@ -67,12 +76,7 @@ public:
 
     EventListener(const EventListener& t) { event = t.event; }
 
-    std::variant<
-        std::function<void()>,
-        std::function<void(sol::object)>,
-        std::function<void(sol::object, sol::object)>,
-        sol::function
-    > event;
+    EventFunction event;
 };
 
 // Allows for deleting the event listener referencing this handler.

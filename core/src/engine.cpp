@@ -140,7 +140,7 @@ void Engine::populateBasicLua()
 
     auto eventBusType = lua->new_usertype<EventBus>("EventBus");
 
-    eventBusType["addListener"] = [](EventBus& self, sol::function function) -> EventHandle*
+    eventBusType["addListener"] = [](EventBus& self, sol::function function) -> const EventHandle*
         {
             return self.addListener(function);
         };

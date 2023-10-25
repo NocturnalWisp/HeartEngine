@@ -5,51 +5,27 @@
 namespace HeartEngine
 {
 // EventBus
-EventHandle* EventBus::addListener(std::function<void()> function)
+const EventHandle* EventBus::addListener(std::function<void()> function)
 {
-    EventHandle handle = EventHandle::Create();
-
-    auto ptr = &handle;
-
-    eventHandlers[std::move(handle)].event = function;
-
-    return ptr;
+    return &eventHandlers.emplace(EventHandle::Create(), EventListener(function)).first->first;
 }
 
-EventHandle* EventBus::addListener(std::function<void(sol::object)> function)
+const EventHandle* EventBus::addListener(std::function<void(sol::object)> function)
 {
-    EventHandle handle = EventHandle::Create();
-
-    auto ptr = &handle;
-
-    eventHandlers[std::move(handle)].event = function;
-
-    return ptr;
+    return &eventHandlers.emplace(EventHandle::Create(), EventListener(function)).first->first;
 }
 
-EventHandle* EventBus::addListener(std::function<void(sol::object, sol::object)> function)
+const EventHandle* EventBus::addListener(std::function<void(sol::object, sol::object)> function)
 {
-    EventHandle handle = EventHandle::Create();
-
-    auto ptr = &handle;
-
-    eventHandlers[std::move(handle)].event = function;
-
-    return ptr;
+    return &eventHandlers.emplace(EventHandle::Create(), EventListener(function)).first->first;
 }
 
-EventHandle* EventBus::addListener(sol::function function)
+const EventHandle* EventBus::addListener(sol::function function)
 {
-    EventHandle handle = EventHandle::Create();
-
-    auto ptr = &handle;
-
-    eventHandlers[std::move(handle)].event = std::move(function);
-
-    return ptr;
+    return &eventHandlers.emplace(EventHandle::Create(), EventListener(function)).first->first;
 }
 
-void EventBus::removeListener(EventHandle& handle)
+void EventBus::removeListener(const EventHandle& handle)
 {
     if (inside_run)
     {

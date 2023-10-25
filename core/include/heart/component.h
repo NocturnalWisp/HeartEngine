@@ -110,7 +110,7 @@ public:
     } \
 private: \
     std::string drawCall = "draw"; \
-    EventHandle* drawHandle = nullptr;
+    const EventHandle* drawHandle = nullptr;
 
 // Check the argument in variadic parameters and use the result if valid.
 #define CHECK_ARG(index, type, statement) \
