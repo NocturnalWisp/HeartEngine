@@ -12,16 +12,19 @@ Label::Label(std::string p_name, sol::variadic_args args)
     // Text
     CHECK_ARG(0, std::string, text = *result);
     // Position
-    CHECK_ARG(1, Vector2, position = *result);
+    CHECK_ARG(1, raylib::Vector2, position = *result);
+    CHECK_ARG(1, std::vector<float>, position = tableToVector2(*result));
     // Font Size
     CHECK_ARG(2, float, fontSize = *result);
+    // Rotation
+    CHECK_ARG(3, float, rotation = *result);
 
     // Color
-    CHECK_ARG(3, Color, color = *result);
+    CHECK_ARG(4, Color, color = *result);
     // Color as int (hex)
-    CHECK_ARG(3, int, color = GetColor(*result));
+    CHECK_ARG(4, int, color = GetColor(*result));
     // Color as vector of floats (rgba)
-    CHECK_ARG(3, std::vector<float>, color = tableToColor(*result));
+    CHECK_ARG(4, std::vector<float>, color = tableToColor(*result));
 }
 
 void Label::populateLuaData()
@@ -38,6 +41,15 @@ void Label::_on_create()
 
 void Label::_on_draw()
 {
-    DrawText(text.c_str(), position.x, position.y, fontSize, color);
+    raylib::DrawTextPro(
+        GetFontDefault(),
+        text.c_str(),
+        position,
+        Vector2Zero(),
+        rotation,
+        fontSize,
+        fontSize/10,
+        color
+    );
 }
 }

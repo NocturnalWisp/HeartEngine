@@ -84,6 +84,8 @@ class Container : private Node
 {
     friend class Engine;
     friend class Node;
+public:
+    EventManager events;
 private:
     Container(std::string p_name) : Node(p_name) {}
 

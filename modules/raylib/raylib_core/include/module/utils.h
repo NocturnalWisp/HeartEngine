@@ -4,20 +4,20 @@
 
 namespace HeartRayLib
 {
-Vector2 tableToVector2(const std::vector<float>& table)
+inline raylib::Vector2 tableToVector2(const std::vector<float>& table)
 {
     if (table.size() != 2)
     {
         throw HeartException({"Invalid table provided as an argument to Vector2. 2 items are required."});
     }
 
-    Vector2 result;
+    raylib::Vector2 result;
     result.x = table[0];
     result.y = table[1];
     return result;
 }
 
-Vector3 tableToVector3(const std::vector<float>& table)
+inline Vector3 tableToVector3(const std::vector<float>& table)
 {
     if (table.size() != 2)
     {
@@ -31,7 +31,7 @@ Vector3 tableToVector3(const std::vector<float>& table)
     return result;
 }
 
-Rectangle tableToRectangle(const std::vector<float>& table)
+inline Rectangle tableToRectangle(const std::vector<float>& table)
 {
     if (table.size() != 4)
     {
@@ -46,7 +46,7 @@ Rectangle tableToRectangle(const std::vector<float>& table)
     return result;
 }
 
-Color tableToColor(const std::vector<float>& table)
+inline Color tableToColor(const std::vector<float>& table)
 {
     if (table.size() != 4 && table.size() != 3)
     {

@@ -8,4 +8,3 @@ FetchLibraryGit(heart_raylib_drawables raylib https://github.com/raysan5/raylib.
 FetchLibraryGit(heart_raylib_drawables raylib_cpp https://github.com/RobLoach/raylib-cpp.git v4.5.0)
 
 LinkLibrary(heart_raylib_drawables heart_raylib_textures include)
-LinkLibrary(heart_raylib_drawables heart_raylib_transforms include)

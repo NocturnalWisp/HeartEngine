@@ -34,9 +34,7 @@ void Engine::run()
     {
         // Update
         double currentTime = getTime();
-        double elapsed = (currentTime - previousTime) / 1000;
-        if (elapsed > 0.25)
-            elapsed = 0.25;
+        double elapsed = currentTime - previousTime;
         previousTime = currentTime;
 
         lag += elapsed;

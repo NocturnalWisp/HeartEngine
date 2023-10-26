@@ -196,6 +196,6 @@ private:
 
     std::chrono::_V2::system_clock::time_point startTime = std::chrono::system_clock::now();
 
-    const double MS_PER_UPDATE = 0.01;
+    const double MS_PER_UPDATE = 10;
 };
 }

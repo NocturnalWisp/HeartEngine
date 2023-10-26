@@ -18,8 +18,8 @@ public:
 
     raylib::Camera2D camera;
 
-    Vector2 offset;
-    Vector2* target = nullptr;
+    raylib::Vector2 offset;
+    raylib::Vector2* target = nullptr;
     float rotation = 0;
     float zoom = 1;
 
@@ -30,12 +30,12 @@ public:
 
     void _on_update();
 
-    Vector2 GetScreenToWorld(Vector2 position) const
+    raylib::Vector2 GetScreenToWorld(raylib::Vector2 position) const
     {
         return camera.GetScreenToWorld(position);
     }
 
-    Vector2 GetWorldToScreen(Vector2 position) const
+    raylib::Vector2 GetWorldToScreen(raylib::Vector2 position) const
     {
         return camera.GetWorldToScreen(position);
     }

@@ -16,14 +16,22 @@ class Label : public Component
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Label(std::string name, std::string text = "",
-        Vector2 position = Vector2Zero(), float fontSize = 10, Color color = BLACK)
+        raylib::Vector2 position = Vector2Zero(),
+        float fontSize = 10,
+        float rotation = 0,
+        Color color = BLACK)
         : Component(name),
-          text(text), position(position), fontSize(fontSize), color(color) {}
+          text(text),
+          position(position),
+          fontSize(fontSize),
+          rotation(rotation),
+          color(color) {}
     Label(std::string name, sol::variadic_args args);
 
     std::string text;
-    Vector2 position;
+    raylib::Vector2 position;
     float fontSize;
+    float rotation;
     Color color;
 
     void populateLuaData() override;

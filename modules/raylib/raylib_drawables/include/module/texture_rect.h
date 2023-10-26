@@ -2,14 +2,10 @@
 
 #include <optional>
 
-#include "heart/node.h"
-
 #include "heart/utils.h"
 #include "heart/engine.h"
 
 #include "module/resources/texture.h"
-
-#include "module/transform2d.h"
 
 namespace HeartRayLib
 {
@@ -21,21 +17,24 @@ private:
 public:
     std::shared_ptr<HeartRayLib::Texture> texture = nullptr;
     std::optional<Rectangle> source;
-    Transform2D transform;
+    Rectangle rect;
+    float rotation;
     // Percentage 0-1
-    Vector2 origin;
+    raylib::Vector2 origin;
     Color color;
 
     TextureRect(std::string p_name,
         std::string p_textureName = "",
         std::optional<Rectangle> source = std::nullopt,
-        Transform2D transform = {},
-        Vector2 origin = Vector2Zero(),
+        Rectangle rect = {0, 0, 10, 10},
+        float rotation = 0,
+        raylib::Vector2 origin = Vector2Zero(),
         Color color = WHITE)
         : Component(p_name),
           textureName(p_textureName),
           source(source),
-          transform(transform),
+          rect(rect),
+          rotation(rotation),
           origin(origin),
           color(color) {}
     TextureRect(std::string name, sol::variadic_args va);

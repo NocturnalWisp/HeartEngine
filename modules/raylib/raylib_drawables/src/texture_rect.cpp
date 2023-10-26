@@ -51,24 +51,28 @@ void TextureRect::_on_destroy()
 
 void TextureRect::_on_draw()
 {
+    // Origin is percentile based: 0 = start, 1 = end.
+    auto actualOrigin = Vector2Multiply(origin, rect.GetSize());
     if (texture != nullptr)
     {
         auto textureSize = Vector2(texture->texture.width, texture->texture.height);
+
+        auto actualScale = Vector2Multiply(rect.GetSize(), textureSize);
 
         DrawTexturePro(texture->texture,
         source.has_value() 
             ? source
             : {Vector2Zero(), textureSize},
-        Rectangle(position, Vector2Multiply(textureSize, scale)),
-        Vector2Multiply(origin, Vector2Multiply(textureSize, scale)),
+        rect,
+        origin
         rotation,
         color);
     }
     else
     {
         DrawRectanglePro(
-            Rectangle(position, scale),
-            Vector2Multiply(origin, scale),
+            rect,
+            origin,
             rotation,
             color
         );

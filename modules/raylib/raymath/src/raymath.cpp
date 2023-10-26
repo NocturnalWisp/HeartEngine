@@ -1,14 +1,18 @@
 #include "module/raymath.h"
 
+#include <raylib-cpp.hpp>
+
+#include "heart/utils.h"
+
 namespace HeartRayLib
 {
 void RayMath::SetupVector2(sol::state& lua)
 {
-    auto vec2Type = lua.new_usertype<Vector2>("Vector2");
-    vec2Type[sol::call_constructor] = [](float x, float y) -> Vector2 { return {x, y}; };
+    auto vec2Type = lua.new_usertype<raylib::Vector2>("Vector2");
+    vec2Type[sol::call_constructor] = [](float x, float y) -> raylib::Vector2 { return {x, y}; };
 
-    vec2Type["x"] = &Vector2::x;
-    vec2Type["y"] = &Vector2::y;
+    vec2Type["x"] = &raylib::Vector2::x;
+    vec2Type["y"] = &raylib::Vector2::y;
 
     vec2Type[sol::meta_function::addition] = &Vector2Add;
     vec2Type["AddValue"] = &Vector2AddValue;
@@ -41,7 +45,7 @@ void RayMath::SetupVector2(sol::state& lua)
     vec2Type["Transform"] =  &Vector2Transform;
 
     vec2Type[sol::meta_function::to_string] =
-        [](Vector2& self) -> std::string { return std::string("(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ")" ); };
+        [](raylib::Vector2& self) -> std::string { return std::string("(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ")" ); };
 }
 void RayMath::SetupVector3(sol::state& lua)
 {
