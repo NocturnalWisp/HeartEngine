@@ -19,14 +19,24 @@ void RayLibCore::SetupCursor(HeartEngine::Engine& engine, sol::state& lua)
 {
     //TODO:
 }
-void RayLibCore::SetupTiming(Engine& engine, sol::state& lua)
-{
-    auto rayLibType = lua.create_named_table("RayLib");
 
-    ADD_LUA_FUNCTION(rayLibType, WaitTime);
-    ADD_LUA_FUNCTION(rayLibType, SetTargetFPS);
-    ADD_LUA_FUNCTION(rayLibType, GetFPS);
-    ADD_LUA_FUNCTION(rayLibType, GetFrameTime);
-    ADD_LUA_FUNCTION(rayLibType, GetTime);
+//TODO: Move to heart raylib input.
+void RayLibCore::handleInputEvents(HeartEngine::Engine& engine)
+{
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        engine.events["input"]["mouse"]["left"]["pressed"].run();
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        engine.events["input"]["mouse"]["left"]["released"].run();
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        engine.events["input"]["mouse"]["right"]["pressed"].run();
+    if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
+        engine.events["input"]["mouse"]["right"]["released"].run();
+    
+    auto key = GetKeyPressed();
+    while (key != 0)
+    {
+        engine.events["input"]["keyboard"][std::to_string(key)].run();
+    }
 }
 }

@@ -166,7 +166,7 @@ public:
 
     double getTime()
     {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count();
+        return std::chrono::duration<double>(std::chrono::system_clock::now() - startTime).count();
     }
 
     FileManager fileManager = {};
@@ -177,6 +177,8 @@ public:
     EventManager events;
 
     bool shouldCloseWindow = false;
+
+    double deltaTime;
 
 private:
     void populateBasicLua();
@@ -197,6 +199,6 @@ private:
 
     std::chrono::_V2::system_clock::time_point startTime = std::chrono::system_clock::now();
 
-    const double MS_PER_UPDATE = 10;
+    const double MS_PER_UPDATE = 0.01;
 };
 }

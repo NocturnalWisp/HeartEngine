@@ -69,7 +69,7 @@ public:
     {
         if (lerp)
         {
-            float interpolation = lerpSpeed * GetFrameTime();
+            float interpolation = lerpSpeed * node->engine->deltaTime;
             *follower = Vector2Lerp(*follower, *target + offset, interpolation);
         }
         else

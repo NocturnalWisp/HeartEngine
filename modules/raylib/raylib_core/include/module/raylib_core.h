@@ -20,12 +20,10 @@ class RayLibCore : public HeartEngine::Module
 public:
     RayLibCore(bool includeWindow = false,
             bool includeMonitor = false,
-            bool includeCursor = false,
-            bool includeTiming = true)
+            bool includeCursor = false)
         : includeWindow(includeWindow),
         includeMonitor(includeMonitor),
-        includeCursor(includeCursor),
-        includeTiming(includeTiming) {}
+        includeCursor(includeCursor) {}
 
     void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override
     {
@@ -39,13 +37,13 @@ public:
             SetupMonitor(engine, lua);
         if (includeCursor)
             SetupCursor(engine, lua);
-        if (includeTiming)
-            SetupTiming(engine, lua);
     }
 
     void duringUpdate(HeartEngine::Engine& engine) override
     {
-        engine.shouldCloseWindow = WindowShouldClose();
+        PollInputEvents();
+
+        handleInputEvents(engine);
     }
     void closeApplication(HeartEngine::Engine& engine) override
     {
@@ -60,16 +58,20 @@ public:
     void endDraw(HeartEngine::Engine& engine)
     {
         EndDrawing();
+
+        SwapScreenBuffer();
+
+        engine.shouldCloseWindow = WindowShouldClose();
     }
 
     void SetupWindow(HeartEngine::Engine& engine, sol::state& lua);
     void SetupMonitor(HeartEngine::Engine& engine, sol::state& lua);
     void SetupCursor(HeartEngine::Engine& engine, sol::state& lua);
-    void SetupTiming(HeartEngine::Engine& engine, sol::state& lua);
 private:
+    void handleInputEvents(HeartEngine::Engine& engine);
+
     bool includeWindow;
     bool includeMonitor;
     bool includeCursor;
-    bool includeTiming;
 };
 }

@@ -34,19 +34,24 @@ void Engine::run()
     {
         // Update
         double currentTime = getTime();
-        double elapsed = currentTime - previousTime;
-        previousTime = currentTime;
-
-        lag += elapsed;
-
-        while (lag >= MS_PER_UPDATE)
-        {
-            events["update"].run();
-            lag -= MS_PER_UPDATE;
-        }
+        deltaTime = currentTime - previousTime;
 
         for (auto& mod : moduleRegistry)
             mod->duringUpdate(*this);
+
+        // Variable update loop.
+        events["update"].run();
+
+        previousTime = currentTime;
+
+        lag += deltaTime;
+
+        // Fixed update loop.
+        while (lag >= MS_PER_UPDATE)
+        {
+            events["fixed_update"].run();
+            lag -= MS_PER_UPDATE;
+        }
 
         // Drawing Start
         for (auto& mod : moduleRegistry)

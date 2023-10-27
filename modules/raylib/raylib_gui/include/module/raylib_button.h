@@ -18,7 +18,6 @@ namespace HeartRayLib
 class Button : public Component
 {
     EVENT_CALLABLE(draw, _on_draw());
-    EVENT_CALLABLE(update, _on_update());
 public:
     Button(std::string name,
         raylib::Rectangle rect = {},
@@ -69,7 +68,8 @@ public:
     void _on_create() override
     {
         setdrawCall(drawCall);
-        setupdateCall(updateCall);
+
+        node->engine->events["input"]["mouse"]["left"]["released"].addListener([this]() {_on_mouse_click();});
     }
 
     void _on_draw()
@@ -77,14 +77,13 @@ public:
         DrawRectanglePro(rect, origin, rotation, color);
     }
 
-    void _on_update()
+    void _on_mouse_click()
     {
-        if (RayLibGUI::CheckCollisionPointRec(GetMousePosition(), rect))
+        // NOTE: Will not currently properly check if the button is rotated.
+        //  Need to implement some kind of AABB I guess.
+        if (CheckCollisionPointRec(GetMousePosition(), rect))
         {
-            if (IsMouseButtonReleased(0))
-            {
-                node->events[name]["pressed"].run();
-            }
+            node->events[name]["pressed"].run();
         }
     }
 };
