@@ -39,7 +39,7 @@ namespace HeartEngine
         CAT2(eventName, Handle) = node->engine->events.getSubBus(CAT2(eventName, Call)).addListener([this](){ callMethod; }); \
     } \
 private: \
-    std::vector<std::string> CAT2(eventName, Call) = {"draw"}; \
+    std::vector<std::string> CAT2(eventName, Call) = {__STRINGIFY(eventName)}; \
     const EventHandle* CAT2(eventName, Handle) = nullptr
 
 // Check the argument in variadic parameters and use the result if valid.

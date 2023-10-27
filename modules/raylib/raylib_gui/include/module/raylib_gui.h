@@ -1,5 +1,6 @@
 #pragma once
 
+#include <raylib-cpp.hpp>
 #include <sol/sol.hpp>
 
 #include "heart/module.h"
@@ -21,6 +22,16 @@ public:
     }
 
     void Setup(HeartEngine::Engine& engine, sol::state& lua);
+
+    static bool CheckCollisionPointRec(raylib::Vector2 point, raylib::Rectangle rec)
+    {
+        bool collision = false;
+
+        if ((point.x >= rec.x) && (point.x <= (rec.x + rec.width)) &&
+            (point.y >= rec.y) && (point.y <= (rec.y + rec.height))) collision = true;
+
+        return collision;
+    }
 private:
     bool includeSetting;
 };
