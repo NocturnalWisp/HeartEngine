@@ -3,10 +3,17 @@
 #include "heart/engine.h"
 #include "heart/utils.h"
 
+#include "module/camera2d.h"
+
 using namespace HeartEngine;
 
 namespace HeartRayLib
 {
+void RayLibCore::SetupCamera(HeartEngine::Engine& engine, sol::state& lua)
+{
+    engine.registerComponent("RayLibCamera2D", &Engine::componentBuilder<RayLibCamera2D>);
+}
+
 void RayLibCore::SetupWindow(HeartEngine::Engine& engine, sol::state& lua)
 {
     //TODO:

@@ -6,7 +6,7 @@
 
 namespace HeartRayLib
 {
-class DrawModeCamera2D : public DrawMode
+class DrawModeCamera2D : public HeartEngine::DrawMode
 {
 public:
     DrawModeCamera2D(raylib::Camera2D& camera)

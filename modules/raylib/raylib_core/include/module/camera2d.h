@@ -2,7 +2,10 @@
 
 #include <raylib-cpp.hpp>
 
-#include "heart/component.h"
+#include "heart/utils.h"
+#include "heart/engine.h"
+
+#include "module/raylib_draw_mode.h"
 
 using namespace HeartEngine;
 
@@ -23,12 +26,43 @@ public:
     float rotation = 0;
     float zoom = 1;
 
-    void populateLuaData() override;
+    void populateLuaData() override
+    {
+        auto type = luaState->new_usertype<RayLibCamera2D>("Camera2D");
+        luaEnv[name] = this;
 
-    void _on_create() override;
-    void _on_destroy() override;
+        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, GetScreenToWorld);
+        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, GetWorldToScreen);
 
-    void _on_update();
+        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, offset);
+        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, target);
+        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, rotation);
+        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, zoom);
+    }
+
+    void _on_create() override
+    {
+        // Add to draw mode registry.
+        node->engine->registerDrawMode(name,
+            std::unique_ptr<DrawMode>(new DrawModeCamera2D(camera)));
+
+        node->engine->events["update"].addListener([this]()
+            { _on_update(); });
+    }
+
+    void _on_destroy() override
+    {
+        // Remove from draw mode registry.
+        node->engine->unregisterDrawMode(name);
+    }
+
+    void _on_update()
+    {
+        camera.offset = offset;
+        camera.target = target != nullptr ? *target : Vector2Zero();
+        camera.rotation = rotation;
+        camera.zoom = zoom;
+    }
 
     raylib::Vector2 GetScreenToWorld(raylib::Vector2 position) const
     {
