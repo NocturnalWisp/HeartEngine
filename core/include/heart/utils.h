@@ -47,6 +47,20 @@ private: \
     if (auto result = checkArg<type>(args[index])) \
         statement
 
+// Check arg sub macros.
+
+#define CHECK_ARG_STRING(index, var) \
+    CHECK_ARG(index, std::string, var = *result)
+
+#define CHECK_ARG_FLOAT(index, var) \
+    CHECK_ARG(index, float, var = *result)
+
+#define CHECK_ARG_INT(index, var) \
+    CHECK_ARG(index, int, var = *result)
+
+#define CHECK_ARG_BOOL(index, var) \
+    CHECK_ARG(index, bool, var = *result)
+
 // Simpler macro to register a component to the engine lua state.
 #define REGISTER_COMPONENT(type) \
     engine.registerComponent<type>(__STRINGIFY(type), &HeartEngine::Engine::componentBuilder<type>)

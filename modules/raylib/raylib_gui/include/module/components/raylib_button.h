@@ -34,20 +34,13 @@ public:
         : Component(name)
     {
         // Rect
-        CHECK_ARG(0, raylib::Rectangle, rect = *result);
-        CHECK_ARG(0, std::vector<float>, rect = tableToRectangle(*result));
+        CHECK_ARG_RECT(0, rect);
         // origin
-        CHECK_ARG(1, raylib::Vector2, origin = *result);
-        CHECK_ARG(1, std::vector<float>, origin = tableToVector2(*result));
+        CHECK_ARG_VECTOR2(1, origin);
         // Rotation
-        CHECK_ARG(2, float, rotation = *result);
-
+        CHECK_ARG_FLOAT(2, rotation);
         // Color
-        CHECK_ARG(3, Color, color = *result);
-        // Color as int (hex)
-        CHECK_ARG(3, int, color = GetColor(*result));
-        // Color as vector of floats (rgba)
-        CHECK_ARG(3, std::vector<float>, color = tableToColor(*result));
+        CHECK_ARG_COLOR(3, color);
     }
 
     raylib::Rectangle rect;

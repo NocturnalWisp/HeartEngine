@@ -33,21 +33,15 @@ public:
         : Component(name)
     {
         // Text
-        CHECK_ARG(0, std::string, text = *result);
+        CHECK_ARG_STRING(0, text);
         // Position
-        CHECK_ARG(1, raylib::Vector2, position = *result);
-        CHECK_ARG(1, std::vector<float>, position = tableToVector2(*result));
+        CHECK_ARG_VECTOR2(1, position);
         // Font Size
-        CHECK_ARG(2, float, fontSize = *result);
+        CHECK_ARG_FLOAT(2, fontSize);
         // Rotation
-        CHECK_ARG(3, float, rotation = *result);
-
+        CHECK_ARG_FLOAT(3, rotation);
         // Color
-        CHECK_ARG(4, Color, color = *result);
-        // Color as int (hex)
-        CHECK_ARG(4, int, color = GetColor(*result));
-        // Color as vector of floats (rgba)
-        CHECK_ARG(4, std::vector<float>, color = tableToColor(*result));
+        CHECK_ARG_COLOR(4, color);
     }
 
     std::string text;

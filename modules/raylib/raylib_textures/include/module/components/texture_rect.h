@@ -42,22 +42,15 @@ public:
         : Component(name)
     {
         // Texture Name
-        CHECK_ARG(0, std::string, textureName = *result);
+        CHECK_ARG_STRING(0, textureName);
         // Rect
-        CHECK_ARG(1, raylib::Rectangle, rect = *result);
-        CHECK_ARG(1, std::vector<float>, rect = tableToRectangle(*result));
+        CHECK_ARG_RECT(1, rect);
         // Rotation
-        CHECK_ARG(2, float, rotation = *result);
+        CHECK_ARG_FLOAT(2, rotation);
         // Origin
-        CHECK_ARG(3, Vector2, origin = *result);
-        CHECK_ARG(3, std::vector<float>, origin = tableToVector2(*result));
-
+        CHECK_ARG_VECTOR2(3, origin);
         // Color
-        CHECK_ARG(4, Color, color = *result);
-        // Color as int (hex)
-        CHECK_ARG(4, int, color = GetColor(*result));
-        // Color as vector of floats (rgba)
-        CHECK_ARG(4, std::vector<float>, color = tableToColor(*result));
+        CHECK_ARG_COLOR(4, color);
     }
 
     void _on_create() override

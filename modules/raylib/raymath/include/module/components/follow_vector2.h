@@ -28,17 +28,16 @@ public:
     FollowVector2(std::string name, sol::variadic_args args)
         : Component(name)
     {
-        // Follower
-        CHECK_ARG(0, raylib::Vector2*, follower = *result);
-        // Target
+        // Follower (Pointer)
+        CHECK_ARG(1, raylib::Vector2*, follower = *result);
+        // Target (Pointer)
         CHECK_ARG(1, raylib::Vector2*, target = *result);
         // Offset
-        CHECK_ARG(2, raylib::Vector2, offset = *result);
-        CHECK_ARG(2, std::vector<float>, offset = tableToVector2(*result));
+        CHECK_ARG_VECTOR2(2, offset);
         // Lerp
-        CHECK_ARG(3, bool, lerp = *result);
+        CHECK_ARG_BOOL(3, lerp);
         // Lerp Speed
-        CHECK_ARG(4, float, lerpSpeed = *result);
+        CHECK_ARG_FLOAT(4, lerpSpeed);
     }
 
     raylib::Vector2* follower = nullptr;

@@ -4,6 +4,8 @@
 
 namespace HeartRayLib
 {
+// Following functions convert vector of floats to various types.
+
 inline raylib::Vector2 tableToVector2(const std::vector<float>& table)
 {
     if (table.size() != 2)
@@ -61,4 +63,19 @@ inline Color tableToColor(const std::vector<float>& table)
         result.a = table[3];
     return result;
 }
+
+// Check Arg sub-macros
+
+#define CHECK_ARG_VECTOR2(index, var) \
+    CHECK_ARG(index, raylib::Vector2, var = *result); \
+    CHECK_ARG(index, std::vector<float>, var = tableToVector2(*result))
+
+#define CHECK_ARG_COLOR(index, var) \
+    CHECK_ARG(index, Color, var = *result); \
+    CHECK_ARG(index, int, var = GetColor(*result)); \
+    CHECK_ARG(index, std::vector<float>, var = tableToColor(*result))
+
+#define CHECK_ARG_RECT(index, var) \
+    CHECK_ARG(index, raylib::Rectangle, var = *result); \
+    CHECK_ARG(index, std::vector<float>, var = tableToRectangle(*result))
 }
