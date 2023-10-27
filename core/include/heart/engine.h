@@ -94,6 +94,8 @@ public:
 
         resources.push_back(res);
 
+        res->populateLuaData(lua);
+
         load(res);
     }
 

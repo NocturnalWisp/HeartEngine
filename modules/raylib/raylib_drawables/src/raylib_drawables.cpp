@@ -11,6 +11,7 @@ namespace HeartRayLib
 void Drawables::SetupTextures(HeartEngine::Engine& engine, sol::state& lua)
 {
     engine.registerComponent("TextureRect", &Engine::componentBuilder<TextureRect>);
+    //TODO: Setup Texture2D lua type.
 }
 void Drawables::SetupShapes(HeartEngine::Engine& engine, sol::state& lua)
 {
