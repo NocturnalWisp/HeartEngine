@@ -56,13 +56,6 @@ public:
     float rotation;
     Color color;
 
-    void populateLuaData() override
-    {
-        auto type = CREATE_USER_TYPE(Label);
-
-        type["text"] = &Label::text;
-    }
-
     void _on_create() override
     {
         setdrawCall(drawCall);

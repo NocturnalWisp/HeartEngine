@@ -49,11 +49,5 @@ private: \
 
 // Simpler macro to register a component to the engine lua state.
 #define REGISTER_COMPONENT(type) \
-    engine.registerComponent(__STRINGIFY(type), &HeartEngine::Engine::componentBuilder<type>)
-
-// Lua Environment
-
-#define CREATE_USER_TYPE(t)\
-    luaState->new_usertype<t>(__STRINGIFY(t));\
-    luaEnv[name] = this
+    engine.registerComponent<type>(__STRINGIFY(type), &HeartEngine::Engine::componentBuilder<type>)
 }

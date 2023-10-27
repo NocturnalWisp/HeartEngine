@@ -9,12 +9,11 @@ namespace HeartEngine
 class LuaEnvironment
 {
 public:
-    virtual void populateLuaData() {}
+    virtual void populateEnvironment() = 0;
 
     sol::state* luaState;
     sol::environment luaEnv;
 private:
     virtual void setupLuaState(sol::state& state, std::string scriptName = "") = 0;
-    virtual void populateEnvironment() = 0;
 };
 }

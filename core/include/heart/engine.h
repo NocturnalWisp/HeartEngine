@@ -94,8 +94,6 @@ public:
 
         resources.push_back(res);
 
-        res->populateLuaData(lua);
-
         load(res);
     }
 
@@ -159,7 +157,14 @@ public:
         return std::make_unique<T>(T(name, va));
     }
 
-    void registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args));
+    template <typename T>
+    sol::usertype<T> registerComponent(std::string typeName,
+        std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args))
+    {
+        componentRegistry[typeName] = creator;
+
+        return lua->new_usertype<T>(typeName);
+    }
 
     std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
 

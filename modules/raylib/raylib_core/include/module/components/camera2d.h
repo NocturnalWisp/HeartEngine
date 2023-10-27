@@ -11,12 +11,12 @@ using namespace HeartEngine;
 
 namespace HeartRayLib
 {
-class RayLibCamera2D : public Component
+class Camera2D : public Component
 {
 public:
-    RayLibCamera2D(std::string name)
+    Camera2D(std::string name)
         : Component(name) {}
-    RayLibCamera2D(std::string name, sol::variadic_args args)
+    Camera2D(std::string name, sol::variadic_args args)
         : Component(name) {}
 
     raylib::Camera2D camera;
@@ -25,20 +25,6 @@ public:
     raylib::Vector2* target = nullptr;
     float rotation = 0;
     float zoom = 1;
-
-    void populateLuaData() override
-    {
-        auto type = luaState->new_usertype<RayLibCamera2D>("Camera2D");
-        luaEnv[name] = this;
-
-        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, GetScreenToWorld);
-        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, GetWorldToScreen);
-
-        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, offset);
-        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, target);
-        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, rotation);
-        ADD_LUA_FUNCTION_W_TYPE(type, RayLibCamera2D, zoom);
-    }
 
     void _on_create() override
     {

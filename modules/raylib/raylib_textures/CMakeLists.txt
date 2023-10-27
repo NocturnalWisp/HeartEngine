@@ -10,3 +10,4 @@ FetchLibraryGit(heart_raylib_textures raylib https://github.com/raysan5/raylib.g
 FetchLibraryGit(heart_raylib_textures raylib_cpp https://github.com/RobLoach/raylib-cpp.git v4.5.0)
 
 LinkLibrary(heart_raylib_textures HeartEngine core/include)
+LinkLibrary(heart_raylib_textures heart_raylib_core include)

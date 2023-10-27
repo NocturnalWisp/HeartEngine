@@ -37,6 +37,7 @@ public:
           rotation(rotation),
           origin(origin),
           color(color) {}
+    
     TextureRect(std::string name, sol::variadic_args args)
         : Component(name)
     {
@@ -57,17 +58,6 @@ public:
         CHECK_ARG(4, int, color = GetColor(*result));
         // Color as vector of floats (rgba)
         CHECK_ARG(4, std::vector<float>, color = tableToColor(*result));
-    }
-
-    void populateLuaData() override
-    {
-        auto type = CREATE_USER_TYPE(TextureRect);
-
-        ADD_LUA_FUNCTION_W_TYPE(type, TextureRect, texture);
-        ADD_LUA_FUNCTION_W_TYPE(type, TextureRect, rect);
-        ADD_LUA_FUNCTION_W_TYPE(type, TextureRect, rotation);
-        ADD_LUA_FUNCTION_W_TYPE(type, TextureRect, origin);
-        ADD_LUA_FUNCTION_W_TYPE(type, TextureRect, color);
     }
 
     void _on_create() override

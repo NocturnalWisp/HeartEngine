@@ -5,13 +5,39 @@
 #include "heart/utils.h"
 #include "heart/engine.h"
 
-#include "module/follow_vector2.h"
+#include "module/components/follow_vector2.h"
 
 namespace HeartRayLib
 {
-void RayMath::SetupComponents(HeartEngine::Engine& engine)
+void RayMath::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
 {
-    REGISTER_COMPONENT(FollowVector2);
+    auto followVector2Type = REGISTER_COMPONENT(FollowVector2);
+
+    ADD_LUA_FUNCTION_W_TYPE(followVector2Type, FollowVector2, follower);
+    ADD_LUA_FUNCTION_W_TYPE(followVector2Type, FollowVector2, target);
+
+    ADD_LUA_FUNCTION_W_TYPE(followVector2Type, FollowVector2, offset);
+    ADD_LUA_FUNCTION_W_TYPE(followVector2Type, FollowVector2, lerp);
+    ADD_LUA_FUNCTION_W_TYPE(followVector2Type, FollowVector2, lerpSpeed);
+
+    if (includeVector2)
+        SetupVector2(lua);
+    if (includeVector3)
+        SetupVector3(lua);
+    if (includeMatrix)
+        SetupMatrix(lua);
+    if (includeQuaternion)
+        SetupQuaternion(lua);
+
+    // Other
+    lua["deg2rad"] = DEG2RAD;
+    lua["rad2deg"] = RAD2DEG;
+
+    ADD_LUA_FUNCTION(lua, Clamp);
+    ADD_LUA_FUNCTION(lua, Normalize);
+    ADD_LUA_FUNCTION(lua, Remap);
+    ADD_LUA_FUNCTION(lua, Wrap);
+    ADD_LUA_FUNCTION(lua, FloatEquals);
 }
 
 void RayMath::SetupVector2(sol::state& lua)
@@ -211,16 +237,5 @@ void RayMath::SetupQuaternion(sol::state& lua)
     quaternionType[sol::meta_function::to_string] =
         [](Quaternion& self) -> std::string
         { return std::string("(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ", " + std::to_string(self.z) + ", " + std::to_string(self.w) + ")" ); };
-}
-void RayMath::SetupOther(sol::state& lua)
-{
-    lua["deg2rad"] = DEG2RAD;
-    lua["rad2deg"] = RAD2DEG;
-
-    ADD_LUA_FUNCTION(lua, Clamp);
-    ADD_LUA_FUNCTION(lua, Normalize);
-    ADD_LUA_FUNCTION(lua, Remap);
-    ADD_LUA_FUNCTION(lua, Wrap);
-    ADD_LUA_FUNCTION(lua, FloatEquals);
 }
 }

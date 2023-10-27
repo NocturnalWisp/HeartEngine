@@ -19,14 +19,6 @@ public:
     std::string path;
     Texture2D texture;
 
-    void populateLuaData(sol::state& lua) override
-    {
-        auto type = lua.new_usertype<Texture>("Texture");
-
-        ADD_LUA_FUNCTION_W_TYPE(type, Texture, path);
-        ADD_LUA_FUNCTION_W_TYPE(type, Texture, texture);
-    }
-
     void _load() override
     {
         texture = RayLibTextures::loadImage(*engine, path).LoadTexture();

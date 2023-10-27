@@ -17,6 +17,10 @@ void Engine::init()
 {
     started = true;
 
+    // Initialize modules.
+    for (auto& mod : moduleRegistry)
+        mod->initialize(*this);
+
     // Creation
     for (auto& node : nodes)
         node->onCreate();
@@ -87,7 +91,7 @@ void Engine::run()
         unload(res);
 
     for (auto& mod : moduleRegistry)
-        mod->closeApplication(*this);
+        mod->close(*this);
 }
 
 Node* Engine::getNode(std::string_view name)
@@ -222,11 +226,6 @@ void Engine::checkEarlyResourceRelease()
             ++it;
         }
     }
-}
-
-void Engine::registerComponent(std::string typeName, std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args))
-{
-    componentRegistry[typeName] = creator;
 }
 
 std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va)

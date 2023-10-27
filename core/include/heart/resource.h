@@ -13,8 +13,6 @@ class Resource
 public:
     Resource(std::string p_name) : name(p_name) {} 
 
-    virtual void populateLuaData(sol::state& lua) {}
-
     virtual void _load() {}
     virtual void _unload() {}
 

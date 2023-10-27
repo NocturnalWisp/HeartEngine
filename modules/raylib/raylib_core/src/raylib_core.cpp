@@ -3,47 +3,50 @@
 #include "heart/engine.h"
 #include "heart/utils.h"
 
-#include "module/camera2d.h"
+#include "module/components/camera2d.h"
 
 using namespace HeartEngine;
 
 namespace HeartRayLib
 {
-void RayLibCore::SetupCamera(HeartEngine::Engine& engine, sol::state& lua)
-{
-    engine.registerComponent("RayLibCamera2D", &Engine::componentBuilder<RayLibCamera2D>);
-}
-
-void RayLibCore::SetupWindow(HeartEngine::Engine& engine, sol::state& lua)
-{
-    //TODO:
-}
-void RayLibCore::SetupMonitor(HeartEngine::Engine& engine, sol::state& lua)
-{
-    //TODO:
-}
-void RayLibCore::SetupCursor(HeartEngine::Engine& engine, sol::state& lua)
-{
-    //TODO:
-}
-
-//TODO: Move to heart raylib input.
-void RayLibCore::handleInputEvents(HeartEngine::Engine& engine)
-{
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        engine.events["input"]["mouse"]["left"]["pressed"].run();
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-        engine.events["input"]["mouse"]["left"]["released"].run();
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-        engine.events["input"]["mouse"]["right"]["pressed"].run();
-    if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
-        engine.events["input"]["mouse"]["right"]["released"].run();
-    
-    auto key = GetKeyPressed();
-    while (key != 0)
+    void RayLibCore::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
     {
-        engine.events["input"]["keyboard"][std::to_string(key)].run();
+        //TODO: Move camera to its own module.
+        auto camera2dType = REGISTER_COMPONENT(Camera2D);
+
+        ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, GetScreenToWorld);
+        ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, GetWorldToScreen);
+
+        ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, offset);
+        ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, target);
+        ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, rotation);
+        ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, zoom);
     }
-}
+
+    void RayLibCore::initialize(HeartEngine::Engine& engine)
+    {
+        SetTraceLogLevel(4);
+        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Window title");
+        SetTargetFPS(60);
+    }
+
+    void RayLibCore::close(HeartEngine::Engine& engine)
+    {
+        CloseWindow();
+    }
+
+    void RayLibCore::startDraw(HeartEngine::Engine& engine)
+    {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+    }
+
+    void RayLibCore::endDraw(HeartEngine::Engine& engine)
+    {
+        EndDrawing();
+
+        SwapScreenBuffer();
+
+        engine.shouldCloseWindow = WindowShouldClose();
+    }
 }

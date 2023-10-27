@@ -23,8 +23,6 @@ class Component : public LuaEnvironment
 public:
     Component(std::string name) : name(name) {}
 
-    virtual void populateLuaData() override = 0;
-
     Node* node;
 
     std::string name;
@@ -77,8 +75,6 @@ class LuaComponent : public Component
 {
 public:
     LuaComponent(std::string name) : Component(name) {}
-
-    void populateLuaData() override {}
 
     //TODO: Allow setting a variable in the lua code to require components before _on_create.
     std::vector<Component*> requireComponents() override

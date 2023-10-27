@@ -1,11 +1,6 @@
 #pragma once
 
-#include <sol/sol.hpp>
-#include <raylib.h>
-
 #include "heart/module.h"
-
-namespace HeartEngine { class Engine; }
 
 namespace HeartRayLib
 {
@@ -21,23 +16,16 @@ public:
           includeGamePad(includeGamePad),
           includeTouch(includeTouch) {}
 
-    void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override
-    {
-        if (includeKeyboard)
-            SetupKeyboard(lua);
-        if (includeMouse)
-            SetupMouse(lua);
-        if (includeGamePad)
-            SetupGamePad(lua);
-        if (includeTouch)
-            SetupTouch(lua);
-    }
+    void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override;
+    void duringUpdate(HeartEngine::Engine& engine) override;
 
     void SetupKeyboard(sol::state&);
     void SetupMouse(sol::state&);
     void SetupGamePad(sol::state&);
     void SetupTouch(sol::state&);
 private:
+    void handleInputEvents(HeartEngine::Engine& engine);
+
     bool includeKeyboard;
     bool includeMouse;
     bool includeGamePad;

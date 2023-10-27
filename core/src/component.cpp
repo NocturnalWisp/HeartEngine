@@ -25,13 +25,16 @@ void Component::setupLuaState(sol::state& p_luaState, std::string scriptName)
     {
         // Lua Scripted Component
         populateEnvironment();
+
         node->engine->fileManager.loadScript(scriptName, *luaState, &luaEnv);
         isLuaScript = true;
     }
     else
     {
         // C++ component.
-        populateLuaData();
+        // Environment table is set to this component to allow for accessing members.
+        luaEnv[name] = this;
+
         isLuaScript = false;
     }
 

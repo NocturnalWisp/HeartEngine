@@ -55,16 +55,6 @@ public:
     float rotation;
     Color color;
 
-    void populateLuaData() override
-    {
-        auto type = CREATE_USER_TYPE(Button);
-
-        ADD_LUA_FUNCTION_W_TYPE(type, Button, rect);
-        ADD_LUA_FUNCTION_W_TYPE(type, Button, origin);
-        ADD_LUA_FUNCTION_W_TYPE(type, Button, rotation);
-        ADD_LUA_FUNCTION_W_TYPE(type, Button, color);
-    }
-
     void _on_create() override
     {
         setdrawCall(drawCall);

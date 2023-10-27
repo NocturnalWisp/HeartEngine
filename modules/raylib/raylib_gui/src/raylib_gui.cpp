@@ -1,21 +1,32 @@
 #include "module/raylib_gui.h"
 
+#include <raylib-cpp.hpp>
+#include <sol/sol.hpp>
+
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
 #include "heart/utils.h"
 #include "heart/engine.h"
 
-#include "module/raylib_label.h"
-#include "module/raylib_button.h"
+#include "module/components/raylib_label.h"
+#include "module/components/raylib_button.h"
 
 using namespace HeartEngine;
 
 namespace HeartRayLib
 {
-void RayLibGUI::Setup(HeartEngine::Engine& engine, sol::state& lua)
+void RayLibGUI::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
 {
-    REGISTER_COMPONENT(Label);
-    REGISTER_COMPONENT(Button);
+    auto labelType = REGISTER_COMPONENT(Label);
+
+    ADD_LUA_FUNCTION_W_TYPE(labelType, Label, text);
+
+    auto buttonType = REGISTER_COMPONENT(Button);
+
+    ADD_LUA_FUNCTION_W_TYPE(buttonType, Button, rect);
+    ADD_LUA_FUNCTION_W_TYPE(buttonType, Button, origin);
+    ADD_LUA_FUNCTION_W_TYPE(buttonType, Button, rotation);
+    ADD_LUA_FUNCTION_W_TYPE(buttonType, Button, color);
 }
 }

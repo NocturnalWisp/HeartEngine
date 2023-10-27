@@ -1,11 +1,52 @@
 #include "module/raylib_input.h"
 
+#include <sol/sol.hpp>
+#include <raylib-cpp.hpp>
+
+#include "heart/utils.h"
 #include "heart/engine.h"
 
 using namespace HeartEngine;
 
 namespace HeartRayLib
 {
+void RayLibInput::registerTypes(HeartEngine::Engine &engine, sol::state &lua)
+{
+    if (includeKeyboard)
+        SetupKeyboard(lua);
+    if (includeMouse)
+        SetupMouse(lua);
+    if (includeGamePad)
+        SetupGamePad(lua);
+    if (includeTouch)
+        SetupTouch(lua);
+}
+void RayLibInput::duringUpdate(HeartEngine::Engine& engine)
+{
+    PollInputEvents();
+
+    handleInputEvents(engine);
+}
+
+void RayLibInput::handleInputEvents(HeartEngine::Engine& engine)
+{
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        engine.events["input"]["mouse"]["left"]["pressed"].run();
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        engine.events["input"]["mouse"]["left"]["released"].run();
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        engine.events["input"]["mouse"]["right"]["pressed"].run();
+    if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
+        engine.events["input"]["mouse"]["right"]["released"].run();
+    
+    auto key = GetKeyPressed();
+    while (key != 0)
+    {
+        engine.events["input"]["keyboard"][std::to_string(key)].run();
+    }
+}
+
 void RayLibInput::SetupKeyboard(sol::state& input)
 {
     ADD_LUA_COPY(input, KEY_ESCAPE);
@@ -119,14 +160,6 @@ void RayLibInput::SetupKeyboard(sol::state& input)
     ADD_LUA_COPY(input, KEY_DOWN);
     ADD_LUA_COPY(input, KEY_LEFT);
     ADD_LUA_COPY(input, KEY_RIGHT);
-
-    ADD_LUA_FUNCTION(input, IsKeyPressed);
-    ADD_LUA_FUNCTION(input, IsKeyDown);
-    ADD_LUA_FUNCTION(input, IsKeyReleased);
-    ADD_LUA_FUNCTION(input, IsKeyUp);
-    ADD_LUA_FUNCTION(input, SetExitKey);
-    ADD_LUA_FUNCTION(input, GetKeyPressed);
-    ADD_LUA_FUNCTION(input, GetCharPressed);
 }
 void RayLibInput::SetupMouse(sol::state& input)
 {
@@ -138,10 +171,6 @@ void RayLibInput::SetupMouse(sol::state& input)
     ADD_LUA_COPY(input, MOUSE_BUTTON_RIGHT);
     ADD_LUA_COPY(input, MOUSE_BUTTON_SIDE);
 
-    ADD_LUA_FUNCTION(input, IsMouseButtonPressed);
-    ADD_LUA_FUNCTION(input, IsMouseButtonDown);
-    ADD_LUA_FUNCTION(input, IsMouseButtonReleased);
-    ADD_LUA_FUNCTION(input, IsMouseButtonUp);
     ADD_LUA_FUNCTION(input, GetMouseX);
     ADD_LUA_FUNCTION(input, GetMouseY);
     ADD_LUA_FUNCTION(input, GetMousePosition);

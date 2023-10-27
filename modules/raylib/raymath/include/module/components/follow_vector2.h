@@ -48,18 +48,6 @@ public:
     bool lerp;
     float lerpSpeed;
 
-    void populateLuaData() override
-    {
-        auto type = CREATE_USER_TYPE(FollowVector2);
-
-        ADD_LUA_FUNCTION_W_TYPE(type, FollowVector2, follower);
-        ADD_LUA_FUNCTION_W_TYPE(type, FollowVector2, target);
-
-        ADD_LUA_FUNCTION_W_TYPE(type, FollowVector2, offset);
-        ADD_LUA_FUNCTION_W_TYPE(type, FollowVector2, lerp);
-        ADD_LUA_FUNCTION_W_TYPE(type, FollowVector2, lerpSpeed);
-    }
-
     void _on_create() override
     {
         setupdateCall(updateCall);
