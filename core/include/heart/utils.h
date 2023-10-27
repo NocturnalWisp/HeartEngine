@@ -21,7 +21,7 @@ namespace HeartEngine
 
 // Define the requireComponents method.
 #define REQUIRE_COMPONENTS(...) protected: \
-    std::vector<Component*> requireComponents() override \
+    std::vector<HeartEngine::Component*> requireComponents() override \
     { \
         return { __VA_ARGS__ }; \
     }
@@ -40,12 +40,16 @@ namespace HeartEngine
     } \
 private: \
     std::vector<std::string> CAT2(eventName, Call) = {__STRINGIFY(eventName)}; \
-    const EventHandle* CAT2(eventName, Handle) = nullptr
+    const HeartEngine::EventHandle* CAT2(eventName, Handle) = nullptr
 
 // Check the argument in variadic parameters and use the result if valid.
 #define CHECK_ARG(index, type, statement) \
     if (auto result = checkArg<type>(args[index])) \
         statement
+
+// Simpler macro to register a component to the engine lua state.
+#define REGISTER_COMPONENT(type) \
+    engine.registerComponent(__STRINGIFY(type), &HeartEngine::Engine::componentBuilder<type>)
 
 // Lua Environment
 

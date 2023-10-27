@@ -22,6 +22,7 @@ public:
 
     void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override
     {
+        SetupComponents(engine);
         if (includeVector2)
             SetupVector2(lua);
         if (includeVector3)
@@ -33,6 +34,7 @@ public:
         SetupOther(lua);
     }
 
+    void SetupComponents(HeartEngine::Engine& engine);
     void SetupVector2(sol::state& lua);
     void SetupVector3(sol::state& lua);
     void SetupMatrix(sol::state& lua);

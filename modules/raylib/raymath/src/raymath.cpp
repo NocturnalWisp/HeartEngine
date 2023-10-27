@@ -3,9 +3,17 @@
 #include <raylib-cpp.hpp>
 
 #include "heart/utils.h"
+#include "heart/engine.h"
+
+#include "module/follow_vector2.h"
 
 namespace HeartRayLib
 {
+void RayMath::SetupComponents(HeartEngine::Engine& engine)
+{
+    REGISTER_COMPONENT(FollowVector2);
+}
+
 void RayMath::SetupVector2(sol::state& lua)
 {
     auto vec2Type = lua.new_usertype<raylib::Vector2>("Vector2");

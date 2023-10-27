@@ -13,3 +13,4 @@ FetchLibraryGit(heart_raymath raylib https://github.com/raysan5/raylib.git 4.3.0
 FetchLibraryGit(heart_raymath raylib_cpp https://github.com/RobLoach/raylib-cpp.git v4.5.0)
 
 LinkLibrary(heart_raymath HeartEngine core/include)
+LinkLibrary(heart_raymath heart_raylib_core include)

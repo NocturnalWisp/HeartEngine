@@ -9,7 +9,7 @@
 
 namespace HeartRayLib
 {
-class FollowVector2 : public Component
+class FollowVector2 : public HeartEngine::Component
 {
     EVENT_CALLABLE(update, _on_update());
 public:
