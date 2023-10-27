@@ -10,8 +10,6 @@ constexpr auto SCREEN_HEIGHT = 450;
 class RayLibCore : public HeartEngine::Module
 {
 public:
-    void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override;
-
     void initialize(HeartEngine::Engine& engine) override;
     void close(HeartEngine::Engine& engine) override;
 
