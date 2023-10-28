@@ -29,27 +29,6 @@ void RayLibInput::registerTypes(HeartEngine::Engine &engine, sol::state &lua)
 void RayLibInput::duringUpdate(HeartEngine::Engine& engine)
 {
     PollInputEvents();
-
-    handleInputEvents(engine);
-}
-
-void RayLibInput::handleInputEvents(HeartEngine::Engine& engine)
-{
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        engine.events["input"]["mouse"]["left"]["pressed"].run();
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-        engine.events["input"]["mouse"]["left"]["released"].run();
-
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
-        engine.events["input"]["mouse"]["right"]["pressed"].run();
-    if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
-        engine.events["input"]["mouse"]["right"]["released"].run();
-    
-    auto key = GetKeyPressed();
-    while (key != 0)
-    {
-        engine.events["input"]["keyboard"][std::to_string(key)].run();
-    }
 }
 
 void RayLibInput::setupKeyboard(sol::usertype<Input>& input)
@@ -165,6 +144,14 @@ void RayLibInput::setupKeyboard(sol::usertype<Input>& input)
     ADD_LUA_FUNCTION_W_TYPE(input, Input, KEY_DOWN);
     ADD_LUA_FUNCTION_W_TYPE(input, Input, KEY_LEFT);
     ADD_LUA_FUNCTION_W_TYPE(input, Input, KEY_RIGHT);
+
+    ADD_LUA_FUNCTION(input, IsKeyPressed);
+    ADD_LUA_FUNCTION(input, IsKeyDown);
+    ADD_LUA_FUNCTION(input, IsKeyReleased);
+    ADD_LUA_FUNCTION(input, IsKeyUp);
+    ADD_LUA_FUNCTION(input, SetExitKey);
+    ADD_LUA_FUNCTION(input, GetKeyPressed);
+    ADD_LUA_FUNCTION(input, GetCharPressed);
 }
 void RayLibInput::setupMouse(sol::usertype<Input>& input)
 {
@@ -176,6 +163,10 @@ void RayLibInput::setupMouse(sol::usertype<Input>& input)
     ADD_LUA_FUNCTION_W_TYPE(input, Input, MOUSE_BUTTON_RIGHT);
     ADD_LUA_FUNCTION_W_TYPE(input, Input, MOUSE_BUTTON_SIDE);
 
+    ADD_LUA_FUNCTION(input, IsMouseButtonDown);
+    ADD_LUA_FUNCTION(input, IsMouseButtonPressed);
+    ADD_LUA_FUNCTION(input, IsMouseButtonReleased);
+    ADD_LUA_FUNCTION(input, IsMouseButtonUp);
     ADD_LUA_FUNCTION(input, GetMouseX);
     ADD_LUA_FUNCTION(input, GetMouseY);
     ADD_LUA_FUNCTION(input, GetMousePosition);
@@ -189,7 +180,42 @@ void RayLibInput::setupMouse(sol::usertype<Input>& input)
 }
 void RayLibInput::setupGamePad(sol::usertype<Input>& input)
 {
-    //TODO:
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_UNKNOWN);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_LEFT_FACE_UP);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_LEFT_FACE_RIGHT);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_LEFT_FACE_DOWN);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_LEFT_FACE_LEFT);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_RIGHT_FACE_UP);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_RIGHT_FACE_LEFT);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_LEFT_TRIGGER_1);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_LEFT_TRIGGER_2);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_RIGHT_TRIGGER_1);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_RIGHT_TRIGGER_2);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_MIDDLE_LEFT);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_MIDDLE);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_MIDDLE_RIGHT);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_LEFT_THUMB);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_RIGHT_THUMB);
+
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_AXIS_LEFT_X);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_AXIS_LEFT_Y);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_AXIS_RIGHT_X);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_AXIS_RIGHT_Y);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_AXIS_LEFT_TRIGGER);
+    ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_AXIS_RIGHT_TRIGGER);
+
+    ADD_LUA_FUNCTION(input, IsGamepadAvailable);
+    ADD_LUA_FUNCTION(input, GetGamepadName);
+    ADD_LUA_FUNCTION(input, IsGamepadButtonDown);
+    ADD_LUA_FUNCTION(input, IsGamepadButtonPressed);
+    ADD_LUA_FUNCTION(input, IsGamepadButtonReleased);
+    ADD_LUA_FUNCTION(input, IsGamepadButtonUp);
+    ADD_LUA_FUNCTION(input, GetGamepadButtonPressed);
+    ADD_LUA_FUNCTION(input, GetGamepadAxisCount);
+    ADD_LUA_FUNCTION(input, GetGamepadAxisMovement);
+    ADD_LUA_FUNCTION(input, SetGamepadMappings);
 }
 void RayLibInput::setupTouch(sol::usertype<Input>& input)
 {

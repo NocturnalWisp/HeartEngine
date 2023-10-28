@@ -16,6 +16,7 @@ class Button : public Component
 {
     SETUP_COMPONENT()
     EVENT_CALLABLE(draw, _on_draw());
+    EVENT_CALLABLE(update, _on_update());
 public:
     Button(std::string name,
         raylib::Rectangle rect = {},
@@ -49,8 +50,7 @@ public:
     void _on_create() override
     {
         setdrawCall(drawCall);
-
-        node->engine->events["input"]["mouse"]["left"]["released"].addListener([this]() {_on_mouse_click();});
+        setupdateCall(updateCall);
     }
 
     void _on_draw()
@@ -58,13 +58,16 @@ public:
         DrawRectanglePro(rect, origin, rotation, color);
     }
 
-    void _on_mouse_click()
+    void _on_update()
     {
-        // NOTE: Will not currently properly check if the button is rotated.
-        //  Need to implement some kind of AABB I guess.
-        if (CheckCollisionPointRec(GetMousePosition(), rect))
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            node->events[name]["pressed"].run();
+            // NOTE: Will not currently properly check if the button is rotated.
+            //  Need to implement some kind of AABB I guess.
+            if (CheckCollisionPointRec(GetMousePosition(), rect))
+            {
+                node->events[name]["pressed"].run();
+            }
         }
     }
 };
