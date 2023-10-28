@@ -26,20 +26,34 @@ namespace HeartEngine
         return { __VA_ARGS__ }; \
     }
 
-// A method for changing which mode to draw to through the engine draw events.
+// A method for changing which event to listen to externally from the class.
 #define EVENT_CALLABLE(eventName, callMethod) public: \
-    void CAT3(set, eventName, Call) (std::vector<std::string> p_Call) \
+    void CAT3(set, eventName, Call) (HeartEngine::EventBus* p_Call) \
     { \
         if (CAT2(eventName, Handle) != nullptr) \
         { \
-            node->engine->events.getSubBus(CAT2(eventName, Call)).removeListener(*CAT2(eventName, Handle)); \
+            CAT2(eventName, Call)->removeListener(*CAT2(eventName, Handle)); \
         } \
-        CAT2(eventName, Call).clear(); \
-        CAT2(eventName, Call) = p_Call; \
-        CAT2(eventName, Handle) = node->engine->events.getSubBus(CAT2(eventName, Call)).addListener([this](){ callMethod; }); \
+        if (CAT2(eventName, Call) == nullptr) \
+        { \
+            /* Initialize to a top engine event called eventName if null previously. */ \
+            CAT2(eventName, Call) = &node->engine->events[__STRINGIFY(eventName)]; \
+        } \
+        else \
+        { \
+            CAT2(eventName, Call) = p_Call; \
+        } \
+        if (CAT2(eventName, Call) != nullptr) \
+        { \
+            CAT2(eventName, Handle) = CAT2(eventName, Call)->addListener([this](){ callMethod; }); \
+        } \
+        else \
+        { \
+            throw HeartEngine::HeartException({"Invalid event bus passed to CAT3(set, eventName, Call)."}); \
+        } \
     } \
 private: \
-    std::vector<std::string> CAT2(eventName, Call) = {__STRINGIFY(eventName)}; \
+    HeartEngine::EventBus* CAT2(eventName, Call) = nullptr; \
     const HeartEngine::EventHandle* CAT2(eventName, Handle) = nullptr
 
 // Check the argument in variadic parameters and use the result if valid.
