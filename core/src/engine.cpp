@@ -138,12 +138,11 @@ void Engine::populateBasicLua()
     // Events
     auto eventManagerType = lua->new_usertype<EventManager>("EventManager");
 
-    eventManagerType["deleteEvent"] = &EventManager::deleteEvent;
+    ADD_LUA_FUNCTION_W_TYPE(eventManagerType, EventManager, addEvent);
+    ADD_LUA_FUNCTION_W_TYPE(eventManagerType, EventManager, deleteEvent);
+    ADD_LUA_FUNCTION_W_TYPE(eventManagerType, EventManager, getSubBus);
+
     eventManagerType[sol::meta_function::index] = &EventManager::operator[];
-    // eventManagerType["getEvent"] = [](EventManager& self, std::string eventName) -> EventBus&
-    //     {
-    //         return self.events[eventName];
-    //     };
 
     auto eventBusType = lua->new_usertype<EventBus>("EventBus");
 
@@ -151,8 +150,15 @@ void Engine::populateBasicLua()
         {
             return self.addListener(function);
         };
-    eventBusType["removeListener"] = &EventBus::removeListener;
-    eventBusType["run"] = &EventBus::run;
+    ADD_LUA_FUNCTION_W_TYPE(eventBusType, EventBus, removeListener);
+    ADD_LUA_FUNCTION_W_TYPE(eventBusType, EventBus, run);
+    ADD_LUA_FUNCTION_W_TYPE(eventBusType, EventBus, runAll);
+
+    ADD_LUA_FUNCTION_W_TYPE(eventBusType, EventBus, addSubEvent);
+    ADD_LUA_FUNCTION_W_TYPE(eventBusType, EventBus, deleteSubEvent);
+
+    eventBusType[sol::meta_function::index] = &EventBus::operator[];
+    ADD_LUA_FUNCTION_W_TYPE(eventBusType, EventBus, recursiveGetSubBus);
 
     // Engine
     auto engineType = lua->new_usertype<Engine>("Engine");
@@ -175,7 +181,6 @@ void Engine::populateBasicLua()
         { return self.addNode<Node>(name, container, scriptName); };
 
     engineType["removeNode"] = &Engine::removeNode;
-
     engineType["events"] = &Engine::events;
 
     // Node

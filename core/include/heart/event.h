@@ -55,7 +55,7 @@ struct EventManager
     void deleteEvent(std::string eventName) { events.erase(eventName); }
 
     // Function to call a recursive function to go down a list of sub buses.
-    EventBus& getSubBus(std::vector<std::string> list)
+    EventBus& getSubBus(const std::vector<std::string>& list)
     {
         return events[list[0]].recursiveGetSubBus(list, 1);
     }
