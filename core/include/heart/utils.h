@@ -20,14 +20,16 @@ namespace HeartEngine
     node->getComponentT<type>(__STRINGIFY(name))
 
 // Define the requireComponents method.
-#define REQUIRE_COMPONENTS(...) protected: \
+#define REQUIRE_COMPONENTS(...) \
+protected: \
     std::vector<HeartEngine::Component*> requireComponents() override \
     { \
         return { __VA_ARGS__ }; \
     }
 
 // A method for changing which event to listen to externally from the class.
-#define EVENT_CALLABLE(eventName, callMethod) public: \
+#define EVENT_CALLABLE(eventName, callMethod) \
+public: \
     void CAT3(set, eventName, Call) (HeartEngine::EventBus* p_Call) \
     { \
         if (CAT2(eventName, Handle) != nullptr) \
