@@ -2,7 +2,6 @@
 
 #include <optional>
 
-#include "heart/utils.h"
 #include "heart/engine.h"
 
 #include "module/resources/texture.h"
@@ -13,6 +12,7 @@ namespace HeartRayLib
 {
 class TextureRect : public Component
 {
+    SETUP_COMPONENT()
     EVENT_CALLABLE(draw, _on_draw());
 private:
     std::string textureName;

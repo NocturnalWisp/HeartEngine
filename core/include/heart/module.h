@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "heart/utils.h"
+
 namespace sol { class state; }
 namespace HeartEngine { class Engine; }
 

@@ -2,7 +2,6 @@
 
 #include <raylib-cpp.hpp>
 
-#include "heart/utils.h"
 #include "heart/engine.h"
 
 #include "module/raylib_draw_mode.h"
@@ -13,6 +12,7 @@ namespace HeartRayLib
 {
 class Camera2D : public Component
 {
+    SETUP_COMPONENT()
 public:
     Camera2D(std::string name)
         : Component(name) {}

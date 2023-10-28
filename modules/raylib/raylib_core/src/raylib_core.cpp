@@ -3,7 +3,6 @@
 #include <raylib-cpp.hpp>
 
 #include "heart/engine.h"
-#include "heart/utils.h"
 
 using namespace HeartEngine;
 

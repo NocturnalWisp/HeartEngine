@@ -51,7 +51,6 @@ with (open(join(modulesDir, moduleName, "include", "module", moduleName + ".h"),
 sourceContents = '''#include "module/{0}.h"
 
 #include "heart/engine.h"
-#include "heart/utils.h"
 
 using namespace HeartEngine;
 

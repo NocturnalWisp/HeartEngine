@@ -3,7 +3,6 @@
 #include <raylib-cpp.hpp>
 
 #include "heart/engine.h"
-#include "heart/utils.h"
 #include "heart/node.h"
 #include "heart/component.h"
 
@@ -15,6 +14,7 @@ namespace HeartRayLib
 {
 class Triangle : public Component
 {
+    SETUP_COMPONENT()
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Triangle(std::string name,

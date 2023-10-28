@@ -11,6 +11,8 @@
 
 #include "lua_environment.h"
 
+#include "heart/utils.h"
+
 namespace HeartEngine
 {
 class Engine;
@@ -51,6 +53,8 @@ protected:
     {
         return {};
     }
+protected:
+    virtual void setEnvironment() = 0;
 private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
     void populateEnvironment() override;
@@ -73,6 +77,7 @@ private:
 
 class LuaComponent : public Component
 {
+    SETUP_COMPONENT();
 public:
     LuaComponent(std::string name) : Component(name) {}
 

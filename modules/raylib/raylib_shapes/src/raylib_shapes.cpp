@@ -1,7 +1,6 @@
 #include "module/raylib_shapes.h"
 
 #include "heart/engine.h"
-#include "heart/utils.h"
 
 #include "module/components/raylib_rectangle.h"
 #include "module/components/raylib_triangle.h"

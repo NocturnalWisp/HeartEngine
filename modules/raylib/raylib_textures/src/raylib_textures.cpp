@@ -5,7 +5,6 @@
 #include "heart/engine.h"
 
 #include "heart/module.h"
-#include "heart/utils.h"
 
 #include "module/components/texture_rect.h"
 

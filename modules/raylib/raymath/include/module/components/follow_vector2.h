@@ -2,7 +2,6 @@
 
 #include <raylib-cpp.hpp>
 
-#include "heart/utils.h"
 #include "heart/engine.h"
 
 #include "module/utils.h"
@@ -11,6 +10,7 @@ namespace HeartRayLib
 {
 class FollowVector2 : public HeartEngine::Component
 {
+    SETUP_COMPONENT()
     EVENT_CALLABLE(update, _on_update());
 public:
     FollowVector2(std::string name,

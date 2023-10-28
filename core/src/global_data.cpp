@@ -34,7 +34,7 @@ void GlobalData::setupLuaState(sol::state& p_luaState, std::string scriptName)
     else
     {
         // C++ Global Data
-        luaEnv[name] = this;
+        setEnvironment();
 
         (*luaState)[name] = luaEnv[name];
     }

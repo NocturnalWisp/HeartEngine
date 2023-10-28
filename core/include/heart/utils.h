@@ -25,7 +25,8 @@ protected: \
     std::vector<HeartEngine::Component*> requireComponents() override \
     { \
         return { __VA_ARGS__ }; \
-    }
+    } \
+private:
 
 // A method for changing which event to listen to externally from the class.
 #define EVENT_CALLABLE(eventName, callMethod) \
@@ -57,6 +58,24 @@ public: \
 private: \
     HeartEngine::EventBus* CAT2(eventName, Call) = nullptr; \
     const HeartEngine::EventHandle* CAT2(eventName, Handle) = nullptr
+
+#define SETUP_GLOBAL_DATA(className) \
+public: \
+    className() : HeartEngine::GlobalData(__STRINGIFY(className)) {} \
+protected: \
+    void setEnvironment() override \
+    { \
+        luaEnv[name] = this; \
+    } \
+private:
+
+#define SETUP_COMPONENT() \
+protected: \
+    void setEnvironment() override \
+    { \
+        luaEnv[name] = this; \
+    } \
+private:
 
 // Check the argument in variadic parameters and use the result if valid.
 #define CHECK_ARG(index, type, statement) \

@@ -2,7 +2,6 @@
 
 #include <raylib-cpp.hpp>
 
-#include "heart/utils.h"
 #include "heart/engine.h"
 
 #include "module/components/follow_vector2.h"

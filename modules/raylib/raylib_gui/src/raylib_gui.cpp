@@ -6,7 +6,6 @@
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
-#include "heart/utils.h"
 #include "heart/engine.h"
 
 #include "module/components/raylib_label.h"
