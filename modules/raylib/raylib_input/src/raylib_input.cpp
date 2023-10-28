@@ -219,6 +219,10 @@ void RayLibInput::setupGamePad(sol::usertype<Input>& input)
 }
 void RayLibInput::setupTouch(sol::usertype<Input>& input)
 {
-    //TODO:
+    ADD_LUA_FUNCTION(input, GetTouchX);
+    ADD_LUA_FUNCTION(input, GetTouchY);
+    ADD_LUA_FUNCTION(input, GetTouchPosition);
+    ADD_LUA_FUNCTION(input, GetTouchPointId);
+    ADD_LUA_FUNCTION(input, GetTouchPointCount);
 }
 }
