@@ -36,21 +36,20 @@ class HeartException : public std::exception
 public:
     HeartException(std::string_view string)
     {
+        message.append("HeartEngine Error: ");
         message.append(string);
     }
 
     HeartException(std::initializer_list<std::string_view> strings)
     {
+        message.append("HeartEngine Error: ");
         for (auto& str : strings)
             message.append(str);
     }
 
-    const char* what()
+    const char* what() const noexcept
     {
-        return std::string()
-            .append("HeartEngine Error: ")
-            .append(message)
-            .c_str();
+        return message.c_str();
     }
 private:
     void append(const std::string& p_message) { message.append(p_message); }

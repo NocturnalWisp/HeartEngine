@@ -15,12 +15,12 @@ namespace HeartRayLib
 void RayLibShapes::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
 {
     // Rectangle.
-    auto rectangleType = REGISTER_COMPONENT(Rectangle);
+    auto rectangleType = REGISTER_COMPONENT(RectangleComponent);
 
-    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, rect);
-    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, origin);
-    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, rotation);
-    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, color);
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, RectangleComponent, rect);
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, RectangleComponent, origin);
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, RectangleComponent, rotation);
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, RectangleComponent, color);
 
     // Triangle.
     auto triangleType = REGISTER_COMPONENT(Triangle);

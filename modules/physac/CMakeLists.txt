@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(heart_physac VERSION 1.0.0)
 
-add_library(heart_physac src/physac.cpp)
+add_library(heart_physac src/physac_core.cpp)
 target_include_directories(heart_physac PUBLIC include)
 
 # Grab physac and add it as an interface library.
@@ -36,3 +36,4 @@ target_include_directories(heart_physac PUBLIC ${physac_SOURCE_DIR}/src)
 target_link_libraries(heart_physac PUBLIC physac)
 
 LinkLibrary(heart_physac HeartEngine core/include)
+LinkLibrary(heart_physac heart_raylib_core include)

@@ -19,14 +19,18 @@ void RayMath::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
     ADD_LUA_FUNCTION_W_TYPE(followVector2Type, FollowVector2, lerp);
     ADD_LUA_FUNCTION_W_TYPE(followVector2Type, FollowVector2, lerpSpeed);
 
-    if (includeVector2)
-        SetupVector2(lua);
-    if (includeVector3)
-        SetupVector3(lua);
-    if (includeMatrix)
-        SetupMatrix(lua);
-    if (includeQuaternion)
-        SetupQuaternion(lua);
+#ifdef INCLUDE_VECTOR2
+    SetupVector2(lua);
+#endif
+#ifdef INCLUDE_VECTOR3
+    SetupVector3(lua);
+#endif
+#ifdef INCLUDE_MATRIX
+    SetupMatrix(lua);
+#endif
+#ifdef INCLUDE_QUATERNION
+    SetupQuaternion(lua);
+#endif
 
     // Other
     lua["deg2rad"] = DEG2RAD;
@@ -37,15 +41,24 @@ void RayMath::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
     ADD_LUA_FUNCTION(lua, Remap);
     ADD_LUA_FUNCTION(lua, Wrap);
     ADD_LUA_FUNCTION(lua, FloatEquals);
+
+    // Rectangle
+    auto rectangleType = lua.new_usertype<Rectangle>("Rectangle");
+
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, x);
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, y);
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, width);
+    ADD_LUA_FUNCTION_W_TYPE(rectangleType, Rectangle, height);
 }
 
+#ifdef INCLUDE_VECTOR2
 void RayMath::SetupVector2(sol::state& lua)
 {
-    auto vec2Type = lua.new_usertype<raylib::Vector2>("Vector2");
-    vec2Type[sol::call_constructor] = [](float x, float y) -> raylib::Vector2 { return {x, y}; };
+    auto vec2Type = lua.new_usertype<Vector2>("Vector2");
+    vec2Type[sol::call_constructor] = [](float x, float y) -> Vector2 { return {x, y}; };
 
-    vec2Type["x"] = &raylib::Vector2::x;
-    vec2Type["y"] = &raylib::Vector2::y;
+    vec2Type["x"] = &Vector2::x;
+    vec2Type["y"] = &Vector2::y;
 
     vec2Type[sol::meta_function::addition] = &Vector2Add;
     vec2Type["AddValue"] = &Vector2AddValue;
@@ -78,8 +91,10 @@ void RayMath::SetupVector2(sol::state& lua)
     vec2Type["Transform"] =  &Vector2Transform;
 
     vec2Type[sol::meta_function::to_string] =
-        [](raylib::Vector2& self) -> std::string { return std::string("(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ")" ); };
+        [](Vector2& self) -> std::string { return std::string("(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ")" ); };
 }
+#endif
+#ifdef INCLUDE_VECTOR3
 void RayMath::SetupVector3(sol::state& lua)
 {
     auto vec3Type = lua.new_usertype<Vector3>("Vector3");
@@ -131,6 +146,8 @@ void RayMath::SetupVector3(sol::state& lua)
         [](Vector3& self) -> std::string
         { return std::string("(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ", " + std::to_string(self.z) + ")" ); };
 }
+#endif
+#ifdef INCLUDE_MATRIX
 void RayMath::SetupMatrix(sol::state& lua)
 {
     auto matrixType = lua.new_usertype<Matrix>("Matrix");
@@ -198,6 +215,8 @@ void RayMath::SetupMatrix(sol::state& lua)
             std::to_string(self.m14) + ", " +
             std::to_string(self.m15) + ")" ); };
 }
+#endif
+#ifdef INCLUDE_QUATERNION
 void RayMath::SetupQuaternion(sol::state& lua)
 {
     auto quaternionType = lua.new_usertype<Quaternion>("Quaternion");
@@ -237,4 +256,5 @@ void RayMath::SetupQuaternion(sol::state& lua)
         [](Quaternion& self) -> std::string
         { return std::string("(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ", " + std::to_string(self.z) + ", " + std::to_string(self.w) + ")" ); };
 }
+#endif
 }

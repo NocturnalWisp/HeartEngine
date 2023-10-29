@@ -22,6 +22,7 @@ void RayLibTextures::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
     ADD_LUA_FUNCTION_W_TYPE(textureRectType, TextureRect, color);
 
     // Texture resource.
+    //TODO: Replace with REGISTER_RESOURCE when lua environment resources are introduced.
     auto textureType = lua.new_usertype<Texture>("Texture");
 
     ADD_LUA_FUNCTION_W_TYPE(textureType, Texture, path);

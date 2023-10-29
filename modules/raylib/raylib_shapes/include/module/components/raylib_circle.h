@@ -18,7 +18,7 @@ class Circle : public Component
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Circle(std::string name,
-        raylib::Vector2 center = Vector2Zero(),
+        Vector2 center = Vector2Zero(),
         float radius = 0,
         Color color = BLACK)
         : Component(name),
@@ -37,7 +37,7 @@ public:
         CHECK_ARG_COLOR(2, color);
     }
 
-    raylib::Vector2 center;
+    Vector2 center;
     float radius;
     Color color;
 

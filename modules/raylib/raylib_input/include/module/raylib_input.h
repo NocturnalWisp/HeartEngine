@@ -12,26 +12,20 @@ namespace HeartRayLib
 class RayLibInput : public HeartEngine::Module
 {
 public:
-    RayLibInput(bool includeKeyboard = true,
-                bool includeMouse = true,
-                bool includeGamePad = false,
-                bool includeTouch = false)
-        : includeKeyboard(includeKeyboard),
-          includeMouse(includeMouse),
-          includeGamePad(includeGamePad),
-          includeTouch(includeTouch) {}
-
     void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override;
     void duringUpdate(HeartEngine::Engine& engine) override;
 private:
+#ifdef INCLUDE_KEYBOARD
     void setupKeyboard(sol::usertype<Input>&);
+#endif
+#ifdef INCLUDE_MOUSE
     void setupMouse(sol::usertype<Input>&);
+#endif
+#ifdef INCLUDE_GAMEPAD
     void setupGamePad(sol::usertype<Input>&);
+#endif
+#ifdef INCLUDE_TOUCH
     void setupTouch(sol::usertype<Input>&);
-
-    bool includeKeyboard;
-    bool includeMouse;
-    bool includeGamePad;
-    bool includeTouch;
+#endif
 };
 }

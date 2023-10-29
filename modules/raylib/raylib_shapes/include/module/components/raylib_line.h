@@ -18,8 +18,8 @@ class Line : public Component
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Line(std::string name,
-        raylib::Vector2 start = Vector2Zero(),
-        raylib::Vector2 end = Vector2Zero(),
+        Vector2 start = Vector2Zero(),
+        Vector2 end = Vector2Zero(),
         float thickness = 0,
         Color color = BLACK)
         : Component(name),
@@ -41,8 +41,8 @@ public:
         CHECK_ARG_COLOR(3, color);
     }
 
-    raylib::Vector2 start;
-    raylib::Vector2 end;
+    Vector2 start;
+    Vector2 end;
     float thickness;
     Color color;
 

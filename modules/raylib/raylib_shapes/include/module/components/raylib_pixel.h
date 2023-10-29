@@ -18,7 +18,7 @@ class Pixel : public Component
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Pixel(std::string name,
-        raylib::Vector2 position = Vector2Zero(),
+        Vector2 position = Vector2Zero(),
         Color color = BLACK)
         : Component(name),
           position(position),
@@ -33,7 +33,7 @@ public:
         CHECK_ARG_COLOR(1, color);
     }
 
-    raylib::Vector2 position;
+    Vector2 position;
     Color color;
 
     void _on_create() override

@@ -19,8 +19,8 @@ class Button : public Component
     EVENT_CALLABLE(update, _on_update());
 public:
     Button(std::string name,
-        raylib::Rectangle rect = {},
-        raylib::Vector2 origin = Vector2Zero(),
+        Rectangle rect = {},
+        Vector2 origin = Vector2Zero(),
         float rotation = 0,
         Color color = BLACK)
         : Component(name),
@@ -42,8 +42,8 @@ public:
         CHECK_ARG_COLOR(3, color);
     }
 
-    raylib::Rectangle rect;
-    raylib::Vector2 origin;
+    Rectangle rect;
+    Vector2 origin;
     float rotation;
     Color color;
 

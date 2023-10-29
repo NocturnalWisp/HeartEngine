@@ -18,7 +18,7 @@ class Label : public Component
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Label(std::string name, std::string text = "",
-        raylib::Vector2 position = Vector2Zero(),
+        Vector2 position = Vector2Zero(),
         float fontSize = 10,
         float rotation = 0,
         Color color = BLACK)
@@ -45,7 +45,7 @@ public:
     }
 
     std::string text;
-    raylib::Vector2 position;
+    Vector2 position;
     float fontSize;
     float rotation;
     Color color;
@@ -57,7 +57,7 @@ public:
 
     void _on_draw()
     {
-        raylib::DrawTextPro(
+        DrawTextPro(
             GetFontDefault(),
             text.c_str(),
             position,

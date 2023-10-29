@@ -9,19 +9,19 @@ namespace HeartRayLib
 class DrawModeCamera2D : public HeartEngine::DrawMode
 {
 public:
-    DrawModeCamera2D(raylib::Camera2D& camera)
+    DrawModeCamera2D(Camera2D& camera)
         : camera(&camera) {}
 
-    raylib::Camera2D* camera;
+    Camera2D* camera;
 
     void startMode() override
     {
-        camera->BeginMode();
+        BeginMode2D(*camera);
     }
 
     void endMode() override
     {
-        camera->EndMode();
+        EndMode2D();
     }
 };
 }

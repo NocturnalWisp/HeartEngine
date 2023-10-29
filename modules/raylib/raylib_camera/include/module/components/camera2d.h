@@ -10,19 +10,20 @@ using namespace HeartEngine;
 
 namespace HeartRayLib
 {
-class Camera2D : public Component
+class Camera2DComponent : public Component
 {
     SETUP_COMPONENT()
+    EVENT_CALLABLE(update, _on_update());
 public:
-    Camera2D(std::string name)
+    Camera2DComponent(std::string name)
         : Component(name) {}
-    Camera2D(std::string name, sol::variadic_args args)
+    Camera2DComponent(std::string name, sol::variadic_args args)
         : Component(name) {}
 
-    raylib::Camera2D camera;
+    Camera2D camera;
 
-    raylib::Vector2 offset;
-    raylib::Vector2* target = nullptr;
+    Vector2 offset;
+    Vector2* target = nullptr;
     float rotation = 0;
     float zoom = 1;
 
@@ -32,8 +33,7 @@ public:
         node->engine->registerDrawMode(name,
             std::unique_ptr<DrawMode>(new DrawModeCamera2D(camera)));
 
-        node->engine->events["update"].addListener([this]()
-            { _on_update(); });
+        setupdateCall(updateCall);
     }
 
     void _on_destroy() override
@@ -50,14 +50,14 @@ public:
         camera.zoom = zoom;
     }
 
-    raylib::Vector2 GetScreenToWorld(raylib::Vector2 position) const
+    Vector2 GetScreenToWorld(Vector2 position) const
     {
-        return camera.GetScreenToWorld(position);
+        return GetScreenToWorld2D(position, camera);
     }
 
-    raylib::Vector2 GetWorldToScreen(raylib::Vector2 position) const
+    Vector2 GetWorldToScreen(Vector2 position) const
     {
-        return camera.GetWorldToScreen(position);
+        return GetWorldToScreen2D(position, camera);
     }
 };
 }

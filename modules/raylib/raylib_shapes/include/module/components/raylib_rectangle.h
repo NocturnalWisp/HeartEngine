@@ -12,14 +12,14 @@ using namespace HeartEngine;
 
 namespace HeartRayLib
 {
-class Rectangle : public Component
+class RectangleComponent : public Component
 {
     SETUP_COMPONENT()
     EVENT_CALLABLE(draw, _on_draw());
 public:
-    Rectangle(std::string name,
-        raylib::Rectangle rect = {},
-        raylib::Vector2 origin = Vector2Zero(),
+    RectangleComponent(std::string name,
+        Rectangle rect = {},
+        Vector2 origin = Vector2Zero(),
         float rotation = 0,
         Color color = BLACK)
         : Component(name),
@@ -28,7 +28,7 @@ public:
           rotation(rotation),
           color(color) {}
     
-    Rectangle(std::string name, sol::variadic_args args)
+    RectangleComponent(std::string name, sol::variadic_args args)
         : Component(name)
     {
         // Rect
@@ -41,8 +41,8 @@ public:
         CHECK_ARG_COLOR(3, color);
     }
 
-    raylib::Rectangle rect;
-    raylib::Vector2 origin;
+    Rectangle rect;
+    Vector2 origin;
     float rotation;
     Color color;
 

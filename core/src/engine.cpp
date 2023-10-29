@@ -165,20 +165,23 @@ void Engine::populateBasicLua()
 
     engineType["getNode"] = &Engine::getNode;
 
-    engineType["addContainer"] = [](Engine& self, std::string name) -> Node*
-        { return self.addNode<Container>(name); };
-    engineType["addContainer"] = [](Engine& self, std::string name, Container* container) -> Node*
-        { return self.addNode<Container>(name, container); };
+    engineType["addContainer"] = sol::overload(
+        [](Engine& self, std::string name) -> Node*
+            { return self.addNode<Container>(name); },
+        [](Engine& self, std::string name, Container* container) -> Node*
+            { return self.addNode<Container>(name, container); });
 
-    engineType["addNode"] = [](Engine& self, std::string name) -> Node*
-        { return self.addNode<Node>(name); };
-    engineType["addNode"] = [](Engine& self, std::string name, Container* container) -> Node*
-        { return self.addNode<Node>(name, container); };
+    engineType["addNode"] = sol::overload(
+        [](Engine& self, std::string name) -> Node*
+            { return self.addNode<Node>(name); },
+        [](Engine& self, std::string name, Container* container) -> Node*
+            { return self.addNode<Node>(name, container); });
 
-    engineType["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name) -> Node*
-        { return self.addNode<Node>(name, nullptr, scriptName); };
-    engineType["addLuaNode"] = [](Engine& self, std::string scriptName, std::string name, Container* container) -> Node*
-        { return self.addNode<Node>(name, container, scriptName); };
+    engineType["addLuaNode"] = sol::overload(
+        [](Engine& self, std::string scriptName, std::string name) -> Node*
+            { return self.addNode<Node>(name, nullptr, scriptName); },
+        [](Engine& self, std::string scriptName, std::string name, Container* container) -> Node*
+            { return self.addNode<Node>(name, container, scriptName); });
 
     engineType["removeNode"] = &Engine::removeNode;
     engineType["events"] = &Engine::events;

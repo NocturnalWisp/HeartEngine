@@ -18,18 +18,18 @@ private:
     std::string textureName;
 public:
     std::shared_ptr<HeartRayLib::Texture> texture = nullptr;
-    raylib::Rectangle source;
-    raylib::Rectangle rect;
+    Rectangle source;
+    Rectangle rect;
     float rotation;
     // Percentage 0-1
-    raylib::Vector2 origin;
+    Vector2 origin;
     Color color;
 
     TextureRect(std::string p_name,
         std::string p_textureName = "",
-        raylib::Rectangle rect = {0, 0, 10, 10},
+        Rectangle rect = {0, 0, 10, 10},
         float rotation = 0,
-        raylib::Vector2 origin = Vector2Zero(),
+        Vector2 origin = Vector2Zero(),
         Color color = WHITE)
         : Component(p_name),
           textureName(p_textureName),
@@ -68,12 +68,12 @@ public:
     void _on_draw()
     {
         // Origin is percentile based: 0 = start, 1 = end.
-        auto actualOrigin = Vector2Multiply(origin, rect.GetSize());
+        auto actualOrigin = Vector2Multiply(origin, {rect.width, rect.height});
         if (texture != nullptr)
         {
-            auto textureSize = raylib::Vector2(texture->texture.width, texture->texture.height);
+            auto textureSize = Vector2{texture->texture.width, texture->texture.height};
 
-            auto actualScale = Vector2Multiply(rect.GetSize(), textureSize);
+            auto actualScale = Vector2Multiply({rect.width, rect.height}, textureSize);
 
             DrawTexturePro(texture->texture,
                 source,

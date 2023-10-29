@@ -81,6 +81,9 @@ private:
 #define CHECK_ARG(index, type, statement) \
     if (auto result = checkArg<type>(args[index])) \
         statement
+#define CHECK_ARG_FALSE(index, type, statement) \
+    if (auto result = checkArg<type>(args[index], false)) \
+        statement
 
 // Check arg sub macros.
 
@@ -99,4 +102,10 @@ private:
 // Simpler macro to register a component to the engine lua state.
 #define REGISTER_COMPONENT(type) \
     engine.registerComponent<type>(__STRINGIFY(type), &HeartEngine::Engine::componentBuilder<type>)
+
+// Simpler macro to register a global data object to the engine lua state.
+// Variable args are constructor arguments for this type.
+#define REGISTER_GLOBAL_DATA(type, ...) \
+    lua.new_usertype<type>(__STRINGIFY(type)); \
+    engine.registerGlobalData<type>(type(__VA_ARGS__))
 }

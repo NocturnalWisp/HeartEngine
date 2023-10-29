@@ -10,14 +10,14 @@ namespace HeartRayLib
 {
 void RayLibCamera::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
 {
-    auto camera2dType = REGISTER_COMPONENT(Camera2D);
+    auto camera2dType = REGISTER_COMPONENT(Camera2DComponent);
 
-    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, GetScreenToWorld);
-    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, GetWorldToScreen);
+    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2DComponent, GetScreenToWorld);
+    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2DComponent, GetWorldToScreen);
 
-    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, offset);
-    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, target);
-    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, rotation);
-    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2D, zoom);
+    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2DComponent, offset);
+    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2DComponent, target);
+    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2DComponent, rotation);
+    ADD_LUA_FUNCTION_W_TYPE(camera2dType, Camera2DComponent, zoom);
 }
 }

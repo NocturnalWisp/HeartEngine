@@ -13,24 +13,28 @@ namespace HeartRayLib
 {
 void RayLibInput::registerTypes(HeartEngine::Engine &engine, sol::state &lua)
 {
-    auto inputType = lua.new_usertype<Input>("Input");
+    auto inputType = REGISTER_GLOBAL_DATA(Input);
 
-    if (includeKeyboard)
-        setupKeyboard(inputType);
-    if (includeMouse)
-        setupMouse(inputType);
-    if (includeGamePad)
-        setupGamePad(inputType);
-    if (includeTouch)
-        setupTouch(inputType);
-
-    engine.registerGlobalData(Input());
+#ifdef INCLUDE_KEYBOARD
+    setupKeyboard(inputType);
+#endif
+#ifdef INCLUDE_MOUSE
+    setupMouse(inputType);
+#endif
+#ifdef INCLUDE_GAMEPAD
+    setupGamePad(inputType);
+#endif
+#ifdef INCLUDE_TOUCH
+    setupTouch(inputType);
+#endif
 }
+
 void RayLibInput::duringUpdate(HeartEngine::Engine& engine)
 {
     PollInputEvents();
 }
 
+#ifdef INCLUDE_KEYBOARD
 void RayLibInput::setupKeyboard(sol::usertype<Input>& input)
 {
     ADD_LUA_FUNCTION_W_TYPE(input, Input, KEY_ESCAPE);
@@ -153,6 +157,8 @@ void RayLibInput::setupKeyboard(sol::usertype<Input>& input)
     ADD_LUA_FUNCTION(input, GetKeyPressed);
     ADD_LUA_FUNCTION(input, GetCharPressed);
 }
+#endif
+#ifdef INCLUDE_MOUSE
 void RayLibInput::setupMouse(sol::usertype<Input>& input)
 {
     ADD_LUA_FUNCTION_W_TYPE(input, Input, MOUSE_BUTTON_BACK);
@@ -178,6 +184,8 @@ void RayLibInput::setupMouse(sol::usertype<Input>& input)
     ADD_LUA_FUNCTION(input, GetMouseWheelMoveV);
     ADD_LUA_FUNCTION(input, SetMouseCursor);
 }
+#endif
+#ifdef INCLUDE_GAMEPAD
 void RayLibInput::setupGamePad(sol::usertype<Input>& input)
 {
     ADD_LUA_FUNCTION_W_TYPE(input, Input, GAMEPAD_BUTTON_UNKNOWN);
@@ -217,6 +225,8 @@ void RayLibInput::setupGamePad(sol::usertype<Input>& input)
     ADD_LUA_FUNCTION(input, GetGamepadAxisMovement);
     ADD_LUA_FUNCTION(input, SetGamepadMappings);
 }
+#endif
+#ifdef INCLUDE_TOUCH
 void RayLibInput::setupTouch(sol::usertype<Input>& input)
 {
     ADD_LUA_FUNCTION(input, GetTouchX);
@@ -225,4 +235,5 @@ void RayLibInput::setupTouch(sol::usertype<Input>& input)
     ADD_LUA_FUNCTION(input, GetTouchPointId);
     ADD_LUA_FUNCTION(input, GetTouchPointCount);
 }
+#endif
 }

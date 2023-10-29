@@ -6,14 +6,14 @@ namespace HeartRayLib
 {
 // Following functions convert vector of floats to various types.
 
-inline raylib::Vector2 tableToVector2(const std::vector<float>& table)
+inline Vector2 tableToVector2(const std::vector<float>& table)
 {
     if (table.size() != 2)
     {
         throw HeartEngine::HeartException({"Invalid table provided as an argument to Vector2. 2 items are required."});
     }
 
-    raylib::Vector2 result;
+    Vector2 result;
     result.x = table[0];
     result.y = table[1];
     return result;
@@ -67,15 +67,15 @@ inline Color tableToColor(const std::vector<float>& table)
 // Check Arg sub-macros
 
 #define CHECK_ARG_VECTOR2(index, var) \
-    CHECK_ARG(index, raylib::Vector2, var = *result); \
-    CHECK_ARG(index, std::vector<float>, var = tableToVector2(*result))
+    CHECK_ARG_FALSE(index, Vector2, var = *result); \
+    CHECK_ARG(index, std::vector<float>, var = HeartRayLib::tableToVector2(*result))
 
 #define CHECK_ARG_COLOR(index, var) \
-    CHECK_ARG(index, Color, var = *result); \
-    CHECK_ARG(index, int, var = GetColor(*result)); \
-    CHECK_ARG(index, std::vector<float>, var = tableToColor(*result))
+    CHECK_ARG_FALSE(index, Color, var = *result); \
+    CHECK_ARG_FALSE(index, int, var = GetColor(*result)); \
+    CHECK_ARG(index, std::vector<float>, var = HeartRayLib::tableToColor(*result))
 
 #define CHECK_ARG_RECT(index, var) \
-    CHECK_ARG(index, raylib::Rectangle, var = *result); \
-    CHECK_ARG(index, std::vector<float>, var = tableToRectangle(*result))
+    CHECK_ARG_FALSE(index, Rectangle, var = *result); \
+    CHECK_ARG(index, std::vector<float>, var = HeartRayLib::tableToRectangle(*result))
 }

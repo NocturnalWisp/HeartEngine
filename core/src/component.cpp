@@ -33,7 +33,7 @@ void Component::setupLuaState(sol::state& p_luaState, std::string scriptName)
     {
         // C++ component.
         // Environment table is set to this component to allow for accessing members.
-        luaEnv[name] = this;
+        setEnvironment();
 
         isLuaScript = false;
     }

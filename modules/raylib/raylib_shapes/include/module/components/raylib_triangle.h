@@ -18,9 +18,9 @@ class Triangle : public Component
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Triangle(std::string name,
-        raylib::Vector2 v1 = {},
-        raylib::Vector2 v2 = {},
-        raylib::Vector2 v3 = {},
+        Vector2 v1 = {},
+        Vector2 v2 = {},
+        Vector2 v3 = {},
         Color color = BLACK)
         : Component(name),
           v1(v1),
@@ -41,9 +41,9 @@ public:
         CHECK_ARG_COLOR(3, color);
     }
 
-    raylib::Vector2 v1;
-    raylib::Vector2 v2;
-    raylib::Vector2 v3;
+    Vector2 v1;
+    Vector2 v2;
+    Vector2 v3;
     Color color;
 
     void _on_create() override

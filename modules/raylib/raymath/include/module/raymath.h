@@ -7,25 +7,19 @@ namespace HeartRayLib
 class RayMath : public HeartEngine::Module
 {
 public:
-    RayMath(bool includeVector2 = true,
-            bool includeVector3 = true,
-            bool includeMatrix = false,
-            bool includeQuaternion = false)
-        : includeVector2(includeVector2),
-        includeVector3(includeVector3),
-        includeMatrix(includeMatrix),
-        includeQuaternion(includeQuaternion) {}
-
     void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override;
 
+#ifdef INCLUDE_VECTOR2
     void SetupVector2(sol::state& lua);
+#endif
+#ifdef INCLUDE_VECTOR3
     void SetupVector3(sol::state& lua);
+#endif
+#ifdef INCLUDE_MATRIX
     void SetupMatrix(sol::state& lua);
+#endif
+#ifdef INCLUDE_QUATERNION
     void SetupQuaternion(sol::state& lua);
-private:
-    bool includeVector2;
-    bool includeVector3;
-    bool includeMatrix;
-    bool includeQuaternion;
+#endif
 };
 }
