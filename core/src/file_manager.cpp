@@ -50,8 +50,8 @@ FileManager::~FileManager()
 void FileManager::loadScript(std::string_view path, sol::state& lua, sol::environment* env)
 {
 #ifdef EDITOR
-    if (env.has_value())
-        lua.script_file("assets/" + std::string(path), env.value());
+    if (env != nullptr)
+        lua.script_file("assets/" + std::string(path), *env);
     else
         lua.script_file("assets/" + std::string(path));
 #else
