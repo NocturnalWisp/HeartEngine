@@ -1,17 +1,21 @@
-# Lua scripted game engine built on raylib C++
+# Heart Engine
+Heart Engine is a Lua scripted engine built on C++. Heart Engine is inspired by Love2D and Godot. There are a few key standards that the engine intends to adhere to.
 
-The engine is inspired by Love2D and Godot. Debated on calling it Love3D, but the engine is functionally quite different and needed it's own name.
+## Standards
+1. Inheritance can be messy for games. The engine is built on certain inheritance abstractions, but lua scripts are intent on composition.
+2. Heart engine is completely modular. It will not really on any implementation besides sol3 (Lua bindings). Raylib is offered as the base, but can be interchanged.
+3. Object communication is mainly done through events. One node should not see the components of another node.
+4. Game assets are easily obfuscated into binary files. Lua scripts and other resources should not be accessable by the player.
+5. Simplified build system offered through python scripts. Easy to create, easy to use.
 
-Currently in infancy, but has a rebust module system for easily expanding functionality!
+## Binary
+The binary build of the engine is offered in a seperate repository which also provides a C++ template in case you want to develop modules or have more control over your project.
 
-Heart Engine is a game engine built on raylib C++. My main goals with the engine are as follows:
-1. Simple game objects with no inheritance trees. (All objects have components and are forced to be their own scenes like Godot. Interactions between nodes (aka scenes) are handled via event systems.)
-2. Simple Lua scripting.
-3. Module engine parts. (All non-core engine is built out in modules/ to keep everything clean and interchangable.)
-4. Raylib is not a requirement. (Interchange raylib with any other C++ game library (Ex. Ogre3D, SDL, SFML) using modules.)
-5. Obfuscated game assets. (Assets are stored in a binary file and not directly accessable when built for production.)
-6. Simple (and easy to use) python scripts for build systems and tools.
-7. Easy CMake build system. (Heart Engine aims to make it easy to call certain CMake scripts to do the heavy lifting. No need for complex or annoying manual Fetching.)
+[https://github.com/NocturnalWisp/HeartEngineBinary](https://github.com/NocturnalWisp/HeartEngineBinary)
 
-Current goals:
-- Create a functioning game with working game loop.
+## Building From Source
+Heart Engine uses CMake's robust FetchContent system. It allows for quickly downloading and building external libraries.
+
+You will need CMake (3.5+), Python (3). You will not need lua as it is one of the external libraries built during the CMake configure process.
+
+### CMake Variables
