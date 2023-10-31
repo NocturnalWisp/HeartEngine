@@ -18,14 +18,18 @@ class Label : public Component
     EVENT_CALLABLE(draw, _on_draw());
 public:
     Label(std::string name, std::string text = "",
-        Vector2 position = Vector2Zero(),
+        Rectangle rect = {0, 0, 100, 100},
+        bool bestFit = false,
         float fontSize = 10,
+        Vector2 anchor = {0, 0},
         float rotation = 0,
         Color color = BLACK)
         : Component(name),
           text(text),
-          position(position),
+          rect(rect),
+          bestFit(bestFit),
           fontSize(fontSize),
+          anchor(anchor),
           rotation(rotation),
           color(color) {}
     
@@ -34,21 +38,27 @@ public:
     {
         // Text
         CHECK_ARG_STRING(0, text);
-        // Position
-        CHECK_ARG_VECTOR2(1, position);
+        // Rect
+        CHECK_ARG_RECT(1, rect);
+        // Best Fit
+        CHECK_ARG_BOOL(2, bestFit);
         // Font Size
-        CHECK_ARG_FLOAT(2, fontSize);
+        CHECK_ARG_FLOAT(3, fontSize);
+        // Anchor
+        CHECK_ARG_VECTOR2(4, anchor);
         // Rotation
-        CHECK_ARG_FLOAT(3, rotation);
+        CHECK_ARG_FLOAT(5, rotation);
         // Color
-        CHECK_ARG_COLOR(4, color);
+        CHECK_ARG_COLOR(6, color);
     }
 
-    std::string text;
-    Vector2 position;
-    float fontSize;
-    float rotation;
-    Color color;
+    std::string text = "";
+    Rectangle rect = {0, 0, 100, 100};
+    bool bestFit = false;
+    float fontSize = 10;
+    Vector2 anchor = {0, 0};
+    float rotation = 0;
+    Color color = BLACK;
 
     void _on_create() override
     {
@@ -57,14 +67,23 @@ public:
 
     void _on_draw()
     {
+        Vector2 rectSize = {rect.width, rect.height};
+
+        Vector2 defaultSize = MeasureTextEx(GetFontDefault(), text.c_str(), 1, 0.1);
+
+        Vector2 measuredSize = Vector2Divide(rectSize, defaultSize);
+
+        float newFontSize = measuredSize.x < measuredSize.y ? measuredSize.x : measuredSize.y;
+
         DrawTextPro(
             GetFontDefault(),
             text.c_str(),
-            position,
-            Vector2Zero(),
+            // rect.position + (anchor * rect.size)
+            Vector2Add({rect.x, rect.y}, Vector2Multiply(anchor, rectSize)),
+            Vector2Multiply(anchor, Vector2Scale(defaultSize, newFontSize)),
             rotation,
-            fontSize,
-            fontSize / 10,
+            newFontSize,
+            newFontSize / 10,
             color);
     }
 };

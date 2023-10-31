@@ -35,11 +35,14 @@ protected:
     template <class T>
     std::optional<T> checkArg(sol::stack_proxy arg, bool throwError = true)
     {
-        if (arg.is<T>())
-        {
-            return arg.as<T>();
-        }
-        else
+        auto argType = arg.get_type();
+
+        if (argType == sol::type::none)
+            return std::nullopt;
+        if (argType == sol::type::nil)
+            return std::nullopt;
+
+        if (!arg.is<T>())
         {
             if (throwError)
             {
@@ -47,6 +50,8 @@ protected:
             }
             return std::nullopt;
         }
+
+        return arg.as<T>();
     }
 
     virtual std::vector<Component*> requireComponents()
