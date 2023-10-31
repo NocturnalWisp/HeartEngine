@@ -83,22 +83,32 @@ public:
 
     bool removeNode(std::string_view name);
 
+    Resource& loadResource(std::string_view typeName, std::string name, sol::variadic_args args);
+
     template <typename T>
-    void loadResource(T resource)
+    std::shared_ptr<Resource> loadResource(T resource, std::string scriptName = "")
     {
         static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
 
         auto res = std::make_shared<T>(resource);
 
         res->engine = this;
+        res->setupLuaState(*lua, scriptName);
 
+        // Makes another shared_ptr here.
         resources.push_back(res);
 
+        // Makes another shared_ptr here. (But goes away at EOF.)
         load(res);
+
+        // Returns the shared_ptr created in this function.
+        return std::move(res);
     }
 
+    std::shared_ptr<Resource> getResource(std::string_view name) const;
+
     template <typename T>
-    std::shared_ptr<T> getResource(std::string_view name)
+    std::shared_ptr<T> getResourceT(std::string_view name)
     {
         static_assert(std::is_base_of<Resource, T>::value, "T must derive from Resource.");
 
@@ -122,6 +132,26 @@ public:
         return found;
     }
 
+    // Resource Registry.
+    template <typename T>
+    sol::usertype<T> registerResource(std::string typeName,
+        std::shared_ptr<Resource>(*creator)(std::string, sol::variadic_args))
+    {
+        resourceRegistry[typeName] = creator;
+
+        return lua->new_usertype<T>(typeName);
+    }
+
+    template <class T>
+    static std::shared_ptr<Resource> resourceBuilder(std::string name, sol::variadic_args va)
+    {
+        static_assert(std::is_base_of<Resource, T>::value, "Type must inherit from resource.");
+        return std::make_shared<T>(T(name, va));
+    }
+
+    std::shared_ptr<Resource> getResourceFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
+
+    // Global Data Registry.
     template <class T>
     T* registerGlobalData(T globalDataObject, std::string scriptName = "")
     {
@@ -149,14 +179,7 @@ public:
         return static_cast<T*>(getGlobalData(name));
     }
 
-    // Component Registry
-    template <class T>
-    static std::unique_ptr<Component> componentBuilder(std::string name, sol::variadic_args va)
-    {
-        static_assert(std::is_base_of<Component, T>::value, "Type must inherit from Component.");
-        return std::make_unique<T>(T(name, va));
-    }
-
+    // Component Registry.
     template <typename T>
     sol::usertype<T> registerComponent(std::string typeName,
         std::unique_ptr<Component>(*creator)(std::string, sol::variadic_args))
@@ -166,8 +189,16 @@ public:
         return lua->new_usertype<T>(typeName);
     }
 
+    template <class T>
+    static std::unique_ptr<Component> componentBuilder(std::string name, sol::variadic_args va)
+    {
+        static_assert(std::is_base_of<Component, T>::value, "Type must inherit from Component.");
+        return std::make_unique<T>(T(name, va));
+    }
+
     std::unique_ptr<Component> getComponentFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va);
 
+    // Draw Mode
     void registerDrawMode(std::string name, std::unique_ptr<DrawMode> drawMode);
     void unregisterDrawMode(std::string name);
 
@@ -201,6 +232,7 @@ private:
 
     std::vector<std::unique_ptr<Module>> moduleRegistry;
     std::map<std::string, std::unique_ptr<Component>(*)(std::string name, sol::variadic_args va)> componentRegistry;
+    std::map<std::string, std::shared_ptr<Resource>(*)(std::string name, sol::variadic_args va)> resourceRegistry;
 
     std::map<std::string, std::unique_ptr<DrawMode>> drawModeRegistry;
 

@@ -24,6 +24,5 @@ protected:
     virtual void setEnvironment() = 0;
 private:
     void setupLuaState(sol::state& state, std::string scriptName = "") override;
-    void populateEnvironment() override;
 };
 }

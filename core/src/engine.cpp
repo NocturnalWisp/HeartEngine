@@ -118,6 +118,39 @@ bool Engine::removeNode(std::string_view name)
     return any_change;
 }
 
+// Resource handling.
+Resource& Engine::loadResource(std::string_view typeName, std::string name, sol::variadic_args args)
+{
+    auto resource = getResourceFromRegistry(typeName, name, args);
+
+    if (resource == nullptr)
+    {
+        throw HeartException({"Could not find resource: ", typeName, " in the registry. Make sure to register both the module AND the resource with the engine."});
+    }
+
+    Resource* resPtr = resource.get();
+
+    resources.push_back(std::move(resource));
+
+    resPtr->engine = this;
+    resPtr->setupLuaState(*lua, "");
+
+    return *resPtr;
+}
+
+std::shared_ptr<Resource> Engine::getResource(std::string_view name) const
+{
+    for (const auto &res : resources)
+    {
+        if (res->name.compare(name) == 0)
+        {
+            return res;
+        }
+    }
+
+    throw HeartException({"No resource found with name: ", name, "."});
+}
+
 GlobalData* Engine::getGlobalData(std::string_view name) const
 {
     GlobalData *foundGlobalData;
@@ -162,6 +195,18 @@ void Engine::populateBasicLua()
 
     // Engine
     auto engineType = lua->new_usertype<Engine>("Engine");
+
+    engineType["loadResource"] = 
+        [](Engine& self, std::string typeName, std::string name, sol::variadic_args va) -> sol::table
+        {
+            return self.loadResource(typeName, name, va).luaEnv[name];
+        };
+    engineType["loadLuaResource"] = 
+        [](Engine& self, std::string scriptName, std::string name) -> sol::table&
+        {
+            return self.loadResource(LuaResource(name), scriptName)->luaEnv;
+        };
+    engineType["getResource"] = &Engine::getResource;
 
     engineType["getNode"] = &Engine::getNode;
 
@@ -243,6 +288,19 @@ std::unique_ptr<Component> Engine::getComponentFromRegistry(std::string_view typ
         if (componentType.first.compare(typeName) == 0)
         {
             return componentType.second(name, va);
+        }
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<Resource> Engine::getResourceFromRegistry(std::string_view typeName, std::string name, sol::variadic_args va)
+{
+    for (const auto &resourceType : resourceRegistry)
+    {
+        if (resourceType.first.compare(typeName) == 0)
+        {
+            return resourceType.second(name, va);
         }
     }
 

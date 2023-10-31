@@ -24,7 +24,8 @@ void Component::setupLuaState(sol::state& p_luaState, std::string scriptName)
     if (scriptName.compare("") != 0)
     {
         // Lua Scripted Component
-        populateEnvironment();
+        luaEnv["name"] = &name;
+        luaEnv["node"] = node;
 
         node->engine->fileManager.loadScript(scriptName, *luaState, &luaEnv);
         isLuaScript = true;
@@ -42,11 +43,5 @@ void Component::setupLuaState(sol::state& p_luaState, std::string scriptName)
     {
         _on_create();
     }
-}
-
-void Component::populateEnvironment()
-{
-    luaEnv["name"] = &name;
-    luaEnv["node"] = node;
 }
 }

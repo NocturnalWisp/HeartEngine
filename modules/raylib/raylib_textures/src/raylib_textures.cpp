@@ -23,13 +23,14 @@ void RayLibTextures::registerTypes(HeartEngine::Engine& engine, sol::state& lua)
 
     // Texture resource.
     //TODO: Replace with REGISTER_RESOURCE when lua environment resources are introduced.
-    auto textureType = lua.new_usertype<Texture>("Texture");
+    auto textureType = REGISTER_RESOURCE(Texture);
 
     ADD_LUA_FUNCTION_W_TYPE(textureType, Texture, path);
     ADD_LUA_FUNCTION_W_TYPE(textureType, Texture, texture);
 
     // RayLib Texture2D.
     auto texture2dType = lua.new_usertype<raylib::Texture2D>("Texture2D");
+
     ADD_LUA_FUNCTION_W_TYPE(texture2dType, raylib::Texture2D, id);
     ADD_LUA_FUNCTION_W_TYPE(texture2dType, raylib::Texture2D, width);
     ADD_LUA_FUNCTION_W_TYPE(texture2dType, raylib::Texture2D, height);

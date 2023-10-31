@@ -19,11 +19,11 @@ private:
 public:
     std::shared_ptr<HeartRayLib::Texture> texture = nullptr;
     Rectangle source;
-    Rectangle rect;
-    float rotation;
+    Rectangle rect = {0, 0, 10, 10};
+    float rotation = 0;
     // Percentage 0-1
-    Vector2 origin;
-    Color color;
+    Vector2 origin = {0, 0};
+    Color color = WHITE;
 
     TextureRect(std::string p_name,
         std::string p_textureName = "",
@@ -57,7 +57,7 @@ public:
     {
         setdrawCall(drawCall);
 
-        texture = node->engine->getResource<HeartRayLib::Texture>(textureName);
+        setTexture(textureName);
     }
 
     void _on_destroy() override
@@ -93,10 +93,10 @@ public:
         }
     }
 
-    void set_texture(std::string p_textureName)
+    void setTexture(std::string p_textureName)
     {
         textureName = p_textureName;
-        texture = node->engine->getResource<HeartRayLib::Texture>(textureName);
+        texture = node->engine->getResourceT<HeartRayLib::Texture>(textureName);
 
         // Setup source to look over whole texture.
         source.x = 0;

@@ -1,7 +1,32 @@
 #pragma once
 
+#include <optional>
+#include <sol/sol.hpp>
+#include "heart/debug.h"
+
 namespace HeartEngine
 {
+template <class T>
+inline static std::optional<T> checkArg(std::string name, sol::stack_proxy arg, bool throwError = true)
+{
+    auto argType = arg.get_type();
+
+    if (argType == sol::type::none)
+        return std::nullopt;
+    if (argType == sol::type::nil)
+        return std::nullopt;
+
+    if (!arg.is<T>())
+    {
+        if (throwError)
+        {
+            throw HeartException({"Invalid argument passed to constructor: ", name, " constructor."});
+        }
+        return std::nullopt;
+    }
+
+    return arg.as<T>();
+}
 #define CAT_I_2(a, b) a##b
 #define CAT2(a, b) CAT_I_2(a, b)
 #define CAT_I_3(a, b, c) a##b##c
@@ -77,12 +102,20 @@ protected: \
     } \
 private:
 
+#define SETUP_RESOURCE() \
+protected: \
+    void setEnvironment() override \
+    { \
+        luaEnv[name] = this; \
+    } \
+private:
+
 // Check the argument in variadic parameters and use the result if valid.
 #define CHECK_ARG(index, type, statement) \
-    if (auto result = checkArg<type>(args[index])) \
+    if (auto result = HeartEngine::checkArg<type>(name, args[index])) \
         statement
 #define CHECK_ARG_FALSE(index, type, statement) \
-    if (auto result = checkArg<type>(args[index], false)) \
+    if (auto result = HeartEngine::checkArg<type>(name, args[index], false)) \
         statement
 
 // Check arg sub macros.
@@ -108,4 +141,8 @@ private:
 #define REGISTER_GLOBAL_DATA(type, ...) \
     lua.new_usertype<type>(__STRINGIFY(type)); \
     engine.registerGlobalData<type>(type(__VA_ARGS__))
+
+// Simpler macro to register a resource to the engine lua state.
+#define REGISTER_RESOURCE(type) \
+    engine.registerResource<type>(__STRINGIFY(type), &HeartEngine::Engine::resourceBuilder<type>)
 }

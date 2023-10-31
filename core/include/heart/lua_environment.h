@@ -9,8 +9,6 @@ namespace HeartEngine
 class LuaEnvironment
 {
 public:
-    virtual void populateEnvironment() = 0;
-
     sol::state* luaState;
     sol::environment luaEnv;
 private:

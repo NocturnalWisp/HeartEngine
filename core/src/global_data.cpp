@@ -21,7 +21,8 @@ void GlobalData::setupLuaState(sol::state& p_luaState, std::string scriptName)
     // Create lua environment.
     luaEnv = sol::environment(*luaState, sol::create, luaState->globals());
 
-    populateEnvironment();
+    luaEnv["name"] = &name;
+    luaEnv["engine"] = engine;
 
     if (scriptName.compare("") != 0)
     {
@@ -43,11 +44,5 @@ void GlobalData::setupLuaState(sol::state& p_luaState, std::string scriptName)
     {
         _on_load();
     }
-}
-
-void GlobalData::populateEnvironment()
-{
-    luaEnv["name"] = &name;
-    luaEnv["engine"] = engine;
 }
 }
