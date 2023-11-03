@@ -29,11 +29,6 @@ void RayLibInput::registerTypes(HeartEngine::Engine &engine, sol::state &lua)
 #endif
 }
 
-void RayLibInput::duringUpdate(HeartEngine::Engine& engine)
-{
-    PollInputEvents();
-}
-
 #ifdef INCLUDE_KEYBOARD
 void RayLibInput::setupKeyboard(sol::usertype<Input>& input)
 {

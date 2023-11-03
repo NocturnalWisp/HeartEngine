@@ -40,11 +40,11 @@ void Engine::run()
         double currentTime = getTime();
         deltaTime = currentTime - previousTime;
 
-        for (auto& mod : moduleRegistry)
-            mod->duringUpdate(*this);
-
         // Variable update loop.
         events["update"].run();
+
+        for (auto& mod : moduleRegistry)
+            mod->duringUpdate(*this);
 
         previousTime = currentTime;
 

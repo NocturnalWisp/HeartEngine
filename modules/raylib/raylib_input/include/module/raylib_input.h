@@ -13,7 +13,6 @@ class RayLibInput : public HeartEngine::Module
 {
 public:
     void registerTypes(HeartEngine::Engine& engine, sol::state& lua) override;
-    void duringUpdate(HeartEngine::Engine& engine) override;
 private:
 #ifdef INCLUDE_KEYBOARD
     void setupKeyboard(sol::usertype<Input>&);

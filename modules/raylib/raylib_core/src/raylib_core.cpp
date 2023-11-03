@@ -20,6 +20,13 @@ namespace HeartRayLib
         CloseWindow();
     }
 
+    void RayLibCore::duringUpdate(HeartEngine::Engine& engine)
+    {
+        PollInputEvents();
+
+        engine.shouldCloseWindow = WindowShouldClose();
+    }
+
     void RayLibCore::startDraw(HeartEngine::Engine& engine)
     {
         BeginDrawing();
@@ -31,7 +38,5 @@ namespace HeartRayLib
         EndDrawing();
 
         SwapScreenBuffer();
-
-        engine.shouldCloseWindow = WindowShouldClose();
     }
 }

@@ -13,6 +13,8 @@ public:
     void initialize(HeartEngine::Engine& engine) override;
     void close(HeartEngine::Engine& engine) override;
 
+    void duringUpdate(HeartEngine::Engine& engine) override;
+
     void startDraw(HeartEngine::Engine& engine) override;
     void endDraw(HeartEngine::Engine& engine);
 };
