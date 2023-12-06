@@ -8,7 +8,6 @@ namespace HeartRayLib { class Input; }
 
 namespace HeartRayLib
 {
-//TODO: Convert include_ variables to definitions for better compilation size.
 class RayLibInput : public HeartEngine::Module
 {
 public:

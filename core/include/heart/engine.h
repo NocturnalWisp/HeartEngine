@@ -25,7 +25,6 @@
 
 namespace HeartEngine
 {
-// TODO: Implement input events.
 class Engine
 {
     friend class Node;

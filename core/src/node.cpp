@@ -104,7 +104,6 @@ void Node::populateEnvironment()
     luaEnv["addComponent"] =
         [this](std::string_view typeName, std::string name, sol::variadic_args va) -> sol::table
         {
-            //TODO: Breaks with error expected table recieved nil if populateLuaData is not setup.
             // Uses a named table in luaEnv for accessing the cool features of sol usertype.
             // Does not work with directly returning the luaEnv table.
             return addComponent(typeName, name, va).luaEnv[name];

@@ -6,6 +6,15 @@ cmake_policy(SET CMP0077 NEW)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if (PLATFORM STREQUAL Web)
+  set(CMAKE_TOOLCHAIN_FILE $ENV{EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake)
+endif()
+
+if (EMSCRIPTEN)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY")
+  set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so taht you can directly open it.
+endif ()
+
 # Settings
 option(USE_EDITOR "Allow for editing game source after compilation." OFF)
 option(USE_DEBUG "Allow the engine to print to the console." ON)

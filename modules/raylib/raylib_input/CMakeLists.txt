@@ -22,7 +22,7 @@ if(RAYINPUT_INCLUDE_TOUCH)
     target_compile_definitions(heart_raylib_input PUBLIC INCLUDE_TOUCH)
 endif()
 
-FetchLibraryGit(heart_raylib_input raylib https://github.com/raysan5/raylib.git 4.3.0)
+FetchLibraryGit(heart_raylib_input raylib https://github.com/raysan5/raylib.git 4.5.0)
 FetchLibraryGit(heart_raylib_input raylib_cpp https://github.com/RobLoach/raylib-cpp.git v4.5.0)
 
 LinkLibrary(heart_raylib_input HeartEngine core/include)
