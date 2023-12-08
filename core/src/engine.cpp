@@ -40,21 +40,30 @@ void Engine::run()
         double currentTime = getTime();
         deltaTime = currentTime - previousTime;
 
+        for (auto& mod : moduleRegistry)
+            mod->beforeUpdate(*this);
+
         // Variable update loop.
         events["update"].run();
 
         for (auto& mod : moduleRegistry)
-            mod->duringUpdate(*this);
+            mod->afterUpdate(*this);
 
         previousTime = currentTime;
 
         lag += deltaTime;
 
         // Fixed update loop.
-        while (lag >= MS_PER_UPDATE)
+        while (lag >= fixedDeltaTime)
         {
+            for (auto& mod : moduleRegistry)
+                mod->beforeFixedUpdate(*this);
+
             events["fixed_update"].run();
-            lag -= MS_PER_UPDATE;
+            lag -= fixedDeltaTime;
+
+            for (auto& mod : moduleRegistry)
+                mod->afterFixedUpdate(*this);
         }
 
         // Drawing Start

@@ -16,7 +16,11 @@ public:
 
     virtual void initialize(Engine& engine) {}
 
-    virtual void duringUpdate(Engine& engine) {}
+    virtual void beforeUpdate(Engine& engine) {}
+    virtual void afterUpdate(Engine& engine) {}
+
+    virtual void beforeFixedUpdate(Engine& engine) {}
+    virtual void afterFixedUpdate(Engine& engine) {}
 
     virtual void startDraw(Engine& engine) {}
     virtual void endDraw(Engine& engine) {}

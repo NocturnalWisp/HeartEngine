@@ -174,7 +174,7 @@ public:
     template<class T>
     T* getGlobalDataT(std::string_view name) const
     {
-        static_assert(std::is_convertible<T, GlobalData>::value, "Class must derive from Global Data.");
+        static_assert(std::is_base_of<GlobalData, T>::value, "Class must derive from Global Data.");
         return static_cast<T*>(getGlobalData(name));
     }
 
@@ -217,6 +217,8 @@ public:
 
     double deltaTime;
 
+    const double fixedDeltaTime = 0.01;
+
 private:
     void populateBasicLua();
     void checkEarlyResourceRelease();
@@ -236,7 +238,5 @@ private:
     std::map<std::string, std::unique_ptr<DrawMode>> drawModeRegistry;
 
     std::chrono::_V2::system_clock::time_point startTime = std::chrono::system_clock::now();
-
-    const double MS_PER_UPDATE = 0.01;
 };
 }

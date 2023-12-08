@@ -20,7 +20,7 @@ namespace HeartRayLib
         CloseWindow();
     }
 
-    void RayLibCore::duringUpdate(HeartEngine::Engine& engine)
+    void RayLibCore::beforeUpdate(HeartEngine::Engine& engine)
     {
         PollInputEvents();
 
